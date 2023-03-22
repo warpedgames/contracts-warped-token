@@ -1,95 +1,59 @@
-## STARLINK Pixelnauts contract
+# STARL Token Migration Contracts Documentation
 
-## Config
+# Used technologies:
 
-Create .env file in root directory and write following:
+Refer this flow: https://miro.com/app/board/uXjVPkKbfEw=/
 
-PRIVATE_KEY=[your private key]
+## Merkle Proof in Migration
 
-ETHERSCAN_API_KEY=[your etherscan api key]
+Use merkle proof to verify migrator's address and amount of tokens.
 
-## Install
+- Build merkle tree from old token holder's addresses and balances
+- Store merkle tree root hash in Migrator contract
+- Get user's proof using backend REST API and pass into migrate function
+- Verify proof and amount of tokens using root hash
 
-npm install
+## Buy/Sell Tax
 
-## Test
+- Use UniswapV2Router to swap tokens collected in treasury contract as buy/sell tax
+- Add liquidity(20% as default): 10% token and 10% of swapped ETH
+- Transfer left ETH into team multsig wallet
+- Buy/sell tax rate will be calculated dynamicly by checking migrator's ownership for ERC721 NFTs
 
-rinkeby
+# Usage of third party dependencies
 
-npx hardhat run --network rinkeby scripts/deploy_pixel_nauts.js
+## Openzeppelin for contracts
 
-Deployed StarlPixleNauts Address: <delpyed_stpn_address>
+@openzeppelin/contracts/token/ERC20/ERC20.sol
 
-npx hardhat verify --network rinkeby <delpyed_stpn_address> --constructor-args scripts/pixel_nauts_params.js
+@openzeppelin/contracts/utils/cryptography/MerkleProof.sol
 
-## Reveal
+## Hardhat for deploy and test
 
-Reveal the PixelNauts with this uri:
+# Development environment
 
-https://starlink.mypinata.cloud/ipfs/QmfCZMkMxSSK6xLSTgZQD5HobKsR1CsAxKa3ynNrbrJmWE/
+# Deploy script
 
-## Deploy NFT Staking contract
+`
+npx hardhat run scripts/migrations/deploy.js --network goerli
+`
 
-npx hardhat run --network rinkeby scripts/deploy_nft_staking.js
+# Test script
 
-# Set tiers
+`
+npx hardhat coverage --testfiles ./test/*.test.js
+`
 
-npx hardhat run --network rinkeby scripts/nft_staking_tiers.js
+# System architecture and internal/external interactions
 
-## Deploy AMxST contract
+Refer this flow: https://miro.com/app/board/uXjVPkKbfEw=/
 
-Add following values to .env file for fee recipients:
+## Integration with Backend REST API
 
-DEV_FEE_RECIPIENT=[0x...] \
-AMOEBA_RECIPIENT=[0x...] \
-FIRST_ARTIST_RECIPIENT=[0x...] \
-SECOND_ARTIST_RECIPIENT=[0x...]
+POST migration/upload-snapshot
 
-Get sale launch timestamp(should be later than current timestamp) and update in following 2 files:
+GET migration/get-proof/:address
 
-- use --network mainnet for mainnet deployment.
+## Integration with UI
 
-scripts\deploy_amxst.js line#13 \
-scripts\args\amxst_constructor.js line#8
-
-command: \
-npx hardhat run scripts/deploy_amxst.js --network rinkeby \
-output: \
-AmoebaXStarl: [AMXST_CONTRACT_ADDRESS]
-
-npx hardhat verify [AMXST_CONTRACT_ADDRESS] --network rinkeby --constructor-args scripts/args/amxst_constructor.js
-
-## Future usage of AMxST contract
-
-In the future, we can add more nft collections of artists by using following functions:
-
-```
-addArtist(
-    uint256 supply, \\ total supply of nfts in this artist collection
-    uint256 launchTime, \\ launch time of sale for these nfts
-    address feeRecipient, \\ address where receive artist payment
-    string memory baseUrl, \\ base ipfs url of metadata of these nfts
-    string memory extension \\ extension, usually .json
-)
-
-batchAddArtists(
-    uint256[] calldata supplies, \\ list of supply
-    uint256 launchTime, \\ launch time of the sale
-    address[] calldata feeRecipients, \\ list of feeRecipient address
-    string[] calldata baseUrls, \\ list of baseUrl
-    string[] calldata extensions \\ list of extension
-)
-
-updateFeePercent(
-    uint256 _devFeePercent, \\ this is 10% now, but can update later
-    uint256 _artistFeePercent, \\ this is 30% now, but can update later
-)
-```
-
-You can write to these functions using etherscan.io or rinkeby.etherscan.io.
-
-## STARLPAL contract
-
-npx hardhat run scripts\deploy_starl_pal.js --network rinkeby
-
-npx hardhat verify 0x113B123d48D8621e6Ff6c3177f5890890faEa785 --constructor-args scripts\args\starl_pal.js --network rinkeby
+https://marketplace.starlproject.com/migration
