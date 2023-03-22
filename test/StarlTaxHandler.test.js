@@ -348,7 +348,7 @@ describe('StarlTaxHandler', function () {
         const nft4 = await this.ERC721.deploy();
         await nft4.deployed();
         const _taxHandler = await this.StarlTaxHandler.deploy(
-            this.poolManager.address, [this.nft1, this.nft2, this.nft3, nft4], [8, 4, 2, 1]
+            this.poolManager.address, [this.nft1.address, this.nft2.address, this.nft3.address, nft4.address], [8, 4, 2, 1]
         );
         await _taxHandler.deployed();
         
@@ -360,7 +360,7 @@ describe('StarlTaxHandler', function () {
         await this.nft3.mint(buyerAddress);
         await nft4.mint(buyerAddress);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        const [taxAmount, rewardAmount, burnAmount] = await _taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.lowestTaxRate).div(this.percentDecimal));
         expect(rewardAmount).to.equal(this.zeroAmount);
         expect(burnAmount).to.equal(this.zeroAmount);

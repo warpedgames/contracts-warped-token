@@ -46,7 +46,7 @@ const constructMerkleTree = async () => {
 const mainnetAddresses = require('../../addresses/mainnet.json');
 const goerliAddresses = require('../../addresses/goerli.json');
 const addresses = process.env.NETWORK === 'mainnet' ? mainnetAddresses : goerliAddresses;
-let merkleRoot = '0x76579fa9c53414e8f6625c4bd52d0f5365bbac7b3752c735ff7b01237d1d55fe';
+let merkleRoot = '0xbd76578c916b8a81fa8292ee234dd5edb4cfd387b5c2bca98cb15cb8ec276770';
 
 async function main() {
   if (!merkleRoot) {
@@ -55,7 +55,7 @@ async function main() {
   }
 
   const nftContracts = [addresses.SATE_NFT_ADDRESS, addresses.LMVX_NFT_ADDRESS, addresses.STPAL_NFT_ADDRESS, addresses.STPN_NFT_ADDRESS];
-  const nftLevels = [4, 2, 1, 1];
+  const nftLevels = [8, 4, 2, 1];
   
   const StarlMigrator = await hre.ethers.getContractFactory("StarlMigrator");
   // set migration start timestamp as 5 mins later for dev
@@ -66,9 +66,9 @@ async function main() {
     merkleRoot,
     addresses.REWARD_VAULT_ADDRESS,
     addresses.TAX_WALLET,
+    migrationStartTimestamp,
     nftContracts,
-    nftLevels,
-    migrationStartTimestamp
+    nftLevels
   );
   await migrator.deployed();
   console.log("StarlMigrator:", migrator.address);
