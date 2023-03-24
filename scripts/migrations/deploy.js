@@ -29,7 +29,7 @@ const constructMerkleTree = async () => {
     
     console.log("nonZeroHolders " + nonZeroHolders.length);
     const bodyData = JSON.stringify({holders: nonZeroHolders})
-    return fetch("http://localhost:3001/migration/upload-snapshot", {
+    return fetch("https://dev-api.starlproject.com/migration/upload-snapshot", {
       method: "POST",
       headers: {
         "Authorization": "API_KEY bdhQexg73961NfudreNlp36Xhr8WqnM",

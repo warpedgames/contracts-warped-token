@@ -50,6 +50,8 @@ contract StarlTreasuryHandler is ITreasuryHandler, Ownable {
     /// @notice Emitted when the treasury address is updated.
     event TreasuryAddressUpdated(address oldTreasuryAddress, address newTreasuryAddress);
 
+    /// @notice constructor of tax handler contract
+    /// @param _poolManager exchange pool manager address
     constructor(IPoolManager _poolManager) {
         poolManager = _poolManager;
     }
