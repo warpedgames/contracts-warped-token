@@ -7,7 +7,7 @@ const nftLevels = [8, 4, 2, 1];
 
 module.exports = [
     // update this with deployed WarpedTokenManager contract address
-    "0xaA2db171656DAfe3dF4BD05e9EBed70000A7a9d8",
+    "0xFB2553d7b41C6cf0F7Dd98f6E816EFa1e209208B",
     nftContracts,
     nftLevels
 ]
