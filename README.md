@@ -1,10 +1,10 @@
-# STARL Token Migration Contracts Documentation
+# WARPED Token Contracts Documentation
 
 # Used technologies:
 
 Refer this flow: https://miro.com/app/board/uXjVPkKbfEw=/
 
-## Merkle Proof in Migration
+## Merkle Proof to swap with STARL token
 
 Use merkle proof to verify migrator's address and amount of tokens.
 

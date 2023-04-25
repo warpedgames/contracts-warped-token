@@ -12,7 +12,7 @@ module.exports = [
     addresses.STARL_ADDRESS,
     merkleRoot,
     addresses.REWARD_VAULT_ADDRESS,
-    addresses.DAO_VAULT_ADDRESS,
+    addresses.WARPED_TREASURY_ADDRESS,
     addresses.TAX_WALLET,
     swapStartTimestamp,
     nftContracts,

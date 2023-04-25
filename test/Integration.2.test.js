@@ -146,4 +146,16 @@ describe('Integration Test 2', function () {
         expect(BN.from(10000)).to.closeTo(taxAmount.mul(1000000).div(totalAmount), 1); // expect 2% tax
         expect(rewardAmount).to.equal(BN.from(0)); // expect no reward
     });
+
+    it("Test sending to other address - Expected Result: No Tax", async function() {
+        // Buy token for 0.01 eth
+        const ethToBuy = ethers.utils.parseEther("0.01");
+        const curTime = await getCurrentTime();
+        await this.router.swapExactETHForTokens(ethToBuy, [this.wethAddress, this.token.address], this.user.address, curTime + 50, {value: ethToBuy});
+
+        const _token = this.token.connect(this.user);
+        const testAmount = ethers.utils.parseEther("100");
+        await _token.transfer(this.tester.address, testAmount);
+        expect(await this.token.balanceOf(this.tester.address)).to.equal(testAmount);
+    });
 });

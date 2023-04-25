@@ -31,8 +31,8 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
     /// and mint total supply into migrator.
     /// @param taxHandlerAddress tax handler contract address
     /// @param treasuryHandlerAddress treasury handler contract address
-    /// @param rewardVaultAddress vault address
-    /// @param warpedTreasuryAddress vault address
+    /// @param rewardVaultAddress game reward vault address
+    /// @param warpedTreasuryAddress warped treasury address
     constructor (
         address taxHandlerAddress,
         address treasuryHandlerAddress,

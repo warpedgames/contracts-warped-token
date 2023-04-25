@@ -8,5 +8,5 @@ module.exports = [
     // update this with WarpedTreasuryHandler contract address from the log of WarpedTokenManager contract deploy script
     "0x3Bb22454C326191DbF31837E4399F733F32a6Cd6",
     addresses.REWARD_VAULT_ADDRESS,
-    addresses.DAO_VAULT_ADDRESS
+    addresses.WARPED_TREASURY_ADDRESS
 ];
