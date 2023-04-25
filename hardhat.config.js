@@ -39,7 +39,8 @@ module.exports = {
         url: "https://goerli.infura.io/v3/0035536bad544fc0a4868ddad5ed81f1",
         blockNumber: 8654260
       },
-      chainId: 1337
+      chainId: 1337,
+      gas: 2100000
     },
     rinkeby: {
       url: "https://rinkeby.infura.io/v3/07c040cbab244c7380571790642de2ba",

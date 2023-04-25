@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./ITaxHandler.sol";
 import "./IPoolManager.sol";
 
-contract StarlTaxHandler is ITaxHandler, Ownable {
+contract WarpedTaxHandler is ITaxHandler, Ownable {
 
     /// @notice NFTs to be used to determine user tax level.
     IERC721[] public nftContracts;
@@ -21,7 +21,7 @@ contract StarlTaxHandler is ITaxHandler, Ownable {
 
     TaxRatePoint[] public taxRates;
     uint256 basisTaxRate;
-    uint256 burningRatePoint;
+    uint256 maxTaxRate = 400;
     uint256 rewardRatePoint;
     bool    taxDisabled;
     IPoolManager poolManager;
@@ -36,7 +36,6 @@ contract StarlTaxHandler is ITaxHandler, Ownable {
         _addNFTs(_nftContracts, _levels);
         // init default tax rates
         basisTaxRate = 400;
-        burningRatePoint = 300;
         rewardRatePoint = 300;
         taxRates.push(TaxRatePoint(7, 100));
         taxRates.push(TaxRatePoint(5, 200));
@@ -56,7 +55,7 @@ contract StarlTaxHandler is ITaxHandler, Ownable {
      * @param benefactor Address of the benefactor.
      * @param beneficiary Address of the beneficiary.
      * @param amount Number of tokens in the transfer.
-     * @return Triple (taxAmount, rewardAmount, burnAmount).
+     * @return Triple (taxAmount, gameRewardAmount, warpedTreasuryAmount).
      */
     function getTax(
         address benefactor,
@@ -78,25 +77,25 @@ contract StarlTaxHandler is ITaxHandler, Ownable {
         }
         
         uint256 taxRate = 0;
-        uint256 rewardRate = 0;
-        uint256 burnRate = 0;
+        uint256 gameRewardRate = 0;
+        uint256 warpedTreasuryRate = 0;
         // If the benefactor is found in the set of exchange pools, then it's a buy transactions, otherwise a sell
         // transactions, because the other use cases have already been checked above.
         if (poolManager.isPoolAddress(benefactor)) {
             taxRate = _getTaxBasisPoints(beneficiary);
             if (taxRate > rewardRatePoint) {
-                rewardRate = taxRate - rewardRatePoint;
+                gameRewardRate = taxRate - rewardRatePoint;
                 taxRate = rewardRatePoint;
             }
         } else {
             taxRate = _getTaxBasisPoints(benefactor);
-            if (taxRate > burningRatePoint) {
-                burnRate = taxRate - burningRatePoint;
-                taxRate = burningRatePoint;
+            if (taxRate > rewardRatePoint) {
+                warpedTreasuryRate = taxRate - rewardRatePoint;
+                taxRate = rewardRatePoint;
             }
         }
 
-        return ((amount * taxRate) / 10000, (amount * rewardRate) / 10000, (amount * burnRate) / 10000);
+        return ((amount * taxRate) / 10000, (amount * gameRewardRate) / 10000, (amount * warpedTreasuryRate) / 10000);
     }
 
     /**
@@ -105,7 +104,6 @@ contract StarlTaxHandler is ITaxHandler, Ownable {
      * @param rates of tax per each threshold.
      * @param _basisTaxRate basis tax rate.
      * @param _rewardRatePoint if calculated tax rate is over this value, send left into reward vault.
-     * @param _burningRatePoint if calculated tax rate is over this value, burn left.
      * 
      * Requirements:
      *
@@ -115,19 +113,19 @@ contract StarlTaxHandler is ITaxHandler, Ownable {
         uint256[] memory thresholds,
         uint256[] memory rates,
         uint256 _basisTaxRate,
-        uint256 _rewardRatePoint,
-        uint256 _burningRatePoint
+        uint256 _rewardRatePoint
     ) external onlyOwner {
         require(thresholds.length == rates.length, "Invalid level points");
         require(_basisTaxRate > 0, "Invalid base rate");
+        require(_basisTaxRate <= maxTaxRate, "Base rate must be less than max rate");
 
         delete taxRates;
         for (uint256 i=0; i<thresholds.length; i++) {
+            require(rates[i] <= maxTaxRate, "Rate must be less than max rate");
             taxRates.push(TaxRatePoint(thresholds[i], rates[i]));
         }
         basisTaxRate = _basisTaxRate;
         rewardRatePoint = _rewardRatePoint;
-        burningRatePoint = _burningRatePoint;
     }
 
     /**

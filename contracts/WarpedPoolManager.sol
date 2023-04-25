@@ -10,7 +10,7 @@ import "./IPoolManager.sol";
  * @title Exchange pool processor abstract contract.
  * @dev Keeps an enumerable set of designated exchange addresses as well as a single primary pool address.
  */
-contract StarlPoolManager is IPoolManager, Ownable {
+contract WarpedPoolManager is IPoolManager, Ownable {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     /// @dev Set of exchange pool addresses.

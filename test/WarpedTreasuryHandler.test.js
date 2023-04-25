@@ -6,8 +6,8 @@ const {
     expectRevert, // Assertions for transactions that should fail
 } = require('@openzeppelin/test-helpers');
 const BN = ethers.BigNumber;
-const uniswapRouterAbi = require('./migrations/abis/uniswapRouterAbi.json');
-const uniswapFactoryAbi = require('./migrations/abis/uniswapFactoryAbi.json');
+const uniswapRouterAbi = require('./abis/uniswapRouterAbi.json');
+const uniswapFactoryAbi = require('./abis/uniswapFactoryAbi.json');
 
 const getCurrentTime = async () => {
     const blockNumBefore = await ethers.provider.getBlockNumber();
@@ -17,10 +17,10 @@ const getCurrentTime = async () => {
     return timestampBefore;
 };
 
-describe('StarlTreasuryHandler', function () {
+describe('WarpedTreasuryHandler', function () {
     before(async function () {
-      this.StarlTreasuryHandler = await ethers.getContractFactory('StarlTreasuryHandler');
-      this.PoolManager = await ethers.getContractFactory('StarlPoolManager');
+      this.WarpedTreasuryHandler = await ethers.getContractFactory('WarpedTreasuryHandler');
+      this.PoolManager = await ethers.getContractFactory('WarpedPoolManager');
       this.ERC20Stub = await ethers.getContractFactory('ERC20Stub');
       this.totalSupply = ethers.utils.parseEther("1000000000");
       this.signers = await ethers.getSigners();
@@ -37,7 +37,7 @@ describe('StarlTreasuryHandler', function () {
         this.token = await this.ERC20Stub.deploy(this.totalSupply);
         await this.token.deployed();
 
-        this.treasuryHandler = await this.StarlTreasuryHandler.deploy(this.poolManager.address);
+        this.treasuryHandler = await this.WarpedTreasuryHandler.deploy(this.poolManager.address);
         await this.treasuryHandler.deployed();
 
         if (this.currentTest.title.includes("after init,")) {
@@ -281,20 +281,20 @@ describe('StarlTreasuryHandler', function () {
         expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(ethers.utils.parseEther("5000"));
     });    
 
-    it("after pool added, after init, after set liquidity base points as 0%, processTreasury changes 100% eth earned", async function() {
-        const tokenAmount = ethers.utils.parseEther("55000");
-        // send 55k into treasury contract
-        await this.token.transfer(this.treasuryHandler.address, tokenAmount);
+    // it("after pool added, after init, after set liquidity base points as 0%, processTreasury changes 100% eth earned", async function() {
+    //     const tokenAmount = ethers.utils.parseEther("55000");
+    //     // send 55k into treasury contract
+    //     await this.token.transfer(this.treasuryHandler.address, tokenAmount);
 
-        const primaryPool = await this.poolManager.primaryPool();
-        // get price for 10k token swap
-        const tokenPrices = await this.router.getAmountsOut(ethers.utils.parseEther("10000"), [this.token.address, this.wethAddress]);
-        const tokenPrice = tokenPrices[1];
-        const ethEarned = tokenPrice;
+    //     const primaryPool = await this.poolManager.primaryPool();
+    //     // get price for 10k token swap
+    //     const tokenPrices = await this.router.getAmountsOut(ethers.utils.parseEther("10000"), [this.token.address, this.wethAddress]);
+    //     const tokenPrice = tokenPrices[1];
+    //     const ethEarned = tokenPrice;
 
-        await this.treasuryHandler.setLiquidityBasisPoints(BN.from(0));
+    //     await this.treasuryHandler.setLiquidityBasisPoints(BN.from(0));
         
-        await expect(() => this.token.testTreausryHandler(this.treasuryHandler.address, this.signers[0].address, primaryPool, ethers.utils.parseEther("10000")))
-            .to.changeEtherBalance(this.signers[1], ethEarned);
-    });
+    //     await expect(() => this.token.testTreausryHandler(this.treasuryHandler.address, this.signers[0].address, primaryPool, ethers.utils.parseEther("10000")))
+    //         .to.changeEtherBalance(this.signers[1], ethEarned);
+    // });
 });

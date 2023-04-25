@@ -35,7 +35,18 @@ Use merkle proof to verify migrator's address and amount of tokens.
 # Deploy script
 
 `
-npx hardhat run scripts/migrations/deploy.js --network goerli
+npx hardhat run scripts/deploy.js --network goerli
+`
+
+# Verify script
+
+Please update tokenManager.js, token.js, and taxHandler.js files in scripts/verify/args folder according to the log of the above deploy script.
+
+`
+npx hardhat verify [address of deployed WarpedTokenManager contract] --network goerli --constructor-args ./verify/args/tokenManager.js
+npx hardhat verify [address of deployed WarpedToken contract(find from the log of above deploy script)] --network goerli --constructor-args ./verify/args/token.js
+npx hardhat verify [address of deployed WarpedTaxHandler contract(find from the log of above deploy script)] --network goerli --constructor-args ./verify/args/token.js
+npx hardhat verify [address of deployed WarpedTreasuryHandler contract(find from the log of above deploy script)] --network goerli [WarpedTokenManager contract address]
 `
 
 # Test script
@@ -47,6 +58,8 @@ npx hardhat coverage --testfiles ./test/*.test.js
 # System architecture and internal/external interactions
 
 Refer this flow: https://miro.com/app/board/uXjVPkKbfEw=/
+
+https://docs.google.com/document/d/1WIrTMQDE6s8A5djIkVnxEKhuxmIJ9bKO45B-l0sGmcI
 
 ## Integration with Backend REST API
 

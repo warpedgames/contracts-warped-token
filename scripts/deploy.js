@@ -43,8 +43,8 @@ const constructMerkleTree = async () => {
     })
 }
 
-const mainnetAddresses = require('../../addresses/mainnet.json');
-const goerliAddresses = require('../../addresses/goerli.json');
+const mainnetAddresses = require('../addresses/mainnet.json');
+const goerliAddresses = require('../addresses/goerli.json');
 const addresses = process.env.NETWORK === 'mainnet' ? mainnetAddresses : goerliAddresses;
 let merkleRoot = '0xbd76578c916b8a81fa8292ee234dd5edb4cfd387b5c2bca98cb15cb8ec276770';
 
@@ -57,31 +57,32 @@ async function main() {
   const nftContracts = [addresses.SATE_NFT_ADDRESS, addresses.LMVX_NFT_ADDRESS, addresses.STPAL_NFT_ADDRESS, addresses.STPN_NFT_ADDRESS];
   const nftLevels = [8, 4, 2, 1];
   
-  const StarlMigrator = await hre.ethers.getContractFactory("StarlMigrator");
+  const WarpedTokenManager = await hre.ethers.getContractFactory("WarpedTokenManager");
   // set migration start timestamp as 5 mins later for dev
-  const migrationStartTimestamp = Math.floor(new Date(new Date().getTime() + 5*60*1000).getTime()/1000);
-  console.log("migrationStartTimestamp: ", migrationStartTimestamp);
-  const migrator = await StarlMigrator.deploy(
+  const swapStartTimestamp = Math.floor(new Date(new Date().getTime() + 5*60*1000).getTime()/1000);
+  console.log("swapStartTimestamp: ", swapStartTimestamp);
+  const manager = await WarpedTokenManager.deploy(
     addresses.STARL_ADDRESS,
     merkleRoot,
     addresses.REWARD_VAULT_ADDRESS,
+    addresses.DAO_VAULT_ADDRESS,
     addresses.TAX_WALLET,
-    migrationStartTimestamp,
+    swapStartTimestamp,
     nftContracts,
     nftLevels
   );
-  await migrator.deployed();
-  console.log("StarlMigrator:", migrator.address);
+  await manager.deployed();
+  console.log("WarpedTokenManager:", manager.address);
 
-  const tokenAddress = await migrator.starlV2();
-  const StarlToken = await hre.ethers.getContractFactory("StarlToken");
-  const starlToken = StarlToken.attach(tokenAddress);
-  console.log("StarlToken: ", starlToken.address);
+  const tokenAddress = await manager.warpedToken();
+  const WarpedToken = await hre.ethers.getContractFactory("WarpedToken");
+  const warpedToken = WarpedToken.attach(tokenAddress);
+  console.log("WarpedToken: ", warpedToken.address);
 
-  const taxHandler = await starlToken.taxHandler();
-  console.log("TaxHandler: ", taxHandler);
-  const treasuryHandler = await starlToken.treasuryHandler();  
-  console.log("TreasuryHandler: ", treasuryHandler);
+  const taxHandler = await warpedToken.taxHandler();
+  console.log("WarpedTaxHandler: ", taxHandler);
+  const treasuryHandler = await warpedToken.treasuryHandler();  
+  console.log("WarpedTreasuryHandler: ", treasuryHandler);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

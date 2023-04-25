@@ -11,11 +11,11 @@ import "./LenientReentrancyGuard.sol";
 
 /// @notice STARL token contract
 /// @dev extends standard ERC20 contract
-contract StarlToken is ERC20, LenientReentrancyGuard {
+contract WarpedToken is ERC20, LenientReentrancyGuard {
     uint8 private constant      _decimals = 18;
     uint256 private constant    _tTotal = 1_000_000_000 * 10**_decimals;
-    string private constant     _name = unicode"STARL Metaverse";
-    string private constant     _symbol = unicode"STARL";
+    string private constant     _name = unicode"WARPED";
+    string private constant     _symbol = unicode"WARPED";
 
     /// @notice tax handler
     ITaxHandler public taxHandler;
@@ -23,6 +23,8 @@ contract StarlToken is ERC20, LenientReentrancyGuard {
     ITreasuryHandler public treasuryHandler;
     /// @notice reward vault
     address public rewardVault;
+    /// @notice DAO vault
+    address public warpedTreasury;
 
     /// @notice constructor of STARL token contract
     /// @dev initialize with tax and treasury handler, reward vault and migrator address,
@@ -30,11 +32,14 @@ contract StarlToken is ERC20, LenientReentrancyGuard {
     /// @param taxHandlerAddress tax handler contract address
     /// @param treasuryHandlerAddress treasury handler contract address
     /// @param rewardVaultAddress vault address
+    /// @param warpedTreasuryAddress vault address
     constructor (
         address taxHandlerAddress,
         address treasuryHandlerAddress,
-        address rewardVaultAddress
+        address rewardVaultAddress,
+        address warpedTreasuryAddress
     ) ERC20(_name, _symbol) {
+        warpedTreasury = warpedTreasuryAddress;
         rewardVault = rewardVaultAddress;
         taxHandler = ITaxHandler(taxHandlerAddress);
         treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
@@ -77,17 +82,17 @@ contract StarlToken is ERC20, LenientReentrancyGuard {
         }
         
         uint256 taxAmount;
-        uint256 rewardAmount;
-        uint256 burnAmount;
-        (taxAmount, rewardAmount, burnAmount) = taxHandler.getTax(from, to, amount);
+        uint256 gameRewardAmount;
+        uint256 warpedTreasuryAmount;
+        (taxAmount, gameRewardAmount, warpedTreasuryAmount) = taxHandler.getTax(from, to, amount);
         if (taxAmount > 0) {
             _transfer(to, address(treasuryHandler), taxAmount);
         }
-        if (rewardAmount > 0) {
-            _transfer(to, rewardVault, rewardAmount);
+        if (gameRewardAmount > 0) {
+            _transfer(to, rewardVault, gameRewardAmount);
         }
-        if (burnAmount > 0) {
-            _burn(to, burnAmount);
+        if (warpedTreasuryAmount > 0) {
+            _transfer(to, warpedTreasury, warpedTreasuryAmount);
         }
     }
 }

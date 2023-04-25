@@ -16,7 +16,7 @@ import "./ITreasuryHandler.sol";
  * `liquidityBasisPoints` has been set to a non-zero value, then that percentage will instead be added to the designated
  * liquidity pool.
  */
-contract StarlTreasuryHandler is ITreasuryHandler, Ownable {
+contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
     using Address for address payable;
 
     IPoolManager poolManager;

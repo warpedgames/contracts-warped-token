@@ -9,10 +9,10 @@ const BN = ethers.BigNumber;
 
 
 
-describe('StarlTaxHandler', function () {
+describe('WarpedTaxHandler', function () {
     before(async function () {
-      this.StarlTaxHandler = await ethers.getContractFactory('StarlTaxHandler');
-      this.PoolManager = await ethers.getContractFactory('StarlPoolManager');
+      this.WarpedTaxHandler = await ethers.getContractFactory('WarpedTaxHandler');
+      this.PoolManager = await ethers.getContractFactory('WarpedPoolManager');
       this.ERC721 = await ethers.getContractFactory('ERC721Stub');
       this.textAmount = BN.from(400);
       this.percentDecimal = BN.from(10000);
@@ -32,7 +32,7 @@ describe('StarlTaxHandler', function () {
         await this.poolManager.deployed();
 
         // Deploy tax handler
-        this.taxHandler = await this.StarlTaxHandler.deploy(this.poolManager.address, [], []);
+        this.taxHandler = await this.WarpedTaxHandler.deploy(this.poolManager.address, [], []);
         await this.taxHandler.deployed();
 
         if (this.currentTest.title.includes("with NFTs")) {
@@ -215,7 +215,7 @@ describe('StarlTaxHandler', function () {
         await this.nft1.mint(buyerAddress);
         await this.nft2.mint(buyerAddress);
         await this.nft3.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200), BN.from(350));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
 
         const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.lowestTaxRate).div(this.percentDecimal));
@@ -231,7 +231,7 @@ describe('StarlTaxHandler', function () {
         await this.taxHandler.addNFTs([this.nft1.address, this.nft2.address, this.nft3.address], [1, 2, 4]);
         // mint 3 nft into buyer address
         await this.nft2.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200), BN.from(350));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
 
         const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.middleTaxRate).div(this.percentDecimal));
@@ -247,7 +247,7 @@ describe('StarlTaxHandler', function () {
         await this.taxHandler.addNFTs([this.nft1.address, this.nft2.address, this.nft3.address], [1, 2, 4]);
         // mint 3 nft into buyer address
         await this.nft1.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200), BN.from(350));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
 
         const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.middleTaxRate).div(this.percentDecimal));
@@ -263,7 +263,7 @@ describe('StarlTaxHandler', function () {
         await this.taxHandler.addNFTs([this.nft1.address, this.nft2.address, this.nft3.address], [1, 2, 4]);
         // mint 3 nft into buyer address
         await this.nft1.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200), BN.from(350));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
         await this.taxHandler.pauseTax();
 
         const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
@@ -280,7 +280,7 @@ describe('StarlTaxHandler', function () {
         await this.taxHandler.addNFTs([this.nft1.address, this.nft2.address, this.nft3.address], [1, 2, 4]);
         // mint 3 nft into buyer address
         await this.nft1.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200), BN.from(350));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
         await this.taxHandler.pauseTax();
         await this.taxHandler.resumeTax();
 
@@ -293,18 +293,18 @@ describe('StarlTaxHandler', function () {
     it("setTaxRates reverts for forbidden user", async function() {
         const _taxHandler = this.taxHandler.connect(this.signers[1]);
         await expectRevert(
-            _taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200), BN.from(350)),
+            _taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200)),
             "Ownable: caller is not the owner"
         );
     });
 
     it("setTaxRates reverts for invalid parameters", async function() {
         await expectRevert(
-            this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200)], BN.from(400), BN.from(200), BN.from(350)),
+            this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200)], BN.from(400), BN.from(200)),
             "Invalid level points"
         );
         await expectRevert(
-            this.taxHandler.setTaxRates([7, 2], [BN.from(100), BN.from(200)], BN.from(0), BN.from(0), BN.from(0)),
+            this.taxHandler.setTaxRates([7, 2], [BN.from(100), BN.from(200)], BN.from(0), BN.from(0)),
             "Invalid base rate"
         );
     });
@@ -347,7 +347,7 @@ describe('StarlTaxHandler', function () {
     it("after deploy with 3 nfts, getTax(with NFTs) returns lowest tax amount with pool, non-zero safe-nft-owned buyer address, non-zero amount", async function() {
         const nft4 = await this.ERC721.deploy();
         await nft4.deployed();
-        const _taxHandler = await this.StarlTaxHandler.deploy(
+        const _taxHandler = await this.WarpedTaxHandler.deploy(
             this.poolManager.address, [this.nft1.address, this.nft2.address, this.nft3.address, nft4.address], [8, 4, 2, 1]
         );
         await _taxHandler.deployed();

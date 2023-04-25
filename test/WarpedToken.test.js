@@ -6,28 +6,20 @@ const {
     expectRevert, // Assertions for transactions that should fail
 } = require('@openzeppelin/test-helpers');
 const BN = ethers.BigNumber;
-const uniswapRouterAbi = require('./migrations/abis/uniswapRouterAbi.json');
-const uniswapFactoryAbi = require('./migrations/abis/uniswapFactoryAbi.json');
 
-const getCurrentTime = async () => {
-    const blockNumBefore = await ethers.provider.getBlockNumber();
-    const blockBefore = await ethers.provider.getBlock(blockNumBefore);
-    const timestampBefore = blockBefore.timestamp;
-    // console.log("block: " + blockNumBefore + " : " + timestampBefore);
-    return timestampBefore;
-};
 
-describe('StarlTreasuryHandler', function () {
+describe('WarpedToken', function () {
     before(async function () {
-      this.StarlToken = await ethers.getContractFactory('StarlToken');
+      this.WarpedToken = await ethers.getContractFactory('WarpedToken');
       this.TaxHandlerStub = await ethers.getContractFactory('TaxHandlerStub');
       this.TreasuryHandlerStub = await ethers.getContractFactory('TreasuryHandlerStub');
-      const [owner, user, tester, pool, vault] = await ethers.getSigners();
+      const [owner, user, tester, pool, vault, daoVault] = await ethers.getSigners();
       this.owner = owner;
       this.user = user;
       this.tester = tester;
       this.pool = pool;
       this.vault = vault;
+      this.daoVault = daoVault;
     });
 
     beforeEach(async function() {
@@ -35,7 +27,7 @@ describe('StarlTreasuryHandler', function () {
         await this.treasuryHandler.deployed();
         this.taxHandler = await this.TaxHandlerStub.deploy();
         await this.taxHandler.deployed();
-        this.token = await this.StarlToken.deploy(this.taxHandler.address, this.treasuryHandler.address, this.vault.address);
+        this.token = await this.WarpedToken.deploy(this.taxHandler.address, this.treasuryHandler.address, this.vault.address, this.daoVault.address);
         await this.token.deployed();
         await this.treasuryHandler.setTokenAndPool(this.token.address, this.pool.address);
     });
@@ -72,14 +64,13 @@ describe('StarlTreasuryHandler', function () {
 
     it("sending tax, reward and burn are working correctly", async function() {
         const taxAmount = ethers.utils.parseEther("1000");
-        const rewardAmount = ethers.utils.parseEther("200");
-        const burnAmount = ethers.utils.parseEther("100");
-        const totalSupply = await this.token.totalSupply();
-        await this.taxHandler.setTestData(taxAmount, rewardAmount, burnAmount);
+        const gameRewardAmount = ethers.utils.parseEther("200");
+        const daoRewardAmount = ethers.utils.parseEther("100");
+        await this.taxHandler.setTestData(taxAmount, gameRewardAmount, daoRewardAmount);
         await this.token.transfer(this.user.address, ethers.utils.parseEther("5000"));
         expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(taxAmount);
-        expect(await this.token.balanceOf(this.vault.address)).to.equal(rewardAmount);
-        expect(await this.token.totalSupply()).equal(totalSupply.sub(burnAmount));
+        expect(await this.token.balanceOf(this.vault.address)).to.equal(gameRewardAmount);
+        expect(await this.token.balanceOf(this.daoVault.address)).to.equal(daoRewardAmount);
     });
 
     it("token transfer call treasuryHandler only 1 time", async function() {
