@@ -54,8 +54,8 @@ async function main() {
     console.log("merkleRoot: " + merkleRoot);
   }
 
-  const nftContracts = [addresses.SATE_NFT_ADDRESS, addresses.LMVX_NFT_ADDRESS, addresses.STPAL_NFT_ADDRESS, addresses.STPN_NFT_ADDRESS];
-  const nftLevels = [8, 4, 2, 1];
+  const nftContracts = [addresses.SATE_NFT_ADDRESS, addresses.LMVX_NFT_ADDRESS, addresses.STLM_NFT_ADDRESS, addresses.STPAL_NFT_ADDRESS, addresses.STPN_NFT_ADDRESS];
+  const nftLevels = [8, 4, 4, 2, 1];
   
   const WarpedTokenManager = await hre.ethers.getContractFactory("WarpedTokenManager");
   // set migration start timestamp as 5 mins later for dev
