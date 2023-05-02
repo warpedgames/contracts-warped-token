@@ -4,9 +4,9 @@ const addresses = process.env.NETWORK === 'mainnet' ? mainnetAddresses : goerliA
 
 module.exports = [
     // update this with WarpedTaxHandler contract address from the log of WarpedTokenManager contract deploy script
-    "0x7430F55FabD318fe4a4861557a98E67c55180139",
+    "0x36dd16eE8Fc8587E03128651D59b0D3C5b66C46B",
     // update this with WarpedTreasuryHandler contract address from the log of WarpedTokenManager contract deploy script
-    "0xd57000F986DA0AF0420CB5709a4A3F00Dd472D85",
+    "0x27b0708a714fE731E1a0D423Ca10ddE469cB2be8",
     addresses.REWARD_VAULT_ADDRESS,
     addresses.WARPED_TREASURY_ADDRESS
 ];
