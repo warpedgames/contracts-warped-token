@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "../ITaxHandler.sol";
+import "../interfaces/ITaxHandler.sol";
 
 contract TaxHandlerStub is ITaxHandler {
     uint256 private _taxAmount;

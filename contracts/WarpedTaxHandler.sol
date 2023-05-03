@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "./ITaxHandler.sol";
-import "./IPoolManager.sol";
+import "./interfaces/ITaxHandler.sol";
+import "./interfaces/IPoolManager.sol";
 
 contract WarpedTaxHandler is ITaxHandler, Ownable {
 

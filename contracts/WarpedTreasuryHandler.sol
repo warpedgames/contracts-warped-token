@@ -5,10 +5,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "./IUniswapV2Router02.sol";
+import "./interfaces/IUniswapV2Router02.sol";
 
-import "./IPoolManager.sol";
-import "./ITreasuryHandler.sol";
+import "./interfaces/IPoolManager.sol";
+import "./interfaces/ITreasuryHandler.sol";
 
 /**
  * @title Treasury handler alpha contract
