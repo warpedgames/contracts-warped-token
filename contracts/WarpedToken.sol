@@ -13,7 +13,7 @@ import "./LenientReentrancyGuard.sol";
 /// @dev extends standard ERC20 contract
 contract WarpedToken is ERC20, LenientReentrancyGuard {
     uint8 private constant      _decimals = 18;
-    uint256 private constant    _tTotal = 1_000_000_000 * 10**_decimals;
+    uint256 private constant    _tTotal = 10_000_000_000 * 10**_decimals;
     string private constant     _name = unicode"WARPED";
     string private constant     _symbol = unicode"WARPED";
 
