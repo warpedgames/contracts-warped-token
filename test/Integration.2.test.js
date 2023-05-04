@@ -11,7 +11,6 @@ const mainnetAddresses = require('../addresses/mainnet.json');
 const goerliAddresses = require('../addresses/goerli.json');
 const { BigNumber } = require("ethers");
 const addresses = process.env.NETWORK === 'mainnet' ? mainnetAddresses : goerliAddresses;
-let merkleRoot = '0xbd76578c916b8a81fa8292ee234dd5edb4cfd387b5c2bca98cb15cb8ec276770';
 
 const getCurrentTime = async () => {
     const blockNumBefore = await ethers.provider.getBlockNumber();
@@ -51,18 +50,13 @@ describe('Integration Test 2', function () {
         await this.otherNft1.deployed();
         await this.otherNft2.deployed();
 
-        const curTime = await getCurrentTime();
-        const migrationStartTimestamp = curTime + 10;
         const nftContracts = [this.sateNft.address, this.lmvxNft.address, this.palNft.address, this.pnNft.address];
         const nftLevels = [8, 4, 2, 1];
         
         this.manager = await this.WarpedTokenManager.deploy(
-            addresses.STARL_ADDRESS,
-            merkleRoot,
             this.gameVault.address,
             this.daoVault.address,
             this.taxWallet.address,
-            migrationStartTimestamp,
             nftContracts,
             nftLevels
         );

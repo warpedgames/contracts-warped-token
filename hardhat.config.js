@@ -42,10 +42,6 @@ module.exports = {
       chainId: 1337,
       gas: 2100000
     },
-    rinkeby: {
-      url: "https://rinkeby.infura.io/v3/07c040cbab244c7380571790642de2ba",
-      accounts: [process.env.PRIVATE_KEY],
-    },
     goerli: {
       url: "https://goerli.infura.io/v3/3849a711ff6443d0b44b62f4156c7c0a",
       accounts: [process.env.PRIVATE_KEY],

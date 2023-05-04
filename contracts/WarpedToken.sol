@@ -27,8 +27,7 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
     address public warpedTreasury;
 
     /// @notice constructor of STARL token contract
-    /// @dev initialize with tax and treasury handler, reward vault and migrator address,
-    /// and mint total supply into migrator.
+    /// @dev initialize with tax, treasury handler, and reward vault address.
     /// @param taxHandlerAddress tax handler contract address
     /// @param treasuryHandlerAddress treasury handler contract address
     /// @param rewardVaultAddress game reward vault address

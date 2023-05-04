@@ -12,7 +12,7 @@ import "./WarpedPoolManager.sol";
 
 /**
  * @title WARPED token manager.
- * @dev Migrate starl old token into new token.
+ * @dev Manage WARPED token such as creating token and adding liquidity.
  */
 contract WarpedTokenManager is WarpedPoolManager {
     

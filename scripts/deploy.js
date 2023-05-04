@@ -1,47 +1,4 @@
-// const csv = require('csv-parser')
-// const fs = require("fs")
-// const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const hre = require("hardhat");
-
-// const loadHolders = async () => {
-//     const holders = []
-//     const promise = new Promise((resolve) => {
-//         fs.createReadStream("data/migrations/goerli_starlink_holders.csv")
-//           .pipe(csv())
-//           .on("data", (item) => {
-//             holders.push(item);
-//           })
-//           .on("end", async () => {
-//             resolve(holders)
-//           })
-//     })
-//     return promise
-// }
-
-// const constructMerkleTree = async () => {
-//     const holders = await loadHolders()
-//     const nonZeroHolders = holders.map(h => {
-//       let hstr = h['HolderAddress']
-//       const hb = h['Balance'].toLowerCase()
-//       let hbal = hb.includes("e+") ? parseFloat(hb.split("e+")[0] + 'e+' + (parseInt(hb.split("e+")[1])-18)).toFixed() : parseFloat(hb).toFixed()
-//       return {address: hstr.toLowerCase(), amount: parseInt(hbal)}
-//     }).filter(h => h.amount > 0)
-    
-//     console.log("nonZeroHolders " + nonZeroHolders.length);
-//     const bodyData = JSON.stringify({holders: nonZeroHolders})
-//     return fetch("https://dev-api.starlproject.com/migration/upload-snapshot", {
-//       method: "POST",
-//       headers: {
-//         "Authorization": "API_KEY bdhQexg73961NfudreNlp36Xhr8WqnM",
-//         'Content-Type': 'application/json',
-//         'Content-Length': Buffer.byteLength(bodyData),
-//       },
-//       body: bodyData
-//     }, 100000).then((r) => r.json()).then(d => {
-//       console.log("Successfully uploaded: " + JSON.stringify(d));
-//       return d.root_hash;
-//     })
-// }
 
 const mainnetAddresses = require('../addresses/mainnet.json');
 const goerliAddresses = require('../addresses/goerli.json');
