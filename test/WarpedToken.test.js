@@ -13,13 +13,13 @@ describe('WarpedToken', function () {
       this.WarpedToken = await ethers.getContractFactory('WarpedToken');
       this.TaxHandlerStub = await ethers.getContractFactory('TaxHandlerStub');
       this.TreasuryHandlerStub = await ethers.getContractFactory('TreasuryHandlerStub');
-      const [owner, user, tester, pool, vault, daoVault] = await ethers.getSigners();
+      const [owner, user, tester, pool, vault, warpedTreasury] = await ethers.getSigners();
       this.owner = owner;
       this.user = user;
       this.tester = tester;
       this.pool = pool;
       this.vault = vault;
-      this.daoVault = daoVault;
+      this.warpedTreasury = warpedTreasury;
     });
 
     beforeEach(async function() {
@@ -27,7 +27,7 @@ describe('WarpedToken', function () {
         await this.treasuryHandler.deployed();
         this.taxHandler = await this.TaxHandlerStub.deploy();
         await this.taxHandler.deployed();
-        this.token = await this.WarpedToken.deploy(this.taxHandler.address, this.treasuryHandler.address, this.vault.address, this.daoVault.address);
+        this.token = await this.WarpedToken.deploy(this.taxHandler.address, this.treasuryHandler.address, this.vault.address, this.warpedTreasury.address);
         await this.token.deployed();
         await this.treasuryHandler.setTokenAndPool(this.token.address, this.pool.address);
     });
@@ -65,12 +65,12 @@ describe('WarpedToken', function () {
     it("sending tax, reward and burn are working correctly", async function() {
         const taxAmount = ethers.utils.parseEther("1000");
         const gameRewardAmount = ethers.utils.parseEther("200");
-        const daoRewardAmount = ethers.utils.parseEther("100");
-        await this.taxHandler.setTestData(taxAmount, gameRewardAmount, daoRewardAmount);
+        const warpedTreasuryAmount = ethers.utils.parseEther("100");
+        await this.taxHandler.setTestData(taxAmount, gameRewardAmount, warpedTreasuryAmount);
         await this.token.transfer(this.user.address, ethers.utils.parseEther("5000"));
         expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(taxAmount);
         expect(await this.token.balanceOf(this.vault.address)).to.equal(gameRewardAmount);
-        expect(await this.token.balanceOf(this.daoVault.address)).to.equal(daoRewardAmount);
+        expect(await this.token.balanceOf(this.warpedTreasury.address)).to.equal(warpedTreasuryAmount);
     });
 
     it("token transfer call treasuryHandler only 1 time", async function() {

@@ -27,13 +27,13 @@ describe('Integration Test 2', function () {
       this.WarpedTaxHandler = await ethers.getContractFactory('WarpedTaxHandler');
       this.WarpedTreasuryHandler = await ethers.getContractFactory('WarpedTreasuryHandler');
       this.ERC721 = await ethers.getContractFactory('ERC721Stub');
-      const [owner, user, tester, pool, gameVault, daoVault, taxWallet] = await ethers.getSigners();
+      const [owner, user, tester, pool, gameVault, warpedTreasury, taxWallet] = await ethers.getSigners();
       this.owner = owner;
       this.user = user;
       this.tester = tester;
       this.pool = pool;
       this.gameVault = gameVault;
-      this.daoVault = daoVault;
+      this.warpedTreasury = warpedTreasury;
       this.taxWallet = taxWallet;
     });
 
@@ -55,7 +55,7 @@ describe('Integration Test 2', function () {
         
         this.manager = await this.WarpedTokenManager.deploy(
             this.gameVault.address,
-            this.daoVault.address,
+            this.warpedTreasury.address,
             this.taxWallet.address,
             nftContracts,
             nftLevels
@@ -101,8 +101,8 @@ describe('Integration Test 2', function () {
         console.log("current treasury: ", _curBalance);
         await _router.swapExactTokensForETHSupportingFeeOnTransferTokens(tokenToSell, 0, [this.token.address, this.wethAddress], this.user.address, curTime + 100);
         expect(await _token.balanceOf(this.treasuryHandler.address)).to.equal(_curBalance.add(tokenToSell.mul(3).div(100))); // expect 3% tax
-        const daoRewardAmount = await this.token.balanceOf(this.daoVault.address);
-        expect(daoRewardAmount).to.equal(tokenToSell.mul(1).div(100)); // expect 1% reward
+        const warpedTreasuryAmount = await this.token.balanceOf(this.warpedTreasury.address);
+        expect(warpedTreasuryAmount).to.equal(tokenToSell.mul(1).div(100)); // expect 1% reward
     });
 
     it(".01 ETH buy/sell - 1 PAL & 1 PN - should only be treated as PN or PAL, no combo tax rate", async function() {

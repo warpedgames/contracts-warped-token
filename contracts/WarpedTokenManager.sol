@@ -27,7 +27,7 @@ contract WarpedTokenManager is WarpedPoolManager {
     /// @notice constructor of WARPED token manager
     /// @dev Create TaxHandler, TreasuryHandler, new Token contract, and open swap
     /// @param gameRewardVault game reward vault address to be passed
-    /// @param warpedTreasury DAO reward vault address to be passed
+    /// @param warpedTreasury warped treasury address to be passed
     /// @param treasuryAddress final tax treasury address
     /// @param nftContracts array of addresses of NFT contracts to calculate tax rate
     /// @param nftLevels array of levels of NFT contracts to calculate tax rate

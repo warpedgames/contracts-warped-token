@@ -23,7 +23,7 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
     ITreasuryHandler public treasuryHandler;
     /// @notice reward vault
     address public rewardVault;
-    /// @notice DAO vault
+    /// @notice warped treasury
     address public warpedTreasury;
 
     /// @notice constructor of STARL token contract

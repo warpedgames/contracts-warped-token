@@ -15,13 +15,13 @@ const nftLevels = [8, 4, 2, 1];
 describe('WarpedTokenManager', function () {
     before(async function () {
       this.WarpedTokenManager = await ethers.getContractFactory('WarpedTokenManager');
-      const [owner, user, tester, pool, gameVault, daoVault, taxWallet] = await ethers.getSigners();
+      const [owner, user, tester, pool, gameVault, warpedTreasury, taxWallet] = await ethers.getSigners();
       this.owner = owner;
       this.user = user;
       this.tester = tester;
       this.pool = pool;
       this.gameVault = gameVault;
-      this.daoVault = daoVault;
+      this.warpedTreasury = warpedTreasury;
       this.taxWallet = taxWallet;
       this.validUser = await ethers.getImpersonatedSigner('0x42ed619fdb869d411f9e10befd2df4e3460c280f');
       this.validUserOldTokenMaxAmount = ethers.utils.parseEther('18000000000');
@@ -30,7 +30,7 @@ describe('WarpedTokenManager', function () {
     beforeEach(async function() {
         this.tokenManager = await this.WarpedTokenManager.deploy(
             this.gameVault.address,
-            this.daoVault.address,
+            this.warpedTreasury.address,
             this.taxWallet.address,
             nftContracts,
             nftLevels

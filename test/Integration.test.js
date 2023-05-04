@@ -27,13 +27,13 @@ describe('Integration Test 1', function () {
       this.WarpedTaxHandler = await ethers.getContractFactory('WarpedTaxHandler');
       this.WarpedTreasuryHandler = await ethers.getContractFactory('WarpedTreasuryHandler');
       this.ERC721 = await ethers.getContractFactory('ERC721Stub');
-      const [owner, user, tester, pool, gameVault, daoVault, taxWallet] = await ethers.getSigners();
+      const [owner, user, tester, pool, gameVault, warpedTreasury, taxWallet] = await ethers.getSigners();
       this.owner = owner;
       this.user = user;
       this.tester = tester;
       this.pool = pool;
       this.gameVault = gameVault;
-      this.daoVault = daoVault;
+      this.warpedTreasury = warpedTreasury;
       this.taxWallet = taxWallet;
     });
 
@@ -56,7 +56,7 @@ describe('Integration Test 1', function () {
         
         this.manager = await this.WarpedTokenManager.deploy(
             this.gameVault.address,
-            this.daoVault.address,
+            this.warpedTreasury.address,
             this.taxWallet.address,
             nftContracts,
             nftLevels
@@ -91,7 +91,7 @@ describe('Integration Test 1', function () {
         expect(rewardAmount).to.equal(totalAmount.mul(1).div(100));
     });
 
-    it(".01 ETH sell - no NFTs - Expected Result: 4% tax - 3% to team wallet / 1% to dao vault / 20% of tax to liquidity vault", async function() {
+    it(".01 ETH sell - no NFTs - Expected Result: 4% tax - 3% to team wallet / 1% to warped treasury / 20% of tax to liquidity vault", async function() {
         // Buy token for 0.01 eth 
         const ethToBuy = ethers.utils.parseEther("0.01");
         const curTime = await getCurrentTime();
@@ -104,7 +104,7 @@ describe('Integration Test 1', function () {
         const _curBalance = await _token.balanceOf(this.treasuryHandler.address);
         await _router.swapExactTokensForETHSupportingFeeOnTransferTokens(tokenToSell, 0, [this.token.address, this.wethAddress], this.user.address, curTime + 100);
         expect(await _token.balanceOf(this.treasuryHandler.address)).to.equal(_curBalance.add(tokenToSell.mul(3).div(100)));
-        const rewardAmount = await this.token.balanceOf(this.daoVault.address);
+        const rewardAmount = await this.token.balanceOf(this.warpedTreasury.address);
         expect(rewardAmount).to.equal(tokenToSell.mul(1).div(100));
     });
 
@@ -131,7 +131,7 @@ describe('Integration Test 1', function () {
         const taxAmount2 = await this.token.balanceOf(this.treasuryHandler.address);
         expect(taxAmount.add(tokenToSell.mul(3).div(100))).to.closeTo(taxAmount2, BN.from(1));
         expect(await this.token.balanceOf(this.gameVault.address)).to.equal(BN.from(0));
-        expect(await this.token.balanceOf(this.daoVault.address)).to.equal(BN.from(0));
+        expect(await this.token.balanceOf(this.warpedTreasury.address)).to.equal(BN.from(0));
     });
 
     it(".01 ETH buy/sell - 1 PN - Expected Result: 3% tax", async function() {
