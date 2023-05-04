@@ -27,12 +27,12 @@ describe('Integration Test 1', function () {
       this.WarpedTaxHandler = await ethers.getContractFactory('WarpedTaxHandler');
       this.WarpedTreasuryHandler = await ethers.getContractFactory('WarpedTreasuryHandler');
       this.ERC721 = await ethers.getContractFactory('ERC721Stub');
-      const [owner, user, tester, pool, gameVault, warpedTreasury, taxWallet] = await ethers.getSigners();
+      const [owner, user, tester, pool, rewardVault, warpedTreasury, taxWallet] = await ethers.getSigners();
       this.owner = owner;
       this.user = user;
       this.tester = tester;
       this.pool = pool;
-      this.gameVault = gameVault;
+      this.rewardVault = rewardVault;
       this.warpedTreasury = warpedTreasury;
       this.taxWallet = taxWallet;
     });
@@ -55,7 +55,7 @@ describe('Integration Test 1', function () {
         const nftLevels = [8, 4, 2, 1];
         
         this.manager = await this.WarpedTokenManager.deploy(
-            this.gameVault.address,
+            this.rewardVault.address,
             this.warpedTreasury.address,
             this.taxWallet.address,
             nftContracts,
@@ -83,7 +83,7 @@ describe('Integration Test 1', function () {
         await this.router.swapExactETHForTokens(ethToBuy, [this.wethAddress, this.token.address], this.user.address, curTime + 100, {value: ethToBuy});
         
         const taxAmount = await this.token.balanceOf(this.treasuryHandler.address);
-        const rewardAmount = await this.token.balanceOf(this.gameVault.address);
+        const rewardAmount = await this.token.balanceOf(this.rewardVault.address);
         const swapAmount = await this.token.balanceOf(this.user.address);
         const totalAmount = taxAmount.add(rewardAmount).add(swapAmount);
         console.log("total amount ", totalAmount);
@@ -117,7 +117,7 @@ describe('Integration Test 1', function () {
         await this.router.swapExactETHForTokens(ethToBuy, [this.wethAddress, this.token.address], this.user.address, curTime + 50, {value: ethToBuy});
 
         const taxAmount = await this.token.balanceOf(this.treasuryHandler.address);
-        const rewardAmount = await this.token.balanceOf(this.gameVault.address);
+        const rewardAmount = await this.token.balanceOf(this.rewardVault.address);
         const swapAmount = await this.token.balanceOf(this.user.address);
         const totalAmount = taxAmount.add(rewardAmount).add(swapAmount);
         expect(BN.from(30000)).to.closeTo(taxAmount.mul(1000000).div(totalAmount), 1); // expect 3% tax
@@ -130,7 +130,7 @@ describe('Integration Test 1', function () {
         await _router.swapExactTokensForETHSupportingFeeOnTransferTokens(tokenToSell, 0, [this.token.address, this.wethAddress], this.user.address, curTime + 100);
         const taxAmount2 = await this.token.balanceOf(this.treasuryHandler.address);
         expect(taxAmount.add(tokenToSell.mul(3).div(100))).to.closeTo(taxAmount2, BN.from(1));
-        expect(await this.token.balanceOf(this.gameVault.address)).to.equal(BN.from(0));
+        expect(await this.token.balanceOf(this.rewardVault.address)).to.equal(BN.from(0));
         expect(await this.token.balanceOf(this.warpedTreasury.address)).to.equal(BN.from(0));
     });
 
@@ -143,7 +143,7 @@ describe('Integration Test 1', function () {
         await this.router.swapExactETHForTokens(ethToBuy, [this.wethAddress, this.token.address], this.user.address, curTime + 50, {value: ethToBuy});
         
         const taxAmount = await this.token.balanceOf(this.treasuryHandler.address);
-        const rewardAmount = await this.token.balanceOf(this.gameVault.address);
+        const rewardAmount = await this.token.balanceOf(this.rewardVault.address);
         const swapAmount = await this.token.balanceOf(this.user.address);
         const totalAmount = taxAmount.add(rewardAmount).add(swapAmount);
         expect(BN.from(30000)).to.closeTo(taxAmount.mul(1000000).div(totalAmount), 1); // expect 3% tax
@@ -159,7 +159,7 @@ describe('Integration Test 1', function () {
         await this.router.swapExactETHForTokens(ethToBuy, [this.wethAddress, this.token.address], this.user.address, curTime + 50, {value: ethToBuy});
         
         const taxAmount = await this.token.balanceOf(this.treasuryHandler.address);
-        const rewardAmount = await this.token.balanceOf(this.gameVault.address);
+        const rewardAmount = await this.token.balanceOf(this.rewardVault.address);
         const swapAmount = await this.token.balanceOf(this.user.address);
         const totalAmount = taxAmount.add(rewardAmount).add(swapAmount);
         expect(BN.from(30000)).to.closeTo(taxAmount.mul(1000000).div(totalAmount), 1); // expect 3% tax
@@ -176,7 +176,7 @@ describe('Integration Test 1', function () {
         await this.router.swapExactETHForTokens(ethToBuy, [this.wethAddress, this.token.address], this.user.address, curTime + 50, {value: ethToBuy});
         
         const taxAmount = await this.token.balanceOf(this.treasuryHandler.address);
-        const rewardAmount = await this.token.balanceOf(this.gameVault.address);
+        const rewardAmount = await this.token.balanceOf(this.rewardVault.address);
         const swapAmount = await this.token.balanceOf(this.user.address);
         const totalAmount = taxAmount.add(rewardAmount).add(swapAmount);
         expect(BN.from(20000)).to.closeTo(taxAmount.mul(1000000).div(totalAmount), 1); // expect 2% tax
@@ -193,7 +193,7 @@ describe('Integration Test 1', function () {
         await this.router.swapExactETHForTokens(ethToBuy, [this.wethAddress, this.token.address], this.user.address, curTime + 50, {value: ethToBuy});
         
         const taxAmount = await this.token.balanceOf(this.treasuryHandler.address);
-        const rewardAmount = await this.token.balanceOf(this.gameVault.address);
+        const rewardAmount = await this.token.balanceOf(this.rewardVault.address);
         const swapAmount = await this.token.balanceOf(this.user.address);
         const totalAmount = taxAmount.add(rewardAmount).add(swapAmount);
         expect(BN.from(20000)).to.closeTo(taxAmount.mul(1000000).div(totalAmount), 1); // expect 2% tax
@@ -211,7 +211,7 @@ describe('Integration Test 1', function () {
         await this.router.swapExactETHForTokens(ethToBuy, [this.wethAddress, this.token.address], this.user.address, curTime + 50, {value: ethToBuy});
         
         const taxAmount = await this.token.balanceOf(this.treasuryHandler.address);
-        const rewardAmount = await this.token.balanceOf(this.gameVault.address);
+        const rewardAmount = await this.token.balanceOf(this.rewardVault.address);
         const swapAmount = await this.token.balanceOf(this.user.address);
         const totalAmount = taxAmount.add(rewardAmount).add(swapAmount);
         expect(BN.from(10000)).to.closeTo(taxAmount.mul(1000000).div(totalAmount), 1); // expect 1% tax

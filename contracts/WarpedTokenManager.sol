@@ -26,13 +26,13 @@ contract WarpedTokenManager is WarpedPoolManager {
 
     /// @notice constructor of WARPED token manager
     /// @dev Create TaxHandler, TreasuryHandler, new Token contract, and open swap
-    /// @param gameRewardVault game reward vault address to be passed
+    /// @param rewardVault reward vault address to be passed
     /// @param warpedTreasury warped treasury address to be passed
     /// @param treasuryAddress final tax treasury address
     /// @param nftContracts array of addresses of NFT contracts to calculate tax rate
     /// @param nftLevels array of levels of NFT contracts to calculate tax rate
     constructor(
-        address gameRewardVault,
+        address rewardVault,
         address warpedTreasury,
         address treasuryAddress,
         address[] memory nftContracts,
@@ -43,7 +43,7 @@ contract WarpedTokenManager is WarpedPoolManager {
         WarpedTaxHandler taxHandler = new WarpedTaxHandler(IPoolManager(this), nftContracts, nftLevels);
 
         // 2. Create token contract and initilize treasury handler
-        warpedToken = new WarpedToken(address(taxHandler), address(treasuryHandler), gameRewardVault, warpedTreasury);
+        warpedToken = new WarpedToken(address(taxHandler), address(treasuryHandler), rewardVault, warpedTreasury);
         // Initialize treasury handler with created token contract
         treasuryHandler.initialize(treasuryAddress, address(warpedToken));
 

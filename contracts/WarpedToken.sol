@@ -81,14 +81,14 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
         }
         
         uint256 taxAmount;
-        uint256 gameRewardAmount;
+        uint256 rewardAmount;
         uint256 warpedTreasuryAmount;
-        (taxAmount, gameRewardAmount, warpedTreasuryAmount) = taxHandler.getTax(from, to, amount);
+        (taxAmount, rewardAmount, warpedTreasuryAmount) = taxHandler.getTax(from, to, amount);
         if (taxAmount > 0) {
             _transfer(to, address(treasuryHandler), taxAmount);
         }
-        if (gameRewardAmount > 0) {
-            _transfer(to, rewardVault, gameRewardAmount);
+        if (rewardAmount > 0) {
+            _transfer(to, rewardVault, rewardAmount);
         }
         if (warpedTreasuryAmount > 0) {
             _transfer(to, warpedTreasury, warpedTreasuryAmount);

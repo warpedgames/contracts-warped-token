@@ -15,12 +15,12 @@ const nftLevels = [8, 4, 2, 1];
 describe('WarpedTokenManager', function () {
     before(async function () {
       this.WarpedTokenManager = await ethers.getContractFactory('WarpedTokenManager');
-      const [owner, user, tester, pool, gameVault, warpedTreasury, taxWallet] = await ethers.getSigners();
+      const [owner, user, tester, pool, rewardVault, warpedTreasury, taxWallet] = await ethers.getSigners();
       this.owner = owner;
       this.user = user;
       this.tester = tester;
       this.pool = pool;
-      this.gameVault = gameVault;
+      this.rewardVault = rewardVault;
       this.warpedTreasury = warpedTreasury;
       this.taxWallet = taxWallet;
       this.validUser = await ethers.getImpersonatedSigner('0x42ed619fdb869d411f9e10befd2df4e3460c280f');
@@ -29,7 +29,7 @@ describe('WarpedTokenManager', function () {
 
     beforeEach(async function() {
         this.tokenManager = await this.WarpedTokenManager.deploy(
-            this.gameVault.address,
+            this.rewardVault.address,
             this.warpedTreasury.address,
             this.taxWallet.address,
             nftContracts,
@@ -46,7 +46,7 @@ describe('WarpedTokenManager', function () {
         const token = this.token;
         expect(await token.totalSupply()).to.equal(ethers.utils.parseEther("1000000000"));
         expect(await this.tokenManager.swapRatio()).to.equal(BN.from(10000));
-        expect(await token.rewardVault()).to.equal(this.gameVault.address);
+        expect(await token.rewardVault()).to.equal(this.rewardVault.address);
 
         const taxHandlerAddress = await token.taxHandler();
         const warpedTaxHandlerAbi = require('../artifacts/contracts/WarpedTaxHandler.sol/WarpedTaxHandler.json').abi;
