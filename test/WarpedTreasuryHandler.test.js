@@ -239,8 +239,8 @@ describe('WarpedTreasuryHandler', function () {
         const primaryPool = await this.poolManager.primaryPool();
         const tokenPrices = await this.router.getAmountsOut(ethers.utils.parseEther("1000"), [this.token.address, this.wethAddress]);
         const tokenPrice = tokenPrices[1];
-        // 1k tokens -> 0.1k tokens for liqiduity token, 0.9k tokens -> 0.9 eth, 0.18 eth -> liqiidity eth, 0.72 eth -> earned
-        const ethEarned = tokenPrice.mul(BN.from(90)).div(BN.from(100)).sub(tokenPrice.div(BN.from(10)));
+        // 1k tokens -> 0.0k tokens for liqiduity token, 1k tokens -> 1 eth, 0 eth -> liqiidity eth, 1 eth -> earned
+        const ethEarned = tokenPrice;
         const beforeBalance = await ethers.provider.getBalance(this.signers[1].address);
         await this.token.testTreausryHandler(
             this.treasuryHandler.address, this.signers[0].address, primaryPool, ethers.utils.parseEther("1000")
@@ -248,7 +248,8 @@ describe('WarpedTreasuryHandler', function () {
         const afterBalance = await ethers.provider.getBalance(this.signers[1].address);
         const convert = (val) => parseFloat(ethers.utils.formatEther(val)).toFixed(3);
         // compare only 3 decimals as there are slight change in price after swap inside contract function
-        expect(convert(afterBalance.sub(beforeBalance))).to.equal(convert(ethEarned));
+        // expect(convert(afterBalance.sub(beforeBalance))).to.equal(convert(ethEarned));
+        expect(afterBalance.sub(beforeBalance).mul(1000)).to.closeTo(ethEarned.mul(1000), 5);
         // and now the balance of treasury handler is 10k
         expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(ethers.utils.parseEther("10000"));
     });

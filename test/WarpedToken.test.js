@@ -27,50 +27,21 @@ describe('WarpedToken', function () {
         await this.treasuryHandler.deployed();
         this.taxHandler = await this.TaxHandlerStub.deploy();
         await this.taxHandler.deployed();
-        this.token = await this.WarpedToken.deploy(this.taxHandler.address, this.treasuryHandler.address, this.vault.address, this.warpedTreasury.address);
+        this.token = await this.WarpedToken.deploy(this.taxHandler.address, this.treasuryHandler.address);
         await this.token.deployed();
         await this.treasuryHandler.setTokenAndPool(this.token.address, this.pool.address);
-    });
-    
-    it("updateRewardVault reverts for non-vault address or zero address update", async function() {
-        await expectRevert(
-            this.token.updateRewardVault(this.tester.address),
-            'Not allowed'
-        );
-        const _token = this.token.connect(this.vault);
-        await expectRevert(
-            _token.updateRewardVault(constants.ZERO_ADDRESS),
-            'Null address'
-        );
-    });
-    
-    it("updateRewardVault updates vault address correctly", async function() {
-        const _token = this.token.connect(this.vault);
-        await _token.updateRewardVault(this.tester.address);
-        expect(await _token.rewardVault()).to.equal(this.tester.address);
-
-        const testAmount = ethers.utils.parseEther("100");
-        this.taxHandler.setTestData(testAmount, testAmount, testAmount);
-        // expect updated reward vault address recieve testAmount tokens
-        expect(() => this.token.transfer(this.user.address, ethers.utils.parseEther("100000")))
-        .to.changeTokenBalance(this.token, this.tester, testAmount);
     });
 
     it("mint tokens doesn't transfer reward", async function() {
         expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(BN.from(0));
-        expect(await this.token.balanceOf(this.vault.address)).to.equal(BN.from(0));
-        expect(await this.token.totalSupply()).to.equal(ethers.utils.parseEther("1000000000"));
+        expect(await this.token.totalSupply()).to.equal(ethers.utils.parseEther("10000000000"));
     });
 
     it("sending tax, reward and burn are working correctly", async function() {
         const taxAmount = ethers.utils.parseEther("1000");
-        const gameRewardAmount = ethers.utils.parseEther("200");
-        const warpedTreasuryAmount = ethers.utils.parseEther("100");
-        await this.taxHandler.setTestData(taxAmount, gameRewardAmount, warpedTreasuryAmount);
+        await this.taxHandler.setTestData(taxAmount);
         await this.token.transfer(this.user.address, ethers.utils.parseEther("5000"));
         expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(taxAmount);
-        expect(await this.token.balanceOf(this.vault.address)).to.equal(gameRewardAmount);
-        expect(await this.token.balanceOf(this.warpedTreasury.address)).to.equal(warpedTreasuryAmount);
     });
 
     it("token transfer call treasuryHandler only 1 time", async function() {

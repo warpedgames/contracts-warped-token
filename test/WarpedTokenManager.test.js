@@ -29,8 +29,6 @@ describe('WarpedTokenManager', function () {
 
     beforeEach(async function() {
         this.tokenManager = await this.WarpedTokenManager.deploy(
-            this.rewardVault.address,
-            this.warpedTreasury.address,
             this.taxWallet.address,
             nftContracts,
             nftLevels
@@ -44,9 +42,7 @@ describe('WarpedTokenManager', function () {
     
     it("constructor create contracts successfully", async function() {
         const token = this.token;
-        expect(await token.totalSupply()).to.equal(ethers.utils.parseEther("1000000000"));
-        expect(await this.tokenManager.swapRatio()).to.equal(BN.from(10000));
-        expect(await token.rewardVault()).to.equal(this.rewardVault.address);
+        expect(await token.totalSupply()).to.equal(ethers.utils.parseEther("10000000000"));
 
         const taxHandlerAddress = await token.taxHandler();
         const warpedTaxHandlerAbi = require('../artifacts/contracts/WarpedTaxHandler.sol/WarpedTaxHandler.json').abi;

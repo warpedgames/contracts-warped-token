@@ -16,11 +16,10 @@ describe('WarpedTaxHandler', function () {
       this.ERC721 = await ethers.getContractFactory('ERC721Stub');
       this.textAmount = BN.from(400);
       this.percentDecimal = BN.from(10000);
+      this.highTaxRate = BN.from(400);
       this.basicTaxRate = BN.from(300);
       this.lowestTaxRate = BN.from(100);
       this.middleTaxRate = BN.from(200);
-      this.rewardRate = BN.from(100);
-      this.burnRate = BN.from(100);
       this.zeroAmount = BN.from(0);
       this.signers = await ethers.getSigners();
       this.testAmount = BN.from(10000);
@@ -48,37 +47,29 @@ describe('WarpedTaxHandler', function () {
 
     it("getTax(no NFTs) returns zero with no-pool, zero buyer/seller address, zero amount", async function() {
         // Test for zero input
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(constants.ZERO_ADDRESS, constants.ZERO_ADDRESS, this.zeroAmount);
+        const taxAmount = await this.taxHandler.getTax(constants.ZERO_ADDRESS, constants.ZERO_ADDRESS, this.zeroAmount);
         expect(taxAmount).to.equal(this.zeroAmount);
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("getTax(no NFTs) returns zero with no-pool, zero buyer/seller address, non-zero amount", async function() {
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(constants.ZERO_ADDRESS, constants.ZERO_ADDRESS, BN.from(100));
+        const taxAmount = await this.taxHandler.getTax(constants.ZERO_ADDRESS, constants.ZERO_ADDRESS, BN.from(100));
         expect(taxAmount).to.equal(this.zeroAmount);
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("getTax(no NFTs) returns zero with pool, zero buyer address, zero amount", async function() {
         const poolAddress = this.signers[0].address;
         await this.poolManager.addExchangePool(poolAddress);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, constants.ZERO_ADDRESS, this.zeroAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, constants.ZERO_ADDRESS, this.zeroAmount);
         expect(taxAmount).to.equal(this.zeroAmount);
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("getTax(no NFTs) returns default rated tax with pool, zero buyer address, non-zero amount", async function() {
         const poolAddress = this.signers[0].address;
         await this.poolManager.addExchangePool(poolAddress);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, constants.ZERO_ADDRESS, this.testAmount);
-        expect(taxAmount).to.equal(this.testAmount.mul(this.basicTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.testAmount.mul(this.rewardRate).div(this.percentDecimal));
-        expect(burnAmount).to.equal(this.zeroAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, constants.ZERO_ADDRESS, this.testAmount);
+        expect(taxAmount).to.equal(this.testAmount.mul(this.highTaxRate).div(this.percentDecimal));
     });
 
     it("getTax(no NFTs) returns zero tax with pool, both pool address, non-zero amount", async function() {
@@ -87,10 +78,8 @@ describe('WarpedTaxHandler', function () {
         await this.poolManager.addExchangePool(pool1Address);
         await this.poolManager.addExchangePool(pool2Address);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(pool1Address, pool2Address, this.testAmount);
+        const taxAmount = await this.taxHandler.getTax(pool1Address, pool2Address, this.testAmount);
         expect(taxAmount).to.equal(this.zeroAmount);
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("getTax(with NFTs) revert with pool, zero buyer address, zero amount", async function() {
@@ -108,10 +97,8 @@ describe('WarpedTaxHandler', function () {
         // add one nft1 address with level 1
         await this.taxHandler.addNFTs([this.nft1.address], [1]);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, this.signers[1].address, this.testAmount);
-        expect(taxAmount).to.equal(this.testAmount.mul(this.basicTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.testAmount.mul(this.rewardRate).div(this.percentDecimal));
-        expect(burnAmount).to.equal(this.zeroAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, this.signers[1].address, this.testAmount);
+        expect(taxAmount).to.equal(this.testAmount.mul(this.highTaxRate).div(this.percentDecimal));
     });
 
     it("getTax(with NFTs) returns default tax and burn amount with pool, non-zero non-nft-owned seller address, non-zero amount", async function() {
@@ -120,10 +107,8 @@ describe('WarpedTaxHandler', function () {
         // add one nft1 address with level 1
         await this.taxHandler.addNFTs([this.nft1.address], [1]);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(this.signers[1].address, poolAddress, this.testAmount);
-        expect(taxAmount).to.equal(this.testAmount.mul(this.basicTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.testAmount.mul(this.burnRate).div(this.percentDecimal));
+        const taxAmount = await this.taxHandler.getTax(this.signers[1].address, poolAddress, this.testAmount);
+        expect(taxAmount).to.equal(this.testAmount.mul(this.highTaxRate).div(this.percentDecimal));
     });
 
     it("getTax(with NFTs) returns default tax and zero burn amount with pool, 2-nfts-owned seller address, non-zero amount", async function() {
@@ -136,10 +121,8 @@ describe('WarpedTaxHandler', function () {
         await this.nft1.mint(sellerAddress);
         await this.nft2.mint(sellerAddress);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(sellerAddress, poolAddress, this.testAmount);
+        const taxAmount = await this.taxHandler.getTax(sellerAddress, poolAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.middleTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("getTax(with NFTs) returns zero reward and burn amount with pool, non-zero nft-owned buyer address, non-zero amount", async function() {
@@ -151,10 +134,8 @@ describe('WarpedTaxHandler', function () {
         // mint 1 nft into buyer address
         await this.nft1.mint(buyerAddress);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.basicTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("getTax(with NFTs) returns lowest tax amount with pool, non-zero safe-nft-owned buyer address, non-zero amount", async function() {
@@ -166,10 +147,8 @@ describe('WarpedTaxHandler', function () {
         // mint 1 nft into buyer address
         await this.nft1.mint(buyerAddress);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.lowestTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("getTax(with NFTs) returns middle tax amount with pool, non-zero lm+pal-nft-owned buyer address, non-zero amount", async function() {
@@ -182,10 +161,8 @@ describe('WarpedTaxHandler', function () {
         await this.nft1.mint(buyerAddress);
         await this.nft2.mint(buyerAddress);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.middleTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("getTax(with NFTs) returns lowest tax amount with pool, non-zero lm+pal+pn-nft-owned buyer address, non-zero amount", async function() {
@@ -199,10 +176,8 @@ describe('WarpedTaxHandler', function () {
         await this.nft2.mint(buyerAddress);
         await this.nft3.mint(buyerAddress);
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.lowestTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("after update tax rates points using setTaxRates: getTax(with NFTs) returns lowest tax amount with all-nft-owned buyer address", async function() {
@@ -215,12 +190,10 @@ describe('WarpedTaxHandler', function () {
         await this.nft1.mint(buyerAddress);
         await this.nft2.mint(buyerAddress);
         await this.nft3.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400));
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.lowestTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("after update tax rates points using setTaxRates: getTax(with NFTs) returns middle tax amount with one-nft-owned buyer address", async function() {
@@ -231,12 +204,10 @@ describe('WarpedTaxHandler', function () {
         await this.taxHandler.addNFTs([this.nft1.address, this.nft2.address, this.nft3.address], [1, 2, 4]);
         // mint 3 nft into buyer address
         await this.nft2.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400));
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.middleTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("after update tax rates points using setTaxRates: getTax(with NFTs) returns tax and reward amount with one-nft-owned buyer address", async function() {
@@ -247,12 +218,10 @@ describe('WarpedTaxHandler', function () {
         await this.taxHandler.addNFTs([this.nft1.address, this.nft2.address, this.nft3.address], [1, 2, 4]);
         // mint 3 nft into buyer address
         await this.nft1.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400));
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
-        expect(taxAmount).to.equal(this.testAmount.mul(this.middleTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.testAmount.mul(this.lowestTaxRate).div(this.percentDecimal));
-        expect(burnAmount).to.equal(this.zeroAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        expect(taxAmount).to.equal(this.testAmount.mul(this.basicTaxRate).div(this.percentDecimal));
     });
 
     it("after pause tax, getTax(with NFTs) returns zero", async function() {
@@ -263,13 +232,11 @@ describe('WarpedTaxHandler', function () {
         await this.taxHandler.addNFTs([this.nft1.address, this.nft2.address, this.nft3.address], [1, 2, 4]);
         // mint 3 nft into buyer address
         await this.nft1.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400));
         await this.taxHandler.pauseTax();
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.zeroAmount);
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 
     it("after pause tax, after resume tax, getTax(with NFTs) returns valid", async function() {
@@ -280,31 +247,29 @@ describe('WarpedTaxHandler', function () {
         await this.taxHandler.addNFTs([this.nft1.address, this.nft2.address, this.nft3.address], [1, 2, 4]);
         // mint 3 nft into buyer address
         await this.nft1.mint(buyerAddress);
-        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200));
+        await this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400));
         await this.taxHandler.pauseTax();
         await this.taxHandler.resumeTax();
 
-        const [taxAmount, rewardAmount, burnAmount] = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
-        expect(taxAmount).to.equal(this.testAmount.mul(this.middleTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.testAmount.mul(this.lowestTaxRate).div(this.percentDecimal));
-        expect(burnAmount).to.equal(this.zeroAmount);
+        const taxAmount = await this.taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        expect(taxAmount).to.equal(this.testAmount.mul(this.basicTaxRate).div(this.percentDecimal));
     });
 
     it("setTaxRates reverts for forbidden user", async function() {
         const _taxHandler = this.taxHandler.connect(this.signers[1]);
         await expectRevert(
-            _taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400), BN.from(200)),
+            _taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200), BN.from(300)], BN.from(400)),
             "Ownable: caller is not the owner"
         );
     });
 
     it("setTaxRates reverts for invalid parameters", async function() {
         await expectRevert(
-            this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200)], BN.from(400), BN.from(200)),
+            this.taxHandler.setTaxRates([7, 2, 1], [BN.from(100), BN.from(200)], BN.from(400)),
             "Invalid level points"
         );
         await expectRevert(
-            this.taxHandler.setTaxRates([7, 2], [BN.from(100), BN.from(200)], BN.from(0), BN.from(0)),
+            this.taxHandler.setTaxRates([7, 2], [BN.from(100), BN.from(200)], BN.from(0)),
             "Invalid base rate"
         );
     });
@@ -360,9 +325,7 @@ describe('WarpedTaxHandler', function () {
         await this.nft3.mint(buyerAddress);
         await nft4.mint(buyerAddress);
 
-        const [taxAmount, rewardAmount, burnAmount] = await _taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
+        const taxAmount = await _taxHandler.getTax(poolAddress, buyerAddress, this.testAmount);
         expect(taxAmount).to.equal(this.testAmount.mul(this.lowestTaxRate).div(this.percentDecimal));
-        expect(rewardAmount).to.equal(this.zeroAmount);
-        expect(burnAmount).to.equal(this.zeroAmount);
     });
 });

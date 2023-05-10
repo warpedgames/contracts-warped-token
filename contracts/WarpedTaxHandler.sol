@@ -22,7 +22,6 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
     TaxRatePoint[] public taxRates;
     uint256 basisTaxRate;
     uint256 maxTaxRate = 400;
-    uint256 rewardRatePoint;
     bool    taxDisabled;
     IPoolManager poolManager;
 
@@ -36,7 +35,6 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
         _addNFTs(_nftContracts, _levels);
         // init default tax rates
         basisTaxRate = 400;
-        rewardRatePoint = 300;
         taxRates.push(TaxRatePoint(7, 100));
         taxRates.push(TaxRatePoint(5, 200));
         taxRates.push(TaxRatePoint(1, 300));
@@ -55,47 +53,37 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
      * @param benefactor Address of the benefactor.
      * @param beneficiary Address of the beneficiary.
      * @param amount Number of tokens in the transfer.
-     * @return Triple (taxAmount, gameRewardAmount, warpedTreasuryAmount).
+     * @return taxAmount Number of tokens for tax
      */
     function getTax(
         address benefactor,
         address beneficiary,
         uint256 amount
-    ) external view override returns (uint256, uint256, uint256) {
+    ) external view override returns (uint256) {
         if (taxDisabled) {
-            return (0, 0, 0);
+            return 0;
         }
 
         // Transactions between regular users (this includes contracts) aren't taxed.
         if (!poolManager.isPoolAddress(benefactor) && !poolManager.isPoolAddress(beneficiary)) {
-            return (0, 0, 0);
+            return 0;
         }
 
         // Transactions between pools aren't taxed.
         if (poolManager.isPoolAddress(benefactor) && poolManager.isPoolAddress(beneficiary)) {
-            return (0, 0, 0);
+            return 0;
         }
         
         uint256 taxRate = 0;
-        uint256 gameRewardRate = 0;
-        uint256 warpedTreasuryRate = 0;
         // If the benefactor is found in the set of exchange pools, then it's a buy transactions, otherwise a sell
         // transactions, because the other use cases have already been checked above.
         if (poolManager.isPoolAddress(benefactor)) {
             taxRate = _getTaxBasisPoints(beneficiary);
-            if (taxRate > rewardRatePoint) {
-                gameRewardRate = taxRate - rewardRatePoint;
-                taxRate = rewardRatePoint;
-            }
         } else {
             taxRate = _getTaxBasisPoints(benefactor);
-            if (taxRate > rewardRatePoint) {
-                warpedTreasuryRate = taxRate - rewardRatePoint;
-                taxRate = rewardRatePoint;
-            }
         }
 
-        return ((amount * taxRate) / 10000, (amount * gameRewardRate) / 10000, (amount * warpedTreasuryRate) / 10000);
+        return (amount * taxRate) / 10000;
     }
 
     /**
@@ -103,7 +91,6 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
      * @param thresholds of user level.
      * @param rates of tax per each threshold.
      * @param _basisTaxRate basis tax rate.
-     * @param _rewardRatePoint if calculated tax rate is over this value, send left into reward vault.
      * 
      * Requirements:
      *
@@ -112,8 +99,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
     function setTaxRates(
         uint256[] memory thresholds,
         uint256[] memory rates,
-        uint256 _basisTaxRate,
-        uint256 _rewardRatePoint
+        uint256 _basisTaxRate
     ) external onlyOwner {
         require(thresholds.length == rates.length, "Invalid level points");
         require(_basisTaxRate > 0, "Invalid base rate");
@@ -125,7 +111,6 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
             taxRates.push(TaxRatePoint(thresholds[i], rates[i]));
         }
         basisTaxRate = _basisTaxRate;
-        rewardRatePoint = _rewardRatePoint;
     }
 
     /**

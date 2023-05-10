@@ -21,42 +21,21 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
     ITaxHandler public taxHandler;
     /// @notice trasury handler
     ITreasuryHandler public treasuryHandler;
-    /// @notice reward vault
-    address public rewardVault;
-    /// @notice warped treasury
-    address public warpedTreasury;
 
     /// @notice constructor of STARL token contract
     /// @dev initialize with tax, treasury handler, and reward vault address.
     /// @param taxHandlerAddress tax handler contract address
     /// @param treasuryHandlerAddress treasury handler contract address
-    /// @param rewardVaultAddress game reward vault address
-    /// @param warpedTreasuryAddress warped treasury address
     constructor (
         address taxHandlerAddress,
-        address treasuryHandlerAddress,
-        address rewardVaultAddress,
-        address warpedTreasuryAddress
+        address treasuryHandlerAddress
     ) ERC20(_name, _symbol) {
-        warpedTreasury = warpedTreasuryAddress;
-        rewardVault = rewardVaultAddress;
         taxHandler = ITaxHandler(taxHandlerAddress);
         treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
 
         _mint(_msgSender(), _tTotal);
     }
 
-    /**
-     * @notice update current reward vault
-     * Requirements:
-     *  msg sender should be current reward vault address
-     * @param newAddress new reward vault address
-     */
-    function updateRewardVault(address newAddress) external {
-        require(_msgSender() == rewardVault, "Not allowed");
-        require(newAddress != address(0x0), "Null address");
-        rewardVault = newAddress;
-    }
     
     /**
      * @dev See {ERC20-_beforeTokenTransfer}.
@@ -81,17 +60,9 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
         }
         
         uint256 taxAmount;
-        uint256 rewardAmount;
-        uint256 warpedTreasuryAmount;
-        (taxAmount, rewardAmount, warpedTreasuryAmount) = taxHandler.getTax(from, to, amount);
+        taxAmount = taxHandler.getTax(from, to, amount);
         if (taxAmount > 0) {
             _transfer(to, address(treasuryHandler), taxAmount);
-        }
-        if (rewardAmount > 0) {
-            _transfer(to, rewardVault, rewardAmount);
-        }
-        if (warpedTreasuryAmount > 0) {
-            _transfer(to, warpedTreasury, warpedTreasuryAmount);
         }
     }
 }
