@@ -34,7 +34,7 @@ Please update tokenManager.js, token.js, and taxHandler.js files in scripts/veri
 `
 npx hardhat verify [address of deployed WarpedTokenManager contract] --network goerli --constructor-args ./scripts/verify/args/tokenManager.js
 npx hardhat verify [address of deployed WarpedToken contract(find from the log of above deploy script)] --network goerli --constructor-args ./scripts/verify/args/token.js
-npx hardhat verify [address of deployed WarpedTaxHandler contract(find from the log of above deploy script)] --network goerli --constructor-args ./scripts/verify/args/token.js
+npx hardhat verify [address of deployed WarpedTaxHandler contract(find from the log of above deploy script)] --network goerli --constructor-args ./scripts/verify/args/taxHandler.js
 npx hardhat verify [address of deployed WarpedTreasuryHandler contract(find from the log of above deploy script)] --network goerli [WarpedTokenManager contract address]
 `
 

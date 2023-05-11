@@ -6,8 +6,6 @@ const nftContracts = [addresses.SATE_NFT_ADDRESS, addresses.LMVX_NFT_ADDRESS, ad
 const nftLevels = [8, 4, 4, 2, 1];
 
 module.exports = [
-    addresses.REWARD_VAULT_ADDRESS,
-    addresses.WARPED_TREASURY_ADDRESS,
     addresses.TAX_WALLET,
     nftContracts,
     nftLevels

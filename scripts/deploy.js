@@ -11,8 +11,6 @@ async function main() {
   
   const WarpedTokenManager = await hre.ethers.getContractFactory("WarpedTokenManager");
   const manager = await WarpedTokenManager.deploy(
-    addresses.REWARD_VAULT_ADDRESS,
-    addresses.WARPED_TREASURY_ADDRESS,
     addresses.TAX_WALLET,
     nftContracts,
     nftLevels
