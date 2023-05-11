@@ -21,13 +21,27 @@ Refer this flow: https://miro.com/app/board/uXjVPkKbfEw=/
 
 # Development environment
 
-# Deploy script
+## Install
+
+copy .env.example as .env and set private key and etherscan api key with your own and install node packages.
+
+`
+yarn
+`
+
+or 
+
+`
+npm install
+`
+
+## Deploy script
 
 `
 npx hardhat run scripts/deploy.js --network goerli
 `
 
-# Verify script
+## Verify script
 
 Please update tokenManager.js, token.js, and taxHandler.js files in scripts/verify/args folder according to the log of the above deploy script.
 
@@ -47,7 +61,7 @@ npx hardhat verify [address of deployed WarpedTaxHandler contract(find from the 
 npx hardhat verify [address of deployed WarpedTreasuryHandler contract(find from the log of above deploy script)] --network goerli [WarpedTokenManager contract address]
 `
 
-# Test script
+## Test script
 
 `
 npx hardhat coverage --testfiles ./test/*.test.js
