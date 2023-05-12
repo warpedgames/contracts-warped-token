@@ -27,6 +27,12 @@ TODO
 copy .env.example as .env and set private key and etherscan api key with your own and install node packages.
 
 `
+nvm use 
+`
+
+then
+
+`
 yarn
 `
 
