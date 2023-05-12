@@ -1,19 +1,21 @@
-[{
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "calculateTaxFee",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "taxFee",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  }]
+[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "calculateTaxFee",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "taxFee",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

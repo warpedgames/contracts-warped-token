@@ -17,7 +17,6 @@ TODO
 
 `@openzeppelin/contracts/token/ERC20/ERC20.sol`
 
-
 ### Hardhat for deploy and test
 
 # Development environment
@@ -26,61 +25,38 @@ TODO
 
 copy .env.example as .env and set private key and etherscan api key with your own and install node packages.
 
-`
-nvm use 
-`
+`nvm use`
 
 then
 
-`
-yarn
-`
+`yarn`
 
 ## Test
 
-`
-yarn test
-`
+`yarn test`
 
 ## Build docs
 
-`
-yarn docs
-`
+`yarn docs`
 
 ## Deploy
 
-`
-yarn deploy:testnet
-`
+`yarn deploy:testnet`
 
-or 
+or
 
-`
-yarn deploy:mainnet
-`
+`yarn deploy:mainnet`
 
 ## Verify
 
 Update tokenManager.js, token.js, and taxHandler.js files in scripts/verify/args folder according to the log of the above deploy script. Also, update package.json script params.
 
-`
-yarn verify:WarpedTaxHandler
-`
+`yarn verify:WarpedTaxHandler`
 
-`
-yarn verify:WarpedToken
-`
+`yarn verify:WarpedToken`
 
-`
-yarn verify:WarpedTaxHandler
-`
+`yarn verify:WarpedTaxHandler`
 
-`
-yarn verify:WarpedTreasuryHandler
-`
-
+`yarn verify:WarpedTreasuryHandler`
 
 # System architecture and internal/external interactions
-
-
