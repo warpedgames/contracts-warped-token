@@ -167,7 +167,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	/**
 	 * @notice Get percent of tax to pay for the given user.
 	 * @dev Basis tax percent will be varied based on user's ownership of NFTs
-	 * in the STARL ecommerce. There are 3 user levels and user's level will be
+	 * in the STARL metaverse. There are 3 user levels and user's level will be
 	 * determined by bit-or of nft levels he owned.
 	 * SATE: 8(4th bit), LM/LMvX: 4(3rd bit), PAL: 2(2nd bit), PN: 1(first bit)
 	 * bit-or >= 7 : 1%

@@ -18,7 +18,7 @@ import './interfaces/ITaxHandler.sol';
 import './interfaces/ITreasuryHandler.sol';
 import './LenientReentrancyGuard.sol';
 
-/// @notice STARL token contract
+/// @notice WARPED token contract
 /// @dev extends standard ERC20 contract
 contract WarpedToken is ERC20, LenientReentrancyGuard {
 	uint8 private constant _decimals = 18;
@@ -31,7 +31,7 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
 	/// @notice trasury handler
 	ITreasuryHandler public treasuryHandler;
 
-	/// @notice constructor of STARL token contract
+	/// @notice constructor of WARPED token contract
 	/// @dev initialize with tax, treasury handler, and reward vault address.
 	/// @param taxHandlerAddress tax handler contract address
 	/// @param treasuryHandlerAddress treasury handler contract address
