@@ -11,13 +11,13 @@
 
 pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
-import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
-import './WarpedToken.sol';
-import './WarpedTaxHandler.sol';
-import './WarpedTreasuryHandler.sol';
-import './WarpedPoolManager.sol';
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "./WarpedToken.sol";
+import "./WarpedTaxHandler.sol";
+import "./WarpedTreasuryHandler.sol";
+import "./WarpedPoolManager.sol";
 
 /**
  * @title WARPED token manager.
@@ -71,7 +71,7 @@ contract WarpedTokenManager is WarpedPoolManager {
 	function addLiquidity(uint256 amountToLiquidity) external payable onlyOwner {
 		require(
 			amountToLiquidity <= warpedToken.balanceOf(address(this)),
-			'Amount exceed balance'
+			"Amount exceed balance"
 		);
 
 		warpedToken.approve(address(uniswapV2Router), amountToLiquidity);

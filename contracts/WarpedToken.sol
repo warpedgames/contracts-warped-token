@@ -11,20 +11,20 @@
 
 pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/utils/Context.sol';
-import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import './interfaces/ITaxHandler.sol';
-import './interfaces/ITreasuryHandler.sol';
-import './LenientReentrancyGuard.sol';
+import "./interfaces/ITaxHandler.sol";
+import "./interfaces/ITreasuryHandler.sol";
+import "./LenientReentrancyGuard.sol";
 
 /// @notice WARPED token contract
 /// @dev extends standard ERC20 contract
 contract WarpedToken is ERC20, LenientReentrancyGuard {
 	uint8 private constant _decimals = 18;
 	uint256 private constant _tTotal = 10_000_000_000 * 10 ** _decimals;
-	string private constant _name = unicode'WARPED';
-	string private constant _symbol = unicode'WARPED';
+	string private constant _name = unicode"WARPED";
+	string private constant _symbol = unicode"WARPED";
 
 	/// @notice tax handler
 	ITaxHandler public taxHandler;

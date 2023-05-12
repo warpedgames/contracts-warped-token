@@ -11,13 +11,13 @@
 
 pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/utils/Address.sol';
-import './interfaces/IUniswapV2Router02.sol';
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "./interfaces/IUniswapV2Router02.sol";
 
-import './interfaces/IPoolManager.sol';
-import './interfaces/ITreasuryHandler.sol';
+import "./interfaces/IPoolManager.sol";
+import "./interfaces/ITreasuryHandler.sol";
 
 /**
  * @title Treasury handler alpha contract
@@ -83,7 +83,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		address treasuryAddress,
 		address tokenAddress
 	) external onlyOwner {
-		require(!_isInitialized, 'Already initialized');
+		require(!_isInitialized, "Already initialized");
 
 		treasury = payable(treasuryAddress);
 		token = IERC20(tokenAddress);
@@ -174,7 +174,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	 * calculation.
 	 */
 	function setLiquidityBasisPoints(uint256 newBasisPoints) external onlyOwner {
-		require(newBasisPoints <= 10000, 'Max is 10000');
+		require(newBasisPoints <= 10000, "Max is 10000");
 
 		uint256 oldBasisPoints = liquidityBasisPoints;
 		liquidityBasisPoints = newBasisPoints;
@@ -189,7 +189,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	function setPriceImpactBasisPoints(
 		uint256 newBasisPoints
 	) external onlyOwner {
-		require(newBasisPoints < 1500, 'Too high value');
+		require(newBasisPoints < 1500, "Too high value");
 
 		uint256 oldBasisPoints = priceImpactBasisPoints;
 		priceImpactBasisPoints = newBasisPoints;
@@ -202,7 +202,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	 * @param newTreasuryAddress New treasury address.
 	 */
 	function setTreasury(address newTreasuryAddress) external onlyOwner {
-		require(newTreasuryAddress != address(0), 'Zero address');
+		require(newTreasuryAddress != address(0), "Zero address");
 
 		address oldTreasuryAddress = address(treasury);
 		treasury = payable(newTreasuryAddress);
@@ -224,7 +224,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	}
 
 	function updateTaxSwap(uint256 taxSwap) external onlyOwner {
-		require(taxSwap > 0, 'Zero taxSwap');
+		require(taxSwap > 0, "Zero taxSwap");
 		_taxSwap = taxSwap;
 	}
 

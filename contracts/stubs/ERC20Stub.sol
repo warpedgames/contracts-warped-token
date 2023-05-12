@@ -11,12 +11,12 @@
 
 pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '../LenientReentrancyGuard.sol';
-import '../interfaces/ITreasuryHandler.sol';
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../LenientReentrancyGuard.sol";
+import "../interfaces/ITreasuryHandler.sol";
 
 contract ERC20Stub is ERC20, LenientReentrancyGuard {
-	constructor(uint256 _totalSupply) ERC20('Test ERC20', 'TestToken') {
+	constructor(uint256 _totalSupply) ERC20("Test ERC20", "TestToken") {
 		_mint(_msgSender(), _totalSupply);
 	}
 

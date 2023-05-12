@@ -11,9 +11,9 @@
 
 pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
-import './interfaces/IPoolManager.sol';
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "./interfaces/IPoolManager.sol";
 
 /**
  * @title Exchange pool processor abstract contract.
@@ -78,9 +78,9 @@ contract WarpedPoolManager is IPoolManager, Ownable {
 	function setPrimaryPool(address exchangePool) external onlyOwner {
 		require(
 			_exchangePools.contains(exchangePool),
-			'Not registered as exchange pool'
+			"Not registered as exchange pool"
 		);
-		require(primaryPool != exchangePool, 'Already primary pool address');
+		require(primaryPool != exchangePool, "Already primary pool address");
 
 		address oldPrimaryPool = primaryPool;
 		primaryPool = exchangePool;

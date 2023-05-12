@@ -11,10 +11,10 @@
 
 pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
-import './interfaces/ITaxHandler.sol';
-import './interfaces/IPoolManager.sol';
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "./interfaces/ITaxHandler.sol";
+import "./interfaces/IPoolManager.sol";
 
 contract WarpedTaxHandler is ITaxHandler, Ownable {
 	/// @notice NFTs to be used to determine user tax level.
@@ -119,16 +119,16 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		uint256[] memory rates,
 		uint256 _basisTaxRate
 	) external onlyOwner {
-		require(thresholds.length == rates.length, 'Invalid level points');
-		require(_basisTaxRate > 0, 'Invalid base rate');
+		require(thresholds.length == rates.length, "Invalid level points");
+		require(_basisTaxRate > 0, "Invalid base rate");
 		require(
 			_basisTaxRate <= maxTaxRate,
-			'Base rate must be less than max rate'
+			"Base rate must be less than max rate"
 		);
 
 		delete taxRates;
 		for (uint256 i = 0; i < thresholds.length; i++) {
-			require(rates[i] <= maxTaxRate, 'Rate must be less than max rate');
+			require(rates[i] <= maxTaxRate, "Rate must be less than max rate");
 			taxRates.push(TaxRatePoint(thresholds[i], rates[i]));
 		}
 		basisTaxRate = _basisTaxRate;
@@ -144,7 +144,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		address[] memory contracts,
 		uint8[] memory levels
 	) external onlyOwner {
-		require(contracts.length > 0 && levels.length > 0, 'Invalid parameters');
+		require(contracts.length > 0 && levels.length > 0, "Invalid parameters");
 		_addNFTs(contracts, levels);
 	}
 
@@ -152,7 +152,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	 * @notice Set no tax for special period
 	 */
 	function pauseTax() external onlyOwner {
-		require(!taxDisabled, 'Already paused');
+		require(!taxDisabled, "Already paused");
 		taxDisabled = true;
 	}
 
@@ -160,7 +160,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	 * @notice Resume tax handling
 	 */
 	function resumeTax() external onlyOwner {
-		require(taxDisabled, 'Not paused');
+		require(taxDisabled, "Not paused");
 		taxDisabled = false;
 	}
 
@@ -196,7 +196,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		address[] memory contracts,
 		uint8[] memory levels
 	) internal {
-		require(contracts.length == levels.length, 'Invalid parameters');
+		require(contracts.length == levels.length, "Invalid parameters");
 
 		for (uint8 i = 0; i < contracts.length; i++) {
 			nftContracts.push(IERC721(contracts[i]));
