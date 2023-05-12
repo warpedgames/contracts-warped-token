@@ -4,8 +4,14 @@
   "description": "Main collection of scripts and utils for Warped",
   "main": "index.js",
   "scripts": {
-    "docgen": "npx hardhat docgen --show-stack-traces",
-    "test": "npx hardhat coverage --testfiles ./test/*.test.js"
+    "deploy:mainnet": "npx hardhat run ./scripts/deploy.js --network mainnet",
+    "deploy:testnet": "npx hardhat run ./scripts/deploy.js --network goerli",
+    "docs": "npx hardhat docgen --show-stack-traces",
+    "test": "npx hardhat coverage --testfiles ./test/*.test.js",
+    "verify:WarpedTaxHandler": "npx hardhat verify [address of deployed WarpedTaxHandler contract (find from the log of above deploy script)] --network goerli --constructor-args ./scripts/verify/args/taxHandler.js",
+    "verify:WarpedToken": "npx hardhat verify [address of deployed WarpedToken contract (find from the log of above deploy script)] --network goerli --constructor-args ./scripts/verify/args/token.js",
+    "verify:WarpedTokenManager": "npx hardhat verify [address of deployed WarpedTokenManager contract] --network goerli --constructor-args ./scripts/verify/args/tokenManager.js",
+    "verify:WarpedTreasuryHandler": "npx hardhat verify [address of deployed WarpedTreasuryHandler contract (find from the log of above deploy script)] --network goerli [WarpedTokenManager contract address]"
   },
   "author": "Warped Studios",
   "license": "ISC",
