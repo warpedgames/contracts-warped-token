@@ -11,9 +11,9 @@
 
 pragma solidity ^0.8.18;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import {IPoolManager} from "./interfaces/IPoolManager.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "./interfaces/IPoolManager.sol";
 
 /**
  * @title Exchange pool processor abstract contract.
@@ -37,7 +37,6 @@ contract WarpedPoolManager is IPoolManager, Ownable {
 	/// @notice Emitted when the primary pool address is updated.
 	event PrimaryPoolUpdated(address oldPrimaryPool, address newPrimaryPool);
 
-	// solhint-disable-next-line no-empty-blocks
 	constructor() {}
 
 	/**
