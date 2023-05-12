@@ -5,6 +5,18 @@
     \__/\  /\____|__  /____|_  /|____|   /_______  //_______  /
         \/         \/       \/                  \/         \/
 
+# External documentation
+
+## Flow
+
+`https://miro.com/app/board/uXjVMNMAo-s=/`
+
+## Summary
+
+`https://docs.google.com/document/d/1b8mfhAul9MTyxIaDIR18KGqk0_4f3KJbAEIb0CgpGE4/edit#heading=h.a9go4ji7no3i`
+
+<br />
+
 # Install
 
 Copy .env.example as .env and set private key and etherscan api key with your own and install node packages.
@@ -27,7 +39,7 @@ then
 
 <br />
 
-# Document
+# Generate docs
 
 `yarn docs`
 
