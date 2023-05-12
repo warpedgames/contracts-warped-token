@@ -35,6 +35,10 @@ then
 
 `yarn test`
 
+`yarn coverage`
+
+`yarn compile`
+
 ## Build docs
 
 `yarn docs`
