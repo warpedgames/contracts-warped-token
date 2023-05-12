@@ -11,13 +11,13 @@
 
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "./interfaces/IUniswapV2Router02.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {IUniswapV2Router02} from "./interfaces/IUniswapV2Router02.sol";
 
-import "./interfaces/IPoolManager.sol";
-import "./interfaces/ITreasuryHandler.sol";
+import {IPoolManager} from "./interfaces/IPoolManager.sol";
+import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
 
 /**
  * @title Treasury handler alpha contract
@@ -28,7 +28,7 @@ import "./interfaces/ITreasuryHandler.sol";
 contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	using Address for address payable;
 
-	IPoolManager poolManager;
+	IPoolManager private poolManager;
 
 	/// @notice The treasury address.
 	address payable public treasury;
@@ -48,7 +48,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	bool private _isInitialized;
 
 	/// @notice The Uniswap router that handles the sell and liquidity operations.
-	IUniswapV2Router02 public constant uniswapV2Router =
+	IUniswapV2Router02 public constant UNISWAP_V2_ROUTER =
 		IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
 
 	/// @notice Emitted when the basis points value of tokens to add as liquidity is updated.
@@ -231,6 +231,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	/**
 	 * @notice Allow contract to accept ETH.
 	 */
+	// solhint-disable-next-line no-empty-blocks
 	receive() external payable {}
 
 	/**
@@ -241,11 +242,11 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		// The ETH/token pool is the primary pool. It always exists.
 		address[] memory path = new address[](2);
 		path[0] = address(token);
-		path[1] = uniswapV2Router.WETH();
+		path[1] = UNISWAP_V2_ROUTER.WETH();
 
 		// Ensure the router can perform the swap for the designated number of tokens.
-		token.approve(address(uniswapV2Router), tokenAmount);
-		uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
+		token.approve(address(UNISWAP_V2_ROUTER), tokenAmount);
+		UNISWAP_V2_ROUTER.swapExactTokensForETHSupportingFeeOnTransferTokens(
 			tokenAmount,
 			0,
 			path,
@@ -261,10 +262,10 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	 */
 	function _addLiquidity(uint256 tokenAmount, uint256 weiAmount) internal {
 		// Ensure the router can perform the transfer for the designated number of tokens.
-		token.approve(address(uniswapV2Router), tokenAmount);
+		token.approve(address(UNISWAP_V2_ROUTER), tokenAmount);
 
 		// Both minimum values are set to zero to allow for any form of slippage.
-		uniswapV2Router.addLiquidityETH{value: weiAmount}(
+		UNISWAP_V2_ROUTER.addLiquidityETH{value: weiAmount}(
 			address(token),
 			tokenAmount,
 			0,

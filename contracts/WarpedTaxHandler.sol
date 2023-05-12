@@ -11,10 +11,11 @@
 
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "./interfaces/ITaxHandler.sol";
-import "./interfaces/IPoolManager.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+
+import {ITaxHandler} from "./interfaces/ITaxHandler.sol";
+import {IPoolManager} from "./interfaces/IPoolManager.sol";
 
 contract WarpedTaxHandler is ITaxHandler, Ownable {
 	/// @notice NFTs to be used to determine user tax level.
@@ -28,10 +29,10 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	}
 
 	TaxRatePoint[] public taxRates;
-	uint256 basisTaxRate;
-	uint256 maxTaxRate = 400;
-	bool taxDisabled;
-	IPoolManager poolManager;
+	uint256 private basisTaxRate;
+	uint256 private maxTaxRate = 400;
+	bool private taxDisabled;
+	IPoolManager private poolManager;
 
 	/// @notice constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address
@@ -121,10 +122,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	) external onlyOwner {
 		require(thresholds.length == rates.length, "Invalid level points");
 		require(_basisTaxRate > 0, "Invalid base rate");
-		require(
-			_basisTaxRate <= maxTaxRate,
-			"Base rate must be less than max rate"
-		);
+		require(_basisTaxRate <= maxTaxRate, "Base rate must be > than max");
 
 		delete taxRates;
 		for (uint256 i = 0; i < thresholds.length; i++) {
