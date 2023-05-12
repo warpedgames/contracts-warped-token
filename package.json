@@ -1,7 +1,7 @@
 {
   "name": "warped-contracts",
   "version": "1.0.0",
-  "description": "",
+  "description": "Main collection of scripts and utils for Warped",
   "main": "index.js",
   "scripts": {
     "test": "mocha --timeout 30000"
