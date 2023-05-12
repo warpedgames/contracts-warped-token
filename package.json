@@ -1,12 +1,12 @@
 {
-  "name": "starlink-contracts",
+  "name": "warped-contracts",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "mocha --timeout 30000"
   },
-  "author": "",
+  "author": "Warped Studios",
   "license": "ISC",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.2.2",
