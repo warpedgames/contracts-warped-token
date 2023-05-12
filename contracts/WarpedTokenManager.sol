@@ -11,16 +11,13 @@
 
 pragma solidity ^0.8.18;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-
-import {WarpedToken} from "./WarpedToken.sol";
-import {WarpedTaxHandler} from "./WarpedTaxHandler.sol";
-import {WarpedTreasuryHandler, IUniswapV2Router02} from "./WarpedTreasuryHandler.sol";
-import {WarpedPoolManager, EnumerableSet, IPoolManager} from "./WarpedPoolManager.sol";
-
-import {IUniswapV2Factory} from "./interfaces/IUniswapV2Router02.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "./WarpedToken.sol";
+import "./WarpedTaxHandler.sol";
+import "./WarpedTreasuryHandler.sol";
+import "./WarpedPoolManager.sol";
 
 /**
  * @title WARPED token manager.
@@ -33,7 +30,7 @@ contract WarpedTokenManager is WarpedPoolManager {
 	/// @notice WARPED token
 	IERC20 public warpedToken;
 	/// @notice uniswap v2 router address
-	IUniswapV2Router02 public constant UNISWAP_V2_ROUTER =
+	IUniswapV2Router02 public constant uniswapV2Router =
 		IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
 
 	/// @notice constructor of WARPED token manager
@@ -77,10 +74,10 @@ contract WarpedTokenManager is WarpedPoolManager {
 			"Amount exceed balance"
 		);
 
-		warpedToken.approve(address(UNISWAP_V2_ROUTER), amountToLiquidity);
-		address uniswapV2Pair = IUniswapV2Factory(UNISWAP_V2_ROUTER.factory())
-			.createPair(address(warpedToken), UNISWAP_V2_ROUTER.WETH());
-		UNISWAP_V2_ROUTER.addLiquidityETH{value: address(this).balance}(
+		warpedToken.approve(address(uniswapV2Router), amountToLiquidity);
+		address uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
+			.createPair(address(warpedToken), uniswapV2Router.WETH());
+		uniswapV2Router.addLiquidityETH{value: address(this).balance}(
 			address(warpedToken),
 			amountToLiquidity,
 			0,
@@ -88,7 +85,7 @@ contract WarpedTokenManager is WarpedPoolManager {
 			owner(),
 			block.timestamp
 		);
-		IERC20(uniswapV2Pair).approve(address(UNISWAP_V2_ROUTER), type(uint).max);
+		IERC20(uniswapV2Pair).approve(address(uniswapV2Router), type(uint).max);
 
 		_exchangePools.add(address(uniswapV2Pair));
 		primaryPool = address(uniswapV2Pair);

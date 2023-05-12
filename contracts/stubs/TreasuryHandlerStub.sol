@@ -11,8 +11,8 @@
 
 pragma solidity ^0.8.18;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ITreasuryHandler} from "../interfaces/ITreasuryHandler.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../interfaces/ITreasuryHandler.sol";
 
 /**
  * @title Treasury handler interface
