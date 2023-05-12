@@ -1,15 +1,15 @@
-require('@nomiclabs/hardhat-waffle')
-require('hardhat-deploy')
-require('dotenv').config()
-require('@nomiclabs/hardhat-etherscan')
-require('solidity-docgen')
-require('@nomiclabs/hardhat-ethers')
-require('solidity-coverage')
-require('@nomiclabs/hardhat-truffle5')
+require("@nomiclabs/hardhat-waffle")
+require("hardhat-deploy")
+require("dotenv").config()
+require("@nomiclabs/hardhat-etherscan")
+require("solidity-docgen")
+require("@nomiclabs/hardhat-ethers")
+require("solidity-coverage")
+require("@nomiclabs/hardhat-truffle5")
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
-task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
+task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 	const accounts = await hre.ethers.getSigners()
 
 	for (const account of accounts) {
@@ -25,7 +25,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
  */
 module.exports = {
 	solidity: {
-		version: '0.8.1',
+		version: "0.8.18",
 		settings: {
 			optimizer: {
 				enabled: true,
@@ -37,18 +37,18 @@ module.exports = {
 	networks: {
 		hardhat: {
 			forking: {
-				url: 'https://goerli.infura.io/v3/0035536bad544fc0a4868ddad5ed81f1',
+				url: "https://goerli.infura.io/v3/0035536bad544fc0a4868ddad5ed81f1",
 				blockNumber: 8654260
 			},
 			chainId: 1337,
 			gas: 2100000
 		},
 		goerli: {
-			url: 'https://goerli.infura.io/v3/3849a711ff6443d0b44b62f4156c7c0a',
+			url: "https://goerli.infura.io/v3/3849a711ff6443d0b44b62f4156c7c0a",
 			accounts: [process.env.PRIVATE_KEY]
 		},
 		mainnet: {
-			url: 'https://mainnet.infura.io/v3/3849a711ff6443d0b44b62f4156c7c0a',
+			url: "https://mainnet.infura.io/v3/3849a711ff6443d0b44b62f4156c7c0a",
 			accounts: [process.env.PRIVATE_KEY]
 		}
 	},
