@@ -4,7 +4,8 @@
   "description": "Main collection of scripts and utils for Warped",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 30000"
+    "docgen": "npx hardhat docgen --show-stack-traces",
+    "test": "npx hardhat coverage --testfiles ./test/*.test.js"
   },
   "author": "Warped Studios",
   "license": "ISC",
