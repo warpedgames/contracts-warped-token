@@ -20,7 +20,7 @@ import {IPoolManager} from "./interfaces/IPoolManager.sol";
 import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
 
 /**
- * @title Treasury handler alpha contract
+ * @title Treasury handler contract
  * @dev Sells tokens that have accumulated through taxes and sends the resulting ETH to the treasury. If
  * `liquidityBasisPoints` has been set to a non-zero value, then that percentage will instead be added to the designated
  * liquidity pool.
