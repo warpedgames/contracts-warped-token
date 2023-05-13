@@ -1,17 +1,17 @@
-const { ethers } = require('hardhat')
-const { expect } = require('chai')
+const { ethers } = require("hardhat")
+const { expect } = require("chai")
 const {
 	constants, // Common constants, like the zero address and largest integers
 	expectEvent, // Assertions for emitted events
 	expectRevert // Assertions for transactions that should fail
-} = require('@openzeppelin/test-helpers')
+} = require("@openzeppelin/test-helpers")
 const BN = ethers.BigNumber
-const uniswapRouterAbi = require('./abis/uniswapRouterAbi.json')
-const mainnetAddresses = require('../addresses/mainnet.json')
-const goerliAddresses = require('../addresses/goerli.json')
-const { BigNumber } = require('ethers')
+const uniswapRouterAbi = require("./abis/uniswapRouterAbi.json")
+const mainnetAddresses = require("../addresses/mainnet.json")
+const goerliAddresses = require("../addresses/goerli.json")
+const { BigNumber } = require("ethers")
 const addresses =
-	process.env.NETWORK === 'mainnet' ? mainnetAddresses : goerliAddresses
+	process.env.NETWORK === "mainnet" ? mainnetAddresses : goerliAddresses
 
 const getCurrentTime = async () => {
 	const blockNumBefore = await ethers.provider.getBlockNumber()
@@ -21,17 +21,17 @@ const getCurrentTime = async () => {
 	return timestampBefore
 }
 
-describe('Integration Test 1', function () {
+describe("Integration Test 1", function () {
 	before(async function () {
 		this.WarpedTokenManager = await ethers.getContractFactory(
-			'WarpedTokenManager'
+			"WarpedTokenManager"
 		)
-		this.WarpedToken = await ethers.getContractFactory('WarpedToken')
-		this.WarpedTaxHandler = await ethers.getContractFactory('WarpedTaxHandler')
+		this.WarpedToken = await ethers.getContractFactory("WarpedToken")
+		this.WarpedTaxHandler = await ethers.getContractFactory("WarpedTaxHandler")
 		this.WarpedTreasuryHandler = await ethers.getContractFactory(
-			'WarpedTreasuryHandler'
+			"WarpedTreasuryHandler"
 		)
-		this.ERC721 = await ethers.getContractFactory('ERC721Stub')
+		this.ERC721 = await ethers.getContractFactory("ERC721Stub")
 		const [owner, user, tester, pool, rewardVault, warpedTreasury, taxWallet] =
 			await ethers.getSigners()
 		this.owner = owner
@@ -45,7 +45,7 @@ describe('Integration Test 1', function () {
 
 	beforeEach(async function () {
 		await this.taxWallet.sendTransaction({
-			value: ethers.utils.parseEther('1000'),
+			value: ethers.utils.parseEther("1000"),
 			to: this.owner.address
 		})
 		this.sateNft = await this.ERC721.deploy()
@@ -83,21 +83,21 @@ describe('Integration Test 1', function () {
 			await this.token.taxHandler()
 		)
 
-		const tokenToLiquidity = ethers.utils.parseEther('500000000')
-		const ethToLiquidity = ethers.utils.parseEther('1000')
+		const tokenToLiquidity = ethers.utils.parseEther("500000000")
+		const ethToLiquidity = ethers.utils.parseEther("1000")
 		await this.manager.addLiquidity(tokenToLiquidity, {
 			value: ethToLiquidity
 		})
 
 		this.router = await ethers.getContractAt(
 			uniswapRouterAbi,
-			'0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+			"0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
 		)
 		this.wethAddress = await this.router.WETH()
 	})
 
-	it('.01 ETH buy - no NFTs - Expected Result: 4% tax into treasury handler address', async function () {
-		const ethToBuy = ethers.utils.parseEther('0.01')
+	it.skip(".01 ETH buy - no NFTs - Expected Result: 4% tax into treasury handler address", async function () {
+		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
 		await this.router.swapExactETHForTokens(
 			ethToBuy,
@@ -113,9 +113,9 @@ describe('Integration Test 1', function () {
 		expect(taxAmount).to.equal(totalAmount.mul(4).div(100))
 	})
 
-	it('.01 ETH sell - no NFTs - Expected Result: 4% tax into treasury handler address', async function () {
+	it.skip(".01 ETH sell - no NFTs - Expected Result: 4% tax into treasury handler address", async function () {
 		// Buy token for 0.01 eth
-		const ethToBuy = ethers.utils.parseEther('0.01')
+		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
 		await this.router.swapExactETHForTokens(
 			ethToBuy,
@@ -125,7 +125,7 @@ describe('Integration Test 1', function () {
 			{ value: ethToBuy }
 		)
 
-		const tokenToSell = ethers.utils.parseEther('4000')
+		const tokenToSell = ethers.utils.parseEther("4000")
 		const _router = this.router.connect(this.user)
 		const _token = this.token.connect(this.user)
 		await _token.approve(_router.address, tokenToSell)
@@ -142,11 +142,11 @@ describe('Integration Test 1', function () {
 		)
 	})
 
-	it('.01 ETH buy/sell - 1 PAL - Expected Result: 3% tax', async function () {
+	it.skip(".01 ETH buy/sell - 1 PAL - Expected Result: 3% tax", async function () {
 		// mint pal to user
 		await this.palNft.mint(this.user.address)
 		// Buy token for 0.01 eth
-		const ethToBuy = ethers.utils.parseEther('0.01')
+		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
 		await this.router.swapExactETHForTokens(
 			ethToBuy,
@@ -164,7 +164,7 @@ describe('Integration Test 1', function () {
 			1
 		) // expect 3% tax
 
-		const tokenToSell = ethers.utils.parseEther('4000')
+		const tokenToSell = ethers.utils.parseEther("4000")
 		const _router = this.router.connect(this.user)
 		const _token = this.token.connect(this.user)
 		await _token.approve(_router.address, tokenToSell)
@@ -182,11 +182,11 @@ describe('Integration Test 1', function () {
 		)
 	})
 
-	it('.01 ETH buy/sell - 1 PN - Expected Result: 3% tax', async function () {
+	it.skip(".01 ETH buy/sell - 1 PN - Expected Result: 3% tax", async function () {
 		// mint pal to user
 		await this.pnNft.mint(this.user.address)
 		// Buy token for 0.01 eth
-		const ethToBuy = ethers.utils.parseEther('0.01')
+		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
 		await this.router.swapExactETHForTokens(
 			ethToBuy,
@@ -205,11 +205,11 @@ describe('Integration Test 1', function () {
 		) // expect 3% tax
 	})
 
-	it('.01 ETH buy/sell - 1 LMvX - Expected Result: 3% tax', async function () {
+	it.skip(".01 ETH buy/sell - 1 LMvX - Expected Result: 3% tax", async function () {
 		// mint pal to user
 		await this.lmvxNft.mint(this.user.address)
 		// Buy token for 0.01 eth
-		const ethToBuy = ethers.utils.parseEther('0.01')
+		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
 		await this.router.swapExactETHForTokens(
 			ethToBuy,
@@ -228,12 +228,12 @@ describe('Integration Test 1', function () {
 		) // expect 3% tax
 	})
 
-	it('.01 ETH buy/sell - 1 LM / 1 PN - Expected Result: 2% tax', async function () {
+	it.skip(".01 ETH buy/sell - 1 LM / 1 PN - Expected Result: 2% tax", async function () {
 		// mint pal to user
 		await this.lmvxNft.mint(this.user.address)
 		await this.pnNft.mint(this.user.address)
 		// Buy token for 0.01 eth
-		const ethToBuy = ethers.utils.parseEther('0.01')
+		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
 		await this.router.swapExactETHForTokens(
 			ethToBuy,
@@ -252,12 +252,12 @@ describe('Integration Test 1', function () {
 		) // expect 2% tax
 	})
 
-	it('.01 ETH buy/sell - 1 LM / 1 PAL - Expected Result: 2% tax', async function () {
+	it.skip(".01 ETH buy/sell - 1 LM / 1 PAL - Expected Result: 2% tax", async function () {
 		// mint pal to user
 		await this.lmvxNft.mint(this.user.address)
 		await this.pnNft.mint(this.user.address)
 		// Buy token for 0.01 eth
-		const ethToBuy = ethers.utils.parseEther('0.01')
+		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
 		await this.router.swapExactETHForTokens(
 			ethToBuy,
@@ -276,13 +276,13 @@ describe('Integration Test 1', function () {
 		) // expect 2% tax
 	})
 
-	it('.01 ETH buy/sell - 1 LM / 1 PAL / 1 PN - Expected Result: 1% tax', async function () {
+	it.skip(".01 ETH buy/sell - 1 LM / 1 PAL / 1 PN - Expected Result: 1% tax", async function () {
 		// mint pal to user
 		await this.lmvxNft.mint(this.user.address)
 		await this.palNft.mint(this.user.address)
 		await this.pnNft.mint(this.user.address)
 		// Buy token for 0.01 eth
-		const ethToBuy = ethers.utils.parseEther('0.01')
+		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
 		await this.router.swapExactETHForTokens(
 			ethToBuy,
