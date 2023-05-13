@@ -122,7 +122,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	) external onlyOwner {
 		require(thresholds.length == rates.length, "Invalid level points");
 		require(_basisTaxRate > 0, "Invalid base rate");
-		require(_basisTaxRate <= maxTaxRate, "Base rate must be > than max");
+		require(_basisTaxRate <= maxTaxRate, "Base rate must be <= than max");
 
 		delete taxRates;
 		for (uint256 i = 0; i < thresholds.length; i++) {
