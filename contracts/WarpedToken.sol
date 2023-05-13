@@ -11,20 +11,20 @@
 
 pragma solidity ^0.8.18;
 
-import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "./interfaces/ITaxHandler.sol";
-import "./interfaces/ITreasuryHandler.sol";
-import "./LenientReentrancyGuard.sol";
+import {ITaxHandler} from "./interfaces/ITaxHandler.sol";
+import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
+import {LenientReentrancyGuard} from "./LenientReentrancyGuard.sol";
 
 /// @notice WARPED token contract
 /// @dev extends standard ERC20 contract
 contract WarpedToken is ERC20, LenientReentrancyGuard {
-	uint8 private constant _decimals = 18;
-	uint256 private constant _tTotal = 10_000_000_000 * 10 ** _decimals;
-	string private constant _name = unicode"WARPED";
-	string private constant _symbol = unicode"WARPED";
+	uint8 private constant DECIMALS = 18;
+	uint256 private constant T_TOTAL = 10_000_000_000 * 10 ** DECIMALS;
+	string private constant NAME = unicode"WARPED";
+	string private constant SYMBOL = unicode"WARPED";
 
 	/// @notice tax handler
 	ITaxHandler public taxHandler;
@@ -38,11 +38,11 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
 	constructor(
 		address taxHandlerAddress,
 		address treasuryHandlerAddress
-	) ERC20(_name, _symbol) {
+	) ERC20(NAME, SYMBOL) {
 		taxHandler = ITaxHandler(taxHandlerAddress);
 		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
 
-		_mint(_msgSender(), _tTotal);
+		_mint(_msgSender(), T_TOTAL);
 	}
 
 	/**
