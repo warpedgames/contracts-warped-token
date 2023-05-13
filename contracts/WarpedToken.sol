@@ -11,7 +11,6 @@
 
 pragma solidity ^0.8.18;
 
-import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import {ITaxHandler} from "./interfaces/ITaxHandler.sol";
