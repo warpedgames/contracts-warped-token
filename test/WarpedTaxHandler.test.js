@@ -1,17 +1,17 @@
-const { ethers } = require('hardhat')
-const { expect } = require('chai')
+const { ethers } = require("hardhat")
+const { expect } = require("chai")
 const {
 	constants, // Common constants, like the zero address and largest integers
 	expectEvent, // Assertions for emitted events
 	expectRevert // Assertions for transactions that should fail
-} = require('@openzeppelin/test-helpers')
+} = require("@openzeppelin/test-helpers")
 const BN = ethers.BigNumber
 
-describe('WarpedTaxHandler', function () {
+describe("WarpedTaxHandler", function () {
 	before(async function () {
-		this.WarpedTaxHandler = await ethers.getContractFactory('WarpedTaxHandler')
-		this.PoolManager = await ethers.getContractFactory('WarpedPoolManager')
-		this.ERC721 = await ethers.getContractFactory('ERC721Stub')
+		this.WarpedTaxHandler = await ethers.getContractFactory("WarpedTaxHandler")
+		this.PoolManager = await ethers.getContractFactory("WarpedPoolManager")
+		this.ERC721 = await ethers.getContractFactory("ERC721Stub")
 		this.textAmount = BN.from(400)
 		this.percentDecimal = BN.from(10000)
 		this.highTaxRate = BN.from(400)
@@ -36,7 +36,7 @@ describe('WarpedTaxHandler', function () {
 		)
 		await this.taxHandler.deployed()
 
-		if (this.currentTest.title.includes('with NFTs')) {
+		if (this.currentTest.title.includes("with NFTs")) {
 			// Deploy nft contracts
 			this.nft1 = await this.ERC721.deploy()
 			this.nft2 = await this.ERC721.deploy()
@@ -47,7 +47,7 @@ describe('WarpedTaxHandler', function () {
 		}
 	})
 
-	it('getTax(no NFTs) returns zero with no-pool, zero buyer/seller address, zero amount', async function () {
+	it("getTax(no NFTs) returns zero with no-pool, zero buyer/seller address, zero amount", async function () {
 		// Test for zero input
 		const taxAmount = await this.taxHandler.getTax(
 			constants.ZERO_ADDRESS,
@@ -57,7 +57,7 @@ describe('WarpedTaxHandler', function () {
 		expect(taxAmount).to.equal(this.zeroAmount)
 	})
 
-	it('getTax(no NFTs) returns zero with no-pool, zero buyer/seller address, non-zero amount', async function () {
+	it("getTax(no NFTs) returns zero with no-pool, zero buyer/seller address, non-zero amount", async function () {
 		const taxAmount = await this.taxHandler.getTax(
 			constants.ZERO_ADDRESS,
 			constants.ZERO_ADDRESS,
@@ -66,7 +66,7 @@ describe('WarpedTaxHandler', function () {
 		expect(taxAmount).to.equal(this.zeroAmount)
 	})
 
-	it('getTax(no NFTs) returns zero with pool, zero buyer address, zero amount', async function () {
+	it("getTax(no NFTs) returns zero with pool, zero buyer address, zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 
@@ -78,7 +78,7 @@ describe('WarpedTaxHandler', function () {
 		expect(taxAmount).to.equal(this.zeroAmount)
 	})
 
-	it('getTax(no NFTs) returns default rated tax with pool, zero buyer address, non-zero amount', async function () {
+	it("getTax(no NFTs) returns default rated tax with pool, zero buyer address, non-zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 
@@ -92,7 +92,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('getTax(no NFTs) returns zero tax with pool, both pool address, non-zero amount', async function () {
+	it("getTax(no NFTs) returns zero tax with pool, both pool address, non-zero amount", async function () {
 		const pool1Address = this.signers[0].address
 		const pool2Address = this.signers[1].address
 		await this.poolManager.addExchangePool(pool1Address)
@@ -106,7 +106,7 @@ describe('WarpedTaxHandler', function () {
 		expect(taxAmount).to.equal(this.zeroAmount)
 	})
 
-	it('getTax(with NFTs) revert with pool, zero buyer address, zero amount', async function () {
+	it("getTax(with NFTs) revert with pool, zero buyer address, zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		// add one nft1 address with level 1
@@ -118,11 +118,11 @@ describe('WarpedTaxHandler', function () {
 				constants.ZERO_ADDRESS,
 				this.zeroAmount
 			),
-			'ERC721: address zero is not a valid owner'
+			"ERC721: address zero is not a valid owner"
 		)
 	})
 
-	it('getTax(with NFTs) returns default tax and reward amount with pool, non-zero non-nft-owned buyer address, non-zero amount', async function () {
+	it("getTax(with NFTs) returns default tax and reward amount with pool, non-zero non-nft-owned buyer address, non-zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		// add one nft1 address with level 1
@@ -138,7 +138,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('getTax(with NFTs) returns default tax and burn amount with pool, non-zero non-nft-owned seller address, non-zero amount', async function () {
+	it("getTax(with NFTs) returns default tax and burn amount with pool, non-zero non-nft-owned seller address, non-zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		// add one nft1 address with level 1
@@ -154,7 +154,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('getTax(with NFTs) returns default tax and zero burn amount with pool, 2-nfts-owned seller address, non-zero amount', async function () {
+	it("getTax(with NFTs) returns default tax and zero burn amount with pool, 2-nfts-owned seller address, non-zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		const sellerAddress = this.signers[1].address
 		await this.poolManager.addExchangePool(poolAddress)
@@ -177,7 +177,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('getTax(with NFTs) returns zero reward and burn amount with pool, non-zero nft-owned buyer address, non-zero amount', async function () {
+	it("getTax(with NFTs) returns zero reward and burn amount with pool, non-zero nft-owned buyer address, non-zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[1].address
@@ -196,7 +196,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('getTax(with NFTs) returns lowest tax amount with pool, non-zero safe-nft-owned buyer address, non-zero amount', async function () {
+	it("getTax(with NFTs) returns lowest tax amount with pool, non-zero safe-nft-owned buyer address, non-zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[1].address
@@ -215,7 +215,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('getTax(with NFTs) returns middle tax amount with pool, non-zero lm+pal-nft-owned buyer address, non-zero amount', async function () {
+	it("getTax(with NFTs) returns middle tax amount with pool, non-zero lm+pal-nft-owned buyer address, non-zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[1].address
@@ -238,7 +238,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('getTax(with NFTs) returns lowest tax amount with pool, non-zero lm+pal+pn-nft-owned buyer address, non-zero amount', async function () {
+	it("getTax(with NFTs) returns lowest tax amount with pool, non-zero lm+pal+pn-nft-owned buyer address, non-zero amount", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[1].address
@@ -262,7 +262,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('after update tax rates points using setTaxRates: getTax(with NFTs) returns lowest tax amount with all-nft-owned buyer address', async function () {
+	it("after update tax rates points using setTaxRates: getTax(with NFTs) returns lowest tax amount with all-nft-owned buyer address", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[1].address
@@ -291,7 +291,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('after update tax rates points using setTaxRates: getTax(with NFTs) returns middle tax amount with one-nft-owned buyer address', async function () {
+	it("after update tax rates points using setTaxRates: getTax(with NFTs) returns middle tax amount with one-nft-owned buyer address", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[1].address
@@ -318,7 +318,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('after update tax rates points using setTaxRates: getTax(with NFTs) returns tax and reward amount with one-nft-owned buyer address', async function () {
+	it("after update tax rates points using setTaxRates: getTax(with NFTs) returns tax and reward amount with one-nft-owned buyer address", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[1].address
@@ -345,7 +345,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('after pause tax, getTax(with NFTs) returns zero', async function () {
+	it("after pause tax, getTax(with NFTs) returns zero", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[1].address
@@ -371,7 +371,7 @@ describe('WarpedTaxHandler', function () {
 		expect(taxAmount).to.equal(this.zeroAmount)
 	})
 
-	it('after pause tax, after resume tax, getTax(with NFTs) returns valid', async function () {
+	it("after pause tax, after resume tax, getTax(with NFTs) returns valid", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[1].address
@@ -400,7 +400,7 @@ describe('WarpedTaxHandler', function () {
 		)
 	})
 
-	it('setTaxRates reverts for forbidden user', async function () {
+	it("setTaxRates reverts for forbidden user", async function () {
 		const _taxHandler = this.taxHandler.connect(this.signers[1])
 		await expectRevert(
 			_taxHandler.setTaxRates(
@@ -408,18 +408,18 @@ describe('WarpedTaxHandler', function () {
 				[BN.from(100), BN.from(200), BN.from(300)],
 				BN.from(400)
 			),
-			'Ownable: caller is not the owner'
+			"Ownable: caller is not the owner"
 		)
 	})
 
-	it('setTaxRates reverts for invalid parameters', async function () {
+	it("setTaxRates reverts for invalid parameters", async function () {
 		await expectRevert(
 			this.taxHandler.setTaxRates(
 				[7, 2, 1],
 				[BN.from(100), BN.from(200)],
 				BN.from(400)
 			),
-			'Invalid level points'
+			"Invalid level points"
 		)
 		await expectRevert(
 			this.taxHandler.setTaxRates(
@@ -427,55 +427,55 @@ describe('WarpedTaxHandler', function () {
 				[BN.from(100), BN.from(200)],
 				BN.from(0)
 			),
-			'Invalid base rate'
+			"Invalid base rate"
 		)
 	})
 
-	it('addNFTs reverts for forbidden user', async function () {
+	it("addNFTs reverts for forbidden user", async function () {
 		const _taxHandler = this.taxHandler.connect(this.signers[1])
 		await expectRevert(
 			_taxHandler.addNFTs(
 				[this.nft1.address, this.nft2.address, this.nft3.address],
 				[1, 2, 4]
 			),
-			'Ownable: caller is not the owner'
+			"Ownable: caller is not the owner"
 		)
 	})
 
-	it('pauseTax reverts for forbidden user and when already disabled', async function () {
+	it("pauseTax reverts for forbidden user and when already disabled", async function () {
 		const _taxHandler = this.taxHandler.connect(this.signers[1])
 		await expectRevert(
 			_taxHandler.pauseTax(),
-			'Ownable: caller is not the owner'
+			"Ownable: caller is not the owner"
 		)
 		await this.taxHandler.pauseTax()
-		await expectRevert(this.taxHandler.pauseTax(), 'Already paused')
+		await expectRevert(this.taxHandler.pauseTax(), "Already paused")
 	})
 
-	it('resume reverts for forbidden user and when not disabled', async function () {
+	it("resume reverts for forbidden user and when not disabled", async function () {
 		const _taxHandler = this.taxHandler.connect(this.signers[1])
 		await expectRevert(
 			_taxHandler.resumeTax(),
-			'Ownable: caller is not the owner'
+			"Ownable: caller is not the owner"
 		)
-		await expectRevert(this.taxHandler.resumeTax(), 'Not paused')
+		await expectRevert(this.taxHandler.resumeTax(), "Not paused")
 		await this.taxHandler.pauseTax()
 		await this.taxHandler.resumeTax()
-		await expectRevert(this.taxHandler.resumeTax(), 'Not paused')
+		await expectRevert(this.taxHandler.resumeTax(), "Not paused")
 	})
 
-	it('addNFTs reverts for invalid parameters', async function () {
+	it("addNFTs reverts for invalid parameters", async function () {
 		await expectRevert(
 			this.taxHandler.addNFTs(
 				[this.nft1.address, this.nft2.address, this.nft3.address],
 				[1]
 			),
-			'Invalid parameters'
+			"Invalid parameters"
 		)
-		await expectRevert(this.taxHandler.addNFTs([], []), 'Invalid parameters')
+		await expectRevert(this.taxHandler.addNFTs([], []), "Invalid parameters")
 	})
 
-	it('after deploy with 3 nfts, getTax(with NFTs) returns lowest tax amount with pool, non-zero safe-nft-owned buyer address, non-zero amount', async function () {
+	it("after deploy with 3 nfts, getTax(with NFTs) returns lowest tax amount with pool, non-zero safe-nft-owned buyer address, non-zero amount", async function () {
 		const nft4 = await this.ERC721.deploy()
 		await nft4.deployed()
 		const _taxHandler = await this.WarpedTaxHandler.deploy(
@@ -501,5 +501,26 @@ describe('WarpedTaxHandler', function () {
 		expect(taxAmount).to.equal(
 			this.testAmount.mul(this.lowestTaxRate).div(this.percentDecimal)
 		)
+	})
+
+	it("Should fail if basis tax rate is greater than max", async function () {
+		await expectRevert(
+			this.taxHandler.setTaxRates(
+				[1, 2, 3],
+				[BN.from(100), BN.from(200), BN.from(300)],
+				BN.from(500)
+			),
+			"Base rate must be <= than max"
+		)
+	})
+
+	it("Should fail if any provided rate is greater than max", async function () {
+		await expect(
+			this.taxHandler.setTaxRates(
+				[1, 2, 3],
+				[BN.from(100), BN.from(500), BN.from(300)],
+				400
+			)
+		).to.be.revertedWith("Rate must be less than max rate")
 	})
 })
