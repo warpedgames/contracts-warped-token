@@ -15,7 +15,6 @@ const nftContracts = [
 	addresses.STPAL_NFT_ADDRESS,
 	addresses.STPN_NFT_ADDRESS
 ]
-const nftLevels = nftLevels
 
 describe("WarpedTokenManager", function () {
 	before(async function () {

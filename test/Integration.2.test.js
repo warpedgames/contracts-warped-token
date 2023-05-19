@@ -60,8 +60,6 @@ describe("Integration Test 2", function () {
 			this.otherNft1.address
 		]
 
-		const nftLevels = nftLevels
-
 		this.manager = await this.WarpedTokenManager.deploy(
 			this.taxWallet.address,
 			nftContracts,
