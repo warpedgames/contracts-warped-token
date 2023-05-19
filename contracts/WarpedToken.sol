@@ -31,7 +31,7 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
 	ITreasuryHandler public treasuryHandler;
 
 	/// @notice constructor of WARPED token contract
-	/// @dev initialize with tax, treasury handler, and reward vault address.
+	/// @dev initialize with tax and treasury handler addresses.
 	/// @param taxHandlerAddress tax handler contract address
 	/// @param treasuryHandlerAddress treasury handler contract address
 	constructor(
