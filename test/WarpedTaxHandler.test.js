@@ -483,7 +483,13 @@ describe("WarpedTaxHandler", function () {
 		await nft5.deployed()
 		const _taxHandler = await this.WarpedTaxHandler.deploy(
 			this.poolManager.address,
-			[this.nft1.address, this.nft2.address, this.nft3.address, nft4.address, nft5.address],
+			[
+				this.nft1.address,
+				this.nft2.address,
+				this.nft3.address,
+				nft4.address,
+				nft5.address
+			],
 			nftLevels
 		)
 		await _taxHandler.deployed()

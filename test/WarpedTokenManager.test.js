@@ -5,8 +5,6 @@ const {
 } = require("@openzeppelin/test-helpers")
 const { nftLevels } = require("../config/index")
 
-const BN = ethers.BigNumber
-
 const goerliAddresses = require("../addresses/goerli.json")
 const addresses = goerliAddresses
 const nftContracts = [
