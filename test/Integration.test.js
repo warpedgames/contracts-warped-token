@@ -1,6 +1,7 @@
 const { ethers } = require("hardhat")
 const { expect } = require("chai")
 const uniswapRouterAbi = require("./abis/uniswapRouterAbi.json")
+const { nftLevelsFortTests } = require("../config/index")
 
 const BN = ethers.BigNumber
 
@@ -38,14 +39,18 @@ describe("Integration Test 1", function () {
 			value: ethers.utils.parseEther("1000"),
 			to: this.owner.address
 		})
+
 		this.sateNft = await this.ERC721.deploy()
 		this.lmvxNft = await this.ERC721.deploy()
+		this.stlmvxNft = await this.ERC721.deploy()
 		this.palNft = await this.ERC721.deploy()
 		this.pnNft = await this.ERC721.deploy()
 		this.otherNft1 = await this.ERC721.deploy()
 		this.otherNft2 = await this.ERC721.deploy()
+
 		await this.sateNft.deployed()
 		await this.lmvxNft.deployed()
+		await this.stlmvxNft.deployed()
 		await this.palNft.deployed()
 		await this.otherNft1.deployed()
 		await this.otherNft2.deployed()
@@ -53,10 +58,14 @@ describe("Integration Test 1", function () {
 		const nftContracts = [
 			this.sateNft.address,
 			this.lmvxNft.address,
+			this.stlmvxNft.address,
 			this.palNft.address,
-			this.pnNft.address
+			this.pnNft.address,
+			this.otherNft1.address,
+			this.otherNft1.address
 		]
-		const nftLevels = [8, 4, 2, 1]
+
+		const nftLevels = nftLevelsFortTests
 
 		this.manager = await this.WarpedTokenManager.deploy(
 			this.taxWallet.address,

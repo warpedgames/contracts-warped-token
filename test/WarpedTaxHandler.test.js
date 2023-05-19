@@ -4,6 +4,7 @@ const {
 	constants, // Common constants, like the zero address and largest integers
 	expectRevert // Assertions for transactions that should fail
 } = require("@openzeppelin/test-helpers")
+const { nftLevelsFortTests } = require("../config/index")
 
 const BN = ethers.BigNumber
 
@@ -481,7 +482,7 @@ describe("WarpedTaxHandler", function () {
 		const _taxHandler = await this.WarpedTaxHandler.deploy(
 			this.poolManager.address,
 			[this.nft1.address, this.nft2.address, this.nft3.address, nft4.address],
-			[8, 4, 2, 1]
+			nftLevelsFortTests
 		)
 		await _taxHandler.deployed()
 

@@ -1,7 +1,7 @@
 export const mainnetAddresses = require("../addresses/mainnet.json")
 export const goerliAddresses = require("../addresses/goerli.json")
 
-export const { addresses } = require("../config")
+export const { addresses } = require("../config/index")
 
 export const nftContracts = [
 	addresses.SATE_NFT_ADDRESS,
@@ -12,6 +12,8 @@ export const nftContracts = [
 ]
 
 export const nftLevels = [8, 4, 4, 2, 1]
+
+export const nftLevelsFortTests = [8, 4, 4, 2, 1] // TODO Why is this different to above?
 
 // update this with deployed WarpedTokenManager contract address
 export const WarpedTokenManagerContractAddress =
