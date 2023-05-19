@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat")
 const { expect } = require("chai")
 const uniswapRouterAbi = require("./abis/uniswapRouterAbi.json")
-const { nftLevelsFortTests } = require("../config/index")
+const { nftLevels } = require("../config/index")
 
 const BN = ethers.BigNumber
 
@@ -65,7 +65,7 @@ describe("Integration Test 1", function () {
 			this.otherNft1.address
 		]
 
-		const nftLevels = nftLevelsFortTests
+		const nftLevels = nftLevels
 
 		this.manager = await this.WarpedTokenManager.deploy(
 			this.taxWallet.address,

@@ -13,8 +13,6 @@ export const nftContracts = [
 
 export const nftLevels = [8, 4, 4, 2, 1]
 
-export const nftLevelsFortTests = [8, 4, 4, 2, 1] // TODO Why is this different to above?
-
 // update this with deployed WarpedTokenManager contract address
 export const WarpedTokenManagerContractAddress =
 	"0xABDe659338d33252978CA1B108604E97743B0Ffe"
