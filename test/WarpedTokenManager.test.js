@@ -12,6 +12,7 @@ const addresses = goerliAddresses
 const nftContracts = [
 	addresses.SATE_NFT_ADDRESS,
 	addresses.LMVX_NFT_ADDRESS,
+	addresses.STLM_NFT_ADDRESS,
 	addresses.STPAL_NFT_ADDRESS,
 	addresses.STPN_NFT_ADDRESS
 ]
