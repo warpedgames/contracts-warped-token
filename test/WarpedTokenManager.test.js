@@ -3,6 +3,7 @@ const { expect } = require("chai")
 const {
 	expectRevert // Assertions for transactions that should fail
 } = require("@openzeppelin/test-helpers")
+const { nftLevels } = require("../config/index")
 
 const BN = ethers.BigNumber
 
@@ -11,10 +12,10 @@ const addresses = goerliAddresses
 const nftContracts = [
 	addresses.SATE_NFT_ADDRESS,
 	addresses.LMVX_NFT_ADDRESS,
+	addresses.STLM_NFT_ADDRESS,
 	addresses.STPAL_NFT_ADDRESS,
 	addresses.STPN_NFT_ADDRESS
 ]
-const nftLevels = [8, 4, 2, 1]
 
 describe("WarpedTokenManager", function () {
 	before(async function () {

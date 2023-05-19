@@ -4,6 +4,7 @@ const {
 	constants, // Common constants, like the zero address and largest integers
 	expectRevert // Assertions for transactions that should fail
 } = require("@openzeppelin/test-helpers")
+const { nftLevels } = require("../config/index")
 
 const BN = ethers.BigNumber
 
@@ -475,23 +476,25 @@ describe("WarpedTaxHandler", function () {
 		await expectRevert(this.taxHandler.addNFTs([], []), "Invalid parameters")
 	})
 
-	it("after deploy with 3 nfts, getTax(with NFTs) returns lowest tax amount with pool, non-zero safe-nft-owned buyer address, non-zero amount", async function () {
+	it("after deploy with 5 nfts, getTax(with NFTs) returns lowest tax amount with pool, non-zero lmvx+pal+pn-owned buyer address, non-zero amount", async function () {
 		const nft4 = await this.ERC721.deploy()
 		await nft4.deployed()
+		const nft5 = await this.ERC721.deploy()
+		await nft5.deployed()
 		const _taxHandler = await this.WarpedTaxHandler.deploy(
 			this.poolManager.address,
-			[this.nft1.address, this.nft2.address, this.nft3.address, nft4.address],
-			[8, 4, 2, 1]
+			[this.nft1.address, this.nft2.address, this.nft3.address, nft4.address, nft5.address],
+			nftLevels
 		)
 		await _taxHandler.deployed()
 
 		const poolAddress = this.signers[1].address
 		await this.poolManager.addExchangePool(poolAddress)
 		const buyerAddress = this.signers[0].address
-		// mint 1 nft into buyer address
+		// mint 3 nfts into buyer address
 		await this.nft2.mint(buyerAddress)
-		await this.nft3.mint(buyerAddress)
 		await nft4.mint(buyerAddress)
+		await nft5.mint(buyerAddress)
 
 		const taxAmount = await _taxHandler.getTax(
 			poolAddress,
