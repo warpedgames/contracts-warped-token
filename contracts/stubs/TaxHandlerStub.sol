@@ -21,9 +21,9 @@ contract TaxHandlerStub is ITaxHandler {
 	}
 
 	function getTax(
-		address benefactor,
-		address beneficiary,
-		uint256 amount
+		address /* benefactor */,
+		address /* beneficiary */,
+		uint256 /* amount */
 	) external view override returns (uint256) {
 		return _taxAmount;
 	}
