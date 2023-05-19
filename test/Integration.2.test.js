@@ -1,23 +1,13 @@
 const { ethers } = require("hardhat")
 const { expect } = require("chai")
-const {
-	constants, // Common constants, like the zero address and largest integers
-	expectEvent, // Assertions for emitted events
-	expectRevert // Assertions for transactions that should fail
-} = require("@openzeppelin/test-helpers")
-const BN = ethers.BigNumber
 const uniswapRouterAbi = require("./abis/uniswapRouterAbi.json")
-const mainnetAddresses = require("../addresses/mainnet.json")
-const goerliAddresses = require("../addresses/goerli.json")
-const { BigNumber } = require("ethers")
-const addresses =
-	process.env.NETWORK === "mainnet" ? mainnetAddresses : goerliAddresses
+
+const BN = ethers.BigNumber
 
 const getCurrentTime = async () => {
 	const blockNumBefore = await ethers.provider.getBlockNumber()
 	const blockBefore = await ethers.provider.getBlock(blockNumBefore)
 	const timestampBefore = blockBefore.timestamp
-	// console.log("block: " + blockNumBefore + " : " + timestampBefore);
 	return timestampBefore
 }
 

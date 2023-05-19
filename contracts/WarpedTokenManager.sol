@@ -36,7 +36,7 @@ contract WarpedTokenManager is WarpedPoolManager {
 		IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
 
 	/// @notice constructor of WARPED token manager
-	/// @dev Create TaxHandler, TreasuryHandler, new Token contract, and open swap
+	/// @dev Create TaxHandler, TreasuryHandler, and Token contract
 	/// @param treasuryAddress final tax treasury address
 	/// @param nftContracts array of addresses of NFT contracts to calculate tax rate
 	/// @param nftLevels array of levels of NFT contracts to calculate tax rate
