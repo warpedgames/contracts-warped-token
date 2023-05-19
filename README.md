@@ -41,6 +41,8 @@ then
 
 # Generate docs
 
+`chmod +x scripts/prepare-docs.sh`
+
 `yarn docs`
 
 <br />

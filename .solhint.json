@@ -3,6 +3,15 @@
 	"rules": {
 		"compiler-version": ["error", "^0.8.18"],
 		"func-visibility": ["warn", { "ignoreConstructors": true }],
-		"func-name-mixedcase": "off"
+		"no-unused-vars": "error",
+		"const-name-snakecase": "error",
+		"contract-name-camelcase": "error",
+		"event-name-camelcase": "error",
+		"func-name-mixedcase": "off",
+		"func-param-name-mixedcase": "error",
+		"modifier-name-mixedcase": "error",
+		"private-vars-leading-underscore": "error",
+		"var-name-mixedcase": "error",
+		"imports-on-top": "error"
 	}
 }
