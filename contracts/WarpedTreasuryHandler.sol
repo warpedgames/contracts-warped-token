@@ -89,7 +89,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		token = IERC20(tokenAddress);
 		liquidityBasisPoints = 0;
 		priceImpactBasisPoints = 500;
-		_taxSwap = 10_000 * 10 ** 18;
+		_taxSwap = 10_000_000 * 10 ** 18;
 		_isInitialized = true;
 	}
 

@@ -16,16 +16,16 @@ const nftLevels = [8, 4, 4, 2, 1]
 
 // update this with deployed WarpedTokenManager contract address
 const WarpedTokenManagerContractAddress =
-	"0xABDe659338d33252978CA1B108604E97743B0Ffe"
+	"0xE7C67D7B2da9d6C0CFD35EEf9054cF5aDc04Db88"
 
 // update this with WarpedTaxHandler contract address from the log of WarpedTokenManager contract deploy script
 const WarpedTaxHandlerContractAddress =
-	"0x556885475e87F4FA1c1Ad1ABE28bFA2EF57659E3"
+	"0x4674823378a388a89B1Bda1Da0B23689Db932c36"
 
 // update this with WarpedTreasuryHandler contract address from the log of WarpedTokenManager contract deploy script
 
 const WarpedTreasuryHandlerContractAddress =
-	"0x29D27c8f565B8e406C678FF6d1d7Cbb4Dd0B31E1"
+	"0x2e5F95bF9c7BB876E4D44233593CB94A23A27F3D"
 
 module.exports = {
 	mainnetAddresses,
