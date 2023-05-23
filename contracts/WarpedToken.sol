@@ -25,12 +25,12 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
 	string private constant NAME = unicode"WARPED";
 	string private constant SYMBOL = unicode"WARPED";
 
-	/// @notice tax handler
+	/// @notice Tax handler address
 	ITaxHandler public taxHandler;
-	/// @notice trasury handler
+	/// @notice Treasury handler address
 	ITreasuryHandler public treasuryHandler;
 
-	/// @notice constructor of WARPED token contract
+	/// @notice Constructor of WARPED token contract
 	/// @dev initialize with tax and treasury handler addresses.
 	/// @param taxHandlerAddress tax handler contract address
 	/// @param treasuryHandlerAddress treasury handler contract address

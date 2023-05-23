@@ -31,11 +31,11 @@ contract WarpedTokenManager is WarpedPoolManager {
 
 	/// @notice WARPED token
 	IERC20 public warpedToken;
-	/// @notice uniswap v2 router address
+	/// @notice Uniswap v2 router address
 	IUniswapV2Router02 public constant UNISWAP_V2_ROUTER =
 		IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
 
-	/// @notice constructor of WARPED token manager
+	/// @notice Constructor of WARPED token manager
 	/// @dev Create TaxHandler, TreasuryHandler, and Token contract
 	/// @param treasuryAddress final tax treasury address
 	/// @param nftContracts array of addresses of NFT contracts to calculate tax rate
@@ -68,7 +68,7 @@ contract WarpedTokenManager is WarpedPoolManager {
 		treasuryHandler.transferOwnership(_msgSender());
 	}
 
-	/// @notice ownable function to create and add liquidity
+	/// @notice Ownable function to create and add liquidity
 	/// @param amountToLiquidity amount of new tokens to add into liquidity
 	function addLiquidity(uint256 amountToLiquidity) external payable onlyOwner {
 		require(

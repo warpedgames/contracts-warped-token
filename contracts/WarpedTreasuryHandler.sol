@@ -30,7 +30,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 
 	IPoolManager private poolManager;
 
-	/// @notice The treasury address.
+	/// @notice The Treasury address.
 	address payable public treasury;
 
 	/// @notice The token that accumulates through taxes. This will be sold for ETH.
@@ -69,7 +69,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		address newTreasuryAddress
 	);
 
-	/// @notice constructor of tax handler contract
+	/// @notice Constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address
 	constructor(IPoolManager _poolManager) {
 		poolManager = _poolManager;
