@@ -20,7 +20,7 @@ import {IPoolManager} from "./interfaces/IPoolManager.sol";
 contract WarpedTaxHandler is ITaxHandler, Ownable {
 	/// @notice NFTs to be used to determine user tax level.
 	IERC721[] public nftContracts;
-	/// @notice bits representing levels of each NFTs: 1,2,4,8
+	/// @notice Bits representing levels of each NFTs: 1,2,4,8
 	mapping(IERC721 => uint8) public nftLevels;
 
 	struct TaxRatePoint {
@@ -34,7 +34,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	bool public taxDisabled;
 	IPoolManager public poolManager;
 
-	/// @notice constructor of tax handler contract
+	/// @notice Constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address
 	/// @param _nftContracts array of addresses of NFT contracts
 	/// @param _levels array of levels of NFT contracts
