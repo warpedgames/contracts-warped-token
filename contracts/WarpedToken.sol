@@ -20,10 +20,10 @@ import {LenientReentrancyGuard} from "./LenientReentrancyGuard.sol";
 /// @notice WARPED token contract
 /// @dev extends standard ERC20 contract
 contract WarpedToken is ERC20, LenientReentrancyGuard {
-	uint8 private constant DECIMALS = 18;
-	uint256 private constant T_TOTAL = 10_000_000_000 * 10 ** DECIMALS;
-	string private constant NAME = unicode"WARPED";
-	string private constant SYMBOL = unicode"WARPED";
+	uint8 public constant DECIMALS = 18;
+	uint256 public constant T_TOTAL = 10_000_000_000 * 10 ** DECIMALS;
+	string public constant NAME = unicode"WARPED";
+	string public constant SYMBOL = unicode"WARPED";
 
 	/// @notice tax handler
 	ITaxHandler public taxHandler;

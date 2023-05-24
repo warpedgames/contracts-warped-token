@@ -1,9 +1,9 @@
 const { ethers } = require("hardhat")
 const { expect } = require("chai")
+const { nftLevels } = require("../config/index")
 const {
 	expectRevert // Assertions for transactions that should fail
 } = require("@openzeppelin/test-helpers")
-const { nftLevels } = require("../config/index")
 
 const goerliAddresses = require("../addresses/goerli.json")
 const addresses = goerliAddresses
@@ -91,6 +91,78 @@ describe("WarpedTokenManager", function () {
 		)
 	})
 
+	it("addExchangePool/removeExchangePool emit events correctly", async function () {
+		const addResult = await this.tokenManager.addExchangePool(this.pool.address)
+		const addResultReceipt = await addResult.wait()
+		expect(
+			addResultReceipt.events.filter(
+				(e) =>
+					e.event === "ExchangePoolAdded" && e.args[0] === this.pool.address
+			).length > 0,
+			"No event for addExchangePool"
+		)
+		const removeResult = await this.tokenManager.removeExchangePool(
+			this.pool.address
+		)
+		const removeResultreceipt = await removeResult.wait()
+		expect(
+			removeResultreceipt.events.filter(
+				(e) =>
+					e.event === "ExchangePoolRemoved" && e.args[0] === this.pool.address
+			).length > 0,
+			"No event for removeExchangePool"
+		)
+	})
+
+	it("addExchangePool/removeExchangePool does not emit events for already added or not added pool", async function () {
+		await this.tokenManager.addExchangePool(this.pool.address)
+		const doubleAddResult = await this.tokenManager.addExchangePool(
+			this.pool.address
+		)
+		const doubleAddResultReceipt = await doubleAddResult.wait()
+		expect(
+			doubleAddResultReceipt.events.length === 0,
+			"Should be no event for double add"
+		)
+		await this.tokenManager.removeExchangePool(this.pool.address)
+		const doubleRemoveResult = await this.tokenManager.removeExchangePool(
+			this.pool.address
+		)
+		const doubleRemoveResultReceipt = await doubleRemoveResult.wait()
+		expect(
+			doubleRemoveResultReceipt.events.length === 0,
+			"Should be no event for double remove"
+		)
+	})
+
+	it("setPrimaryPool revert for forbidden user, non pool address or already primary pool and emit event for happy path", async function () {
+		const _tokenManager = this.tokenManager.connect(this.tester)
+		await expectRevert(
+			_tokenManager.setPrimaryPool(this.pool.address),
+			"Ownable: caller is not the owner"
+		)
+		await this.tokenManager.addExchangePool(this.pool.address)
+		await expectRevert(
+			this.tokenManager.setPrimaryPool(this.tester.address),
+			"Not registered as exchange pool"
+		)
+		const setPoolResult = await this.tokenManager.setPrimaryPool(
+			this.pool.address
+		)
+		const setPoolResultReceipt = await setPoolResult.wait()
+		expect(
+			setPoolResultReceipt.events.filter(
+				(e) =>
+					e.event === "PrimaryPoolUpdated" && e.args[1] === this.pool.address
+			).length > 0,
+			"No event for setPrimaryPool"
+		)
+		await expectRevert(
+			this.tokenManager.setPrimaryPool(this.pool.address),
+			"Already primary pool address"
+		)
+	})
+
 	it("should revert if trying to add liquidity exceeding balance", async function () {
 		const _tokenManager = this.tokenManager.connect(this.owner)
 		const excessAmount = ethers.utils.parseEther("10000000001")
@@ -106,6 +178,21 @@ describe("WarpedTokenManager", function () {
 		await expectRevert(
 			_tokenManager.addLiquidity(amount),
 			"Ownable: caller is not the owner"
+		)
+	})
+
+	it("addLiqduitiy set primaryPool correctly", async function () {
+		const amount = ethers.utils.parseEther("100000000")
+		const ethAmount = ethers.utils.parseEther("10")
+		const addLiquidityResult = await this.tokenManager.addLiquidity(amount, {
+			value: ethAmount
+		})
+		const addLiquidityResultReceipt = await addLiquidityResult.wait()
+		expect(
+			addLiquidityResultReceipt.events.filter(
+				(e) => e.event === "PrimaryPoolUpdated"
+			).length > 0,
+			"No event for PrimaryPoolUpdated"
 		)
 	})
 })

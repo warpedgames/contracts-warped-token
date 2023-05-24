@@ -29,10 +29,10 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	}
 
 	TaxRatePoint[] public taxRates;
-	uint256 private basisTaxRate;
-	uint256 private maxTaxRate = 400;
-	bool private taxDisabled;
-	IPoolManager private poolManager;
+	uint256 public basisTaxRate;
+	uint256 public maxTaxRate = 400;
+	bool public taxDisabled;
+	IPoolManager public poolManager;
 
 	/// @notice constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address

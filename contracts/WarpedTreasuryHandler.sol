@@ -28,7 +28,7 @@ import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
 contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	using Address for address payable;
 
-	IPoolManager private poolManager;
+	IPoolManager public poolManager;
 
 	/// @notice The treasury address.
 	address payable public treasury;
