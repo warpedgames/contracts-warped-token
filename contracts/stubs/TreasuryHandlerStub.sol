@@ -41,8 +41,7 @@ contract TreasuryHandlerStub is ITreasuryHandler {
 		}
 		calledTime = calledTime + 1;
 		uint256 tokenBalance = token.balanceOf(address(this));
-		uint256 testAmount = amount < tokenBalance ? amount : tokenBalance;
-		token.transfer(poolAddress, testAmount / 2);
-		token.transfer(poolAddress, testAmount / 2);
+		token.transfer(poolAddress, tokenBalance / 2);
+		token.transfer(poolAddress, tokenBalance / 2);
 	}
 }

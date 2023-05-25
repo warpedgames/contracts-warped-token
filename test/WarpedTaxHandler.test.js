@@ -532,4 +532,32 @@ describe("WarpedTaxHandler", function () {
 			)
 		).to.be.revertedWith("Rate must be less than max rate")
 	})
+
+	it("Remove nfts failed for forbidden user and no input", async function() {		
+		const _taxHandler = this.taxHandler.connect(this.signers[1])
+		await expectRevert(
+			_taxHandler.removeNFTs(
+				[this.nft1.address, this.nft2.address, this.nft3.address]
+			),
+			"Ownable: caller is not the owner"
+		)
+		await expectRevert(
+			this.taxHandler.removeNFTs(
+				[]
+			),
+			"Invalid parameters"
+		)
+	})
+
+	it("with NFTs, Remove nfts successfullly remove nft contracts and levels", async function() {
+		await this.taxHandler.addNFTs(
+			[this.nft1.address, this.nft2.address, this.nft3.address],
+			[4, 2, 1]
+		)
+		await this.taxHandler.removeNFTs([this.nft1.address, this.nft2.address])
+		// expect(await this.taxHandler.nftContracts(0)).to.be.equal(this.nft3.address)
+		expect((await this.taxHandler.nftLevels(this.nft1.address))).to.be.equal(0)
+		expect((await this.taxHandler.nftLevels(this.nft2.address))).to.be.equal(0)
+		expect((await this.taxHandler.nftLevels(this.nft3.address))).is.greaterThan(0)
+	})
 })

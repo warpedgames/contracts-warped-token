@@ -113,7 +113,6 @@ describe("Integration Test 2", function () {
 		const _token = this.token.connect(this.tester)
 		await _token.approve(_router.address, tokenToSell)
 		const _curBalance = await _token.balanceOf(this.treasuryHandler.address)
-		console.log("current treasury: ", _curBalance)
 		await _router.swapExactTokensForETHSupportingFeeOnTransferTokens(
 			tokenToSell,
 			0,
