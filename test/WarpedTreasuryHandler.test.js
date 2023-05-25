@@ -23,7 +23,7 @@ describe("WarpedTreasuryHandler", function () {
 		)
 		this.PoolManager = await ethers.getContractFactory("WarpedPoolManager")
 		this.ERC20Stub = await ethers.getContractFactory("ERC20Stub")
-		this.totalSupply = ethers.utils.parseEther("1000000000")
+		this.totalSupply = ethers.utils.parseEther("10000000000")
 		this.signers = await ethers.getSigners()
 		this.liquidityBasisPoint = BN.from(2000)
 		this.priceImpactBasisPoint = BN.from(500)
@@ -60,7 +60,7 @@ describe("WarpedTreasuryHandler", function () {
 			)
 			const wethAddress = await router.WETH()
 			await factory.createPair(this.token.address, wethAddress)
-			const tokenToLiquidity = ethers.utils.parseEther("1000000")
+			const tokenToLiquidity = ethers.utils.parseEther("1000000000")
 			const ethToLiquidity = ethers.utils.parseEther("1000")
 			const curTime = await getCurrentTime()
 			// 1k token price in eth = 1 eth
@@ -76,9 +76,10 @@ describe("WarpedTreasuryHandler", function () {
 					value: ethToLiquidity
 				}
 			)
-			const pairAddress = await factory.getPair(this.token.address, wethAddress)
-			await this.poolManager.addExchangePool(pairAddress)
-			await this.poolManager.setPrimaryPool(pairAddress)
+			this.pairAddress = await factory.getPair(this.token.address, wethAddress)
+			// this.pairAddress = this.signers[2].address
+			await this.poolManager.addExchangePool(this.pairAddress)
+			await this.poolManager.setPrimaryPool(this.pairAddress)
 			this.router = router
 			this.wethAddress = wethAddress
 		}
@@ -242,7 +243,7 @@ describe("WarpedTreasuryHandler", function () {
 		).to.changeTokenBalance(this.token, this.treasuryHandler, BN.from(0))
 	})
 
-	it.skip("after init, do nothing if 'to' address is not pool address or from is zero", async function () {
+	it("after pool added, after init, do nothing if 'to' address is not pool address or from is zero", async function () {
 		const tokenAmount = ethers.utils.parseEther("100000")
 		await this.token.transfer(this.treasuryHandler.address, tokenAmount)
 
@@ -265,7 +266,7 @@ describe("WarpedTreasuryHandler", function () {
 		).to.changeTokenBalance(this.token, this.treasuryHandler, BN.from(0))
 	})
 
-	it.skip("after pool added, after init, do nothing if 'to' address is not pool address", async function () {
+	it("after pool added, after init, do nothing if 'to' address is not pool address", async function () {
 		const tokenAmount = ethers.utils.parseEther("100000")
 		await this.token.transfer(this.treasuryHandler.address, tokenAmount)
 
@@ -279,7 +280,7 @@ describe("WarpedTreasuryHandler", function () {
 		).to.changeTokenBalance(this.token, this.treasuryHandler, BN.from(0))
 	})
 
-	it.skip("after pool added, after init, processTreasury do nothing if balance is less than tax swap", async function () {
+	it("after pool added, after init, processTreasury do nothing if balance is less than tax swap", async function () {
 		const tokenAmount = ethers.utils.parseEther("1000")
 		await this.token.transfer(this.treasuryHandler.address, tokenAmount)
 
@@ -294,65 +295,55 @@ describe("WarpedTreasuryHandler", function () {
 		).to.changeTokenBalance(this.token, this.treasuryHandler, BN.from(0))
 	})
 
-	it.skip("after pool added, after init, processTreasury work correctly(balance:11k, amount: 1k)", async function () {
-		const tokenAmount = ethers.utils.parseEther("11000")
+	it("after pool added, after init, processTreasury work correctly(balance:13m, amount: 1m)", async function () {
+		const tokenAmount = ethers.utils.parseEther("13000000")
 		// send 11k into treasury contract
 		await this.token.transfer(this.treasuryHandler.address, tokenAmount)
 		const primaryPool = await this.poolManager.primaryPool()
-		const tokenPrices = await this.router.getAmountsOut(
-			ethers.utils.parseEther("1000"),
-			[this.token.address, this.wethAddress]
-		)
-		const tokenPrice = tokenPrices[1]
-		// 1k tokens -> 0.0k tokens for liqiduity token, 1k tokens -> 1 eth, 0 eth -> liqiidity eth, 1 eth -> earned
-		const ethEarned = tokenPrice
-		const beforeBalance = await ethers.provider.getBalance(
-			this.signers[1].address
-		)
 		await this.token.testTreausryHandler(
 			this.treasuryHandler.address,
 			this.signers[0].address,
 			primaryPool,
-			ethers.utils.parseEther("1000")
+			ethers.utils.parseEther("1000000")
 		)
-		const afterBalance = await ethers.provider.getBalance(
-			this.signers[1].address
-		)
-		// compare only 3 decimals as there are slight change in price after swap inside contract function
-		// expect(convert(afterBalance.sub(beforeBalance))).to.equal(convert(ethEarned));
-		expect(afterBalance.sub(beforeBalance).mul(1000)).to.closeTo(
-			ethEarned.mul(1000),
-			5
-		)
-		// and now the balance of treasury handler is 10k
 		expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(
-			ethers.utils.parseEther("10000")
+			ethers.utils.parseEther("12000000")
+		)
+		await this.treasuryHandler.setLiquidityBasisPoints(2000);
+		await this.token.testTreausryHandler(
+			this.treasuryHandler.address,
+			this.signers[0].address,
+			primaryPool,
+			ethers.utils.parseEther("1000000")
+		)
+
+		await this.treasuryHandler.setLiquidityBasisPoints(10000);
+		await this.token.testTreausryHandler(
+			this.treasuryHandler.address,
+			this.signers[0].address,
+			primaryPool,
+			ethers.utils.parseEther("1000000")
 		)
 	})
 
-	it.skip("after pool added, after init, processTreasury work correctly(balance:55k, amount: 52k, taxswap: 51k)", async function () {
+	it("after pool added, after init, updateTaxSwap and processTreasury work correctly", async function () {		
+		const primaryPool = await this.poolManager.primaryPool()
+		await this.token.transfer(this.treasuryHandler.address, ethers.utils.parseEther("60000000")) // balance is 60004000
+		await this.treasuryHandler.updateTaxSwap(ethers.utils.parseEther("55000000")) // 55m > 50m(maxPriceImpact)
+		await this.token.testTreausryHandler(
+			this.treasuryHandler.address,
+			this.signers[0].address,
+			primaryPool,
+			ethers.utils.parseEther("52000000") //52m > 50m(maxPriceImpact)
+		)
+		expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(
+			ethers.utils.parseEther("10000000")
+		)
+
 		const tokenAmount = ethers.utils.parseEther("55000")
 		// send 55k into treasury contract
 		await this.token.transfer(this.treasuryHandler.address, tokenAmount)
 
-		const primaryPool = await this.poolManager.primaryPool()
-		// get price for 50k token swap
-		// const tokenPrices = await this.router.getAmountsOut(
-		// 	ethers.utils.parseEther("50000"),
-		// 	[this.token.address, this.wethAddress]
-		// )
-		// const tokenPrice = tokenPrices[1]
-
-		// 50k tokens -> 0.1k tokens for liqiduity token, 0.9k tokens -> 0.9 eth, 0.18 eth -> liqiidity eth, 0.72 eth -> earned
-		// const ethEarned = tokenPrice
-		// 	.mul(BN.from(90))
-		// 	.div(BN.from(100))
-		// 	.sub(tokenPrice.div(BN.from(10)))
-		// const beforeBalance = await ethers.provider.getBalance(
-		// 	this.signers[1].address
-		// )
-
-		// update tax swap as 51k
 		await this.treasuryHandler.updateTaxSwap(ethers.utils.parseEther("51000"))
 
 		await this.token.testTreausryHandler(
@@ -361,12 +352,8 @@ describe("WarpedTreasuryHandler", function () {
 			primaryPool,
 			ethers.utils.parseEther("52000")
 		)
-
-		// compare only 3 decimals as there are slight change in price after swap inside contract function
-		// expect(convert(afterBalance.sub(beforeBalance))).to.equal(convert(ethEarned));
-		// and now the balance of treasury handler is 10k
 		expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(
-			ethers.utils.parseEther("5000")
+			ethers.utils.parseEther("10004000")
 		)
 	})
 })

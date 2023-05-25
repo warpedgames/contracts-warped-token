@@ -63,7 +63,7 @@ describe("Integration Test 2", function () {
 		this.manager = await this.WarpedTokenManager.deploy(
 			this.taxWallet.address,
 			nftContracts,
-			nftLevels
+			[...nftLevels, 1, 1]
 		)
 		await this.manager.deployed()
 
@@ -88,7 +88,7 @@ describe("Integration Test 2", function () {
 		this.wethAddress = await this.router.WETH()
 	})
 
-	it.skip(".01 ETH buy/sell - Other NFTs on account", async function () {
+	it(".01 ETH buy/sell - Other NFTs on account", async function () {
 		// mint pal to user
 		await this.otherNft1.mint(this.user.address)
 		await this.otherNft2.mint(this.user.address)
@@ -126,7 +126,7 @@ describe("Integration Test 2", function () {
 		) // expect 3% tax
 	})
 
-	it.skip(".01 ETH buy/sell - 1 PAL & 1 PN - should only be treated as PN or PAL, no combo tax rate", async function () {
+	it(".01 ETH buy/sell - 1 PAL & 1 PN - should only be treated as PN or PAL, no combo tax rate", async function () {
 		// mint pal to user
 		await this.palNft.mint(this.user.address)
 		await this.pnNft.mint(this.user.address)
@@ -150,7 +150,7 @@ describe("Integration Test 2", function () {
 		) // expect 3% tax
 	})
 
-	it.skip(".01 ETH buy/sell - 1 SATE - Expected Result: 1% tax", async function () {
+	it(".01 ETH buy/sell - 1 SATE - Expected Result: 1% tax", async function () {
 		// mint pal to user
 		await this.sateNft.mint(this.user.address)
 		// Buy token for 0.01 eth
@@ -173,7 +173,7 @@ describe("Integration Test 2", function () {
 		) // expect 2% tax
 	})
 
-	it.skip("Test sending to other address - Expected Result: No Tax", async function () {
+	it("Test sending to other address - Expected Result: No Tax", async function () {
 		// Buy token for 0.01 eth
 		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()

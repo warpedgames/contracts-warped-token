@@ -68,7 +68,7 @@ describe("Integration Test 1", function () {
 		this.manager = await this.WarpedTokenManager.deploy(
 			this.taxWallet.address,
 			nftContracts,
-			nftLevels
+			[...nftLevels, 1, 1]
 		)
 		await this.manager.deployed()
 
@@ -93,7 +93,7 @@ describe("Integration Test 1", function () {
 		this.wethAddress = await this.router.WETH()
 	})
 
-	it.skip(".01 ETH buy - no NFTs - Expected Result: 4% tax into treasury handler address", async function () {
+	it(".01 ETH buy - no NFTs - Expected Result: 4% tax into treasury handler address", async function () {
 		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
 		await this.router.swapExactETHForTokens(
@@ -110,7 +110,7 @@ describe("Integration Test 1", function () {
 		expect(taxAmount).to.equal(totalAmount.mul(4).div(100))
 	})
 
-	it.skip(".01 ETH sell - no NFTs - Expected Result: 4% tax into treasury handler address", async function () {
+	it(".01 ETH sell - no NFTs - Expected Result: 4% tax into treasury handler address", async function () {
 		// Buy token for 0.01 eth
 		const ethToBuy = ethers.utils.parseEther("0.01")
 		const curTime = await getCurrentTime()
@@ -139,7 +139,7 @@ describe("Integration Test 1", function () {
 		)
 	})
 
-	it.skip(".01 ETH buy/sell - 1 PAL - Expected Result: 3% tax", async function () {
+	it(".01 ETH buy/sell - 1 PAL - Expected Result: 3% tax", async function () {
 		// mint pal to user
 		await this.palNft.mint(this.user.address)
 		// Buy token for 0.01 eth
@@ -179,7 +179,7 @@ describe("Integration Test 1", function () {
 		)
 	})
 
-	it.skip(".01 ETH buy/sell - 1 PN - Expected Result: 3% tax", async function () {
+	it(".01 ETH buy/sell - 1 PN - Expected Result: 3% tax", async function () {
 		// mint pal to user
 		await this.pnNft.mint(this.user.address)
 		// Buy token for 0.01 eth
@@ -202,7 +202,7 @@ describe("Integration Test 1", function () {
 		) // expect 3% tax
 	})
 
-	it.skip(".01 ETH buy/sell - 1 LMvX - Expected Result: 3% tax", async function () {
+	it(".01 ETH buy/sell - 1 LMvX - Expected Result: 3% tax", async function () {
 		// mint pal to user
 		await this.lmvxNft.mint(this.user.address)
 		// Buy token for 0.01 eth
@@ -225,7 +225,7 @@ describe("Integration Test 1", function () {
 		) // expect 3% tax
 	})
 
-	it.skip(".01 ETH buy/sell - 1 LM / 1 PN - Expected Result: 2% tax", async function () {
+	it(".01 ETH buy/sell - 1 LM / 1 PN - Expected Result: 2% tax", async function () {
 		// mint pal to user
 		await this.lmvxNft.mint(this.user.address)
 		await this.pnNft.mint(this.user.address)
@@ -249,7 +249,7 @@ describe("Integration Test 1", function () {
 		) // expect 2% tax
 	})
 
-	it.skip(".01 ETH buy/sell - 1 LM / 1 PAL - Expected Result: 2% tax", async function () {
+	it(".01 ETH buy/sell - 1 LM / 1 PAL - Expected Result: 2% tax", async function () {
 		// mint pal to user
 		await this.lmvxNft.mint(this.user.address)
 		await this.pnNft.mint(this.user.address)
@@ -273,7 +273,7 @@ describe("Integration Test 1", function () {
 		) // expect 2% tax
 	})
 
-	it.skip(".01 ETH buy/sell - 1 LM / 1 PAL / 1 PN - Expected Result: 1% tax", async function () {
+	it(".01 ETH buy/sell - 1 LM / 1 PAL / 1 PN - Expected Result: 1% tax", async function () {
 		// mint pal to user
 		await this.lmvxNft.mint(this.user.address)
 		await this.palNft.mint(this.user.address)
