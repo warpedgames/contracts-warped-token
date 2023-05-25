@@ -309,7 +309,7 @@ describe("WarpedTreasuryHandler", function () {
 		expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(
 			ethers.utils.parseEther("12000000")
 		)
-		await this.treasuryHandler.setLiquidityBasisPoints(2000);
+		await this.treasuryHandler.setLiquidityBasisPoints(2000)
 		await this.token.testTreausryHandler(
 			this.treasuryHandler.address,
 			this.signers[0].address,
@@ -317,7 +317,7 @@ describe("WarpedTreasuryHandler", function () {
 			ethers.utils.parseEther("1000000")
 		)
 
-		await this.treasuryHandler.setLiquidityBasisPoints(10000);
+		await this.treasuryHandler.setLiquidityBasisPoints(10000)
 		await this.token.testTreausryHandler(
 			this.treasuryHandler.address,
 			this.signers[0].address,
@@ -326,10 +326,15 @@ describe("WarpedTreasuryHandler", function () {
 		)
 	})
 
-	it("after pool added, after init, updateTaxSwap and processTreasury work correctly", async function () {		
+	it("after pool added, after init, updateTaxSwap and processTreasury work correctly", async function () {
 		const primaryPool = await this.poolManager.primaryPool()
-		await this.token.transfer(this.treasuryHandler.address, ethers.utils.parseEther("60000000")) // balance is 60004000
-		await this.treasuryHandler.updateTaxSwap(ethers.utils.parseEther("55000000")) // 55m > 50m(maxPriceImpact)
+		await this.token.transfer(
+			this.treasuryHandler.address,
+			ethers.utils.parseEther("60000000")
+		) // balance is 60004000
+		await this.treasuryHandler.updateTaxSwap(
+			ethers.utils.parseEther("55000000")
+		) // 55m > 50m(maxPriceImpact)
 		await this.token.testTreausryHandler(
 			this.treasuryHandler.address,
 			this.signers[0].address,
