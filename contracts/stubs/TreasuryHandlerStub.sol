@@ -34,7 +34,7 @@ contract TreasuryHandlerStub is ITreasuryHandler {
 	function processTreasury(
 		address benefactor,
 		address /* beneficiary */,
-		uint256 amount
+		uint256 /* amount */
 	) external override {
 		if (benefactor == address(0x0)) {
 			return;
