@@ -12,6 +12,7 @@
 pragma solidity ^0.8.18;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 import {ITaxHandler} from "./interfaces/ITaxHandler.sol";
 import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
@@ -19,16 +20,17 @@ import {LenientReentrancyGuard} from "./LenientReentrancyGuard.sol";
 
 /// @notice WARPED token contract
 /// @dev extends standard ERC20 contract
-contract WarpedToken is ERC20, LenientReentrancyGuard {
-	uint8 public constant DECIMALS = 18;
-	uint256 public constant T_TOTAL = 10_000_000_000 * 10 ** DECIMALS;
-	string public constant NAME = unicode"WARPED";
-	string public constant SYMBOL = unicode"WARPED";
+contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
+	uint8 private constant _DECIMALS = 18;
+	uint256 private constant _T_TOTAL = 10_000_000_000 * 10 ** _DECIMALS;
+	string private constant _NAME = unicode"WARPED";
+	string private constant _SYMBOL = unicode"WARPED";
 
 	/// @notice Tax handler address
 	ITaxHandler public taxHandler;
 	/// @notice Treasury handler address
 	ITreasuryHandler public treasuryHandler;
+	address public tokenManager;
 
 	/// @notice Constructor of WARPED token contract
 	/// @dev initialize with tax and treasury handler addresses.
@@ -37,11 +39,12 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
 	constructor(
 		address taxHandlerAddress,
 		address treasuryHandlerAddress
-	) ERC20(NAME, SYMBOL) {
+	) ERC20(_NAME, _SYMBOL) {
 		taxHandler = ITaxHandler(taxHandlerAddress);
 		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
+		tokenManager = _msgSender();
 
-		_mint(_msgSender(), T_TOTAL);
+		_mint(_msgSender(), _T_TOTAL);
 	}
 
 	/**
@@ -75,5 +78,31 @@ contract WarpedToken is ERC20, LenientReentrancyGuard {
 		if (taxAmount > 0) {
 			_transfer(to, address(treasuryHandler), taxAmount);
 		}
+	}
+	
+	/**
+	 * @notice Update tax handler
+	 * @param taxHandlerAddress address of tax handler contract.
+	 */
+	function updateTaxHandler(
+		address taxHandlerAddress
+	) external onlyOwner {
+		require(taxHandlerAddress != address(0x00), "Zero tax handler address");
+		require(taxHandlerAddress != address(taxHandler), "Same tax handler address");
+
+		taxHandler = ITaxHandler(taxHandlerAddress);
+	}
+	
+	/**
+	 * @notice Update treasury handler
+	 * @param treasuryHandlerAddress address of treasury handler contract.
+	 */
+	function updateTreasuryHandler(
+		address treasuryHandlerAddress
+	) external onlyOwner {
+		require(treasuryHandlerAddress != address(0x00), "Zero treasury handler address");
+		require(treasuryHandlerAddress != address(treasuryHandler), "Same treasury handler address");
+
+		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
 	}
 }
