@@ -56,19 +56,20 @@ contract WarpedTokenManager is WarpedPoolManager {
 		);
 
 		// 2. Create token contract and initilize treasury handler
-		warpedToken = new WarpedToken(
+		WarpedToken tokenContract = new WarpedToken(
 			address(taxHandler),
 			address(treasuryHandler)
 		);
 		// Initialize treasury handler with created token contract
-		treasuryHandler.initialize(treasuryAddress, address(warpedToken));
+		treasuryHandler.initialize(treasuryAddress, address(tokenContract));
 
 		// 3. Transfer ownership of tax and transfer handlers into msgSender
 		taxHandler.transferOwnership(_msgSender());
 		treasuryHandler.transferOwnership(_msgSender());
 
 		// 4. Transfer ownership of token contract into msgSender
-		warpedToken.transferOwnership(_msgSender());
+		tokenContract.transferOwnership(_msgSender());
+		warpedToken = IERC20(tokenContract);
 	}
 
 	/// @notice Ownable function to create and add liquidity

@@ -1,5 +1,9 @@
 const { ethers } = require("hardhat")
 const { expect } = require("chai")
+const { addresses } = require("../config")
+const {
+	expectRevert // Assertions for transactions that should fail
+} = require("@openzeppelin/test-helpers")
 
 const BN = ethers.BigNumber
 
@@ -10,7 +14,7 @@ describe("WarpedToken", function () {
 		this.TreasuryHandlerStub = await ethers.getContractFactory(
 			"TreasuryHandlerStub"
 		)
-		const [owner, user, tester, pool, vault, warpedTreasury] =
+		const [owner, user, tester, pool, vault, warpedTreasury, testAccount] =
 			await ethers.getSigners()
 		this.owner = owner
 		this.user = user
@@ -18,6 +22,7 @@ describe("WarpedToken", function () {
 		this.pool = pool
 		this.vault = vault
 		this.warpedTreasury = warpedTreasury
+		this.testAddress = testAccount.address
 	})
 
 	beforeEach(async function () {
@@ -63,5 +68,46 @@ describe("WarpedToken", function () {
 			ethers.utils.parseEther("5000")
 		)
 		expect(await this.treasuryHandler.calledTime()).to.equal(BN.from(1))
+	})
+
+	it("updateTaxHandler and updateTreasuryHandler reverts for forbidden user", async function () {
+		const _token = this.token.connect(this.tester)
+		await expectRevert(
+			_token.updateTaxHandler(this.testAddress),
+			"Ownable: caller is not the owner"
+		)
+		
+		await expectRevert(
+			_token.updateTreasuryHandler(this.testAddress),
+			"Ownable: caller is not the owner"
+		)
+	})
+
+	it("updateTaxHandler and updateTreasuryHandler reverts for invalid inputs", async function () {
+		await expectRevert(
+			this.token.updateTaxHandler(this.taxHandler.address),
+			"Same tax handler address"
+		)
+		await expectRevert(
+			this.token.updateTaxHandler(addresses.NULL_ADDRESS),
+			"Zero tax handler address"
+		)
+		
+		await expectRevert(
+			this.token.updateTreasuryHandler(this.treasuryHandler.address),
+			"Same treasury handler address"
+		)
+		await expectRevert(
+			this.token.updateTreasuryHandler(addresses.NULL_ADDRESS),
+			"Zero treasury handler address"
+		)
+	})
+
+	it("updateTaxHandler and updateTreasuryHandler updates handlers successfully", async function () {
+		await this.token.updateTaxHandler(this.testAddress);
+		expect(await this.token.taxHandler()).to.equal(this.testAddress);
+		
+		await this.token.updateTreasuryHandler(this.testAddress);
+		expect(await this.token.treasuryHandler()).to.equal(this.testAddress);
 	})
 })
