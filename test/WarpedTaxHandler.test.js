@@ -13,6 +13,7 @@ describe("WarpedTaxHandler", function () {
 		this.WarpedTaxHandler = await ethers.getContractFactory("WarpedTaxHandler")
 		this.PoolManager = await ethers.getContractFactory("WarpedPoolManager")
 		this.ERC721 = await ethers.getContractFactory("ERC721Stub")
+		this.ERC1155 = await ethers.getContractFactory("ERC1155Stub")
 		this.textAmount = BN.from(400)
 		this.percentDecimal = BN.from(10000)
 		this.highTaxRate = BN.from(400)
@@ -42,9 +43,11 @@ describe("WarpedTaxHandler", function () {
 			this.nft1 = await this.ERC721.deploy()
 			this.nft2 = await this.ERC721.deploy()
 			this.nft3 = await this.ERC721.deploy()
+			this.erc1155 = await this.ERC1155.deploy()
 			await this.nft1.deployed()
 			await this.nft2.deployed()
 			await this.nft3.deployed()
+			await this.erc1155.deployed()
 		}
 	})
 
@@ -555,5 +558,31 @@ describe("WarpedTaxHandler", function () {
 		expect(await this.taxHandler.nftLevels(this.nft1.address)).to.be.equal(0)
 		expect(await this.taxHandler.nftLevels(this.nft2.address)).to.be.equal(0)
 		expect(await this.taxHandler.nftLevels(this.nft3.address)).is.greaterThan(0)
+	})
+
+	it("with NFTs, addNFTs revert for non-erc721 contract", async function () {
+		await expectRevert(
+			this.taxHandler.addNFTs(
+				[this.erc1155.address],
+				[4]
+			),
+			"IERC721 not implemented"
+		)
+		// test contract address but not implement IERC165
+		await expectRevert(
+			this.taxHandler.addNFTs(
+				[this.taxHandler.address],
+				[4]
+			),
+			"function selector was not recognized and there's no fallback function"
+		)
+		// test non-contract address
+		await expectRevert(
+			this.taxHandler.addNFTs(
+				[this.signers[2].address],
+				[4]
+			),
+			"function returned an unexpected amount of data"
+		)
 	})
 })

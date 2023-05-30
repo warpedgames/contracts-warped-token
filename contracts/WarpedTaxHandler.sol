@@ -13,6 +13,7 @@ pragma solidity ^0.8.18;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {ITaxHandler} from "./interfaces/ITaxHandler.sol";
 import {IPoolManager} from "./interfaces/IPoolManager.sol";
@@ -214,6 +215,8 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		require(contracts.length == levels.length, "Invalid parameters");
 
 		for (uint8 i = 0; i < contracts.length; i++) {
+			require(IERC165(contracts[i]).supportsInterface(type(IERC721).interfaceId), "IERC721 not implemented");
+
 			nftContracts.push(IERC721(contracts[i]));
 			nftLevels[IERC721(contracts[i])] = levels[i];
 		}
