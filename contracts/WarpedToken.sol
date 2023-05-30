@@ -79,20 +79,21 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 			_transfer(to, address(treasuryHandler), taxAmount);
 		}
 	}
-	
+
 	/**
 	 * @notice Update tax handler
 	 * @param taxHandlerAddress address of tax handler contract.
 	 */
-	function updateTaxHandler(
-		address taxHandlerAddress
-	) external onlyOwner {
+	function updateTaxHandler(address taxHandlerAddress) external onlyOwner {
 		require(taxHandlerAddress != address(0x00), "Zero tax handler address");
-		require(taxHandlerAddress != address(taxHandler), "Same tax handler address");
+		require(
+			taxHandlerAddress != address(taxHandler),
+			"Same tax handler address"
+		);
 
 		taxHandler = ITaxHandler(taxHandlerAddress);
 	}
-	
+
 	/**
 	 * @notice Update treasury handler
 	 * @param treasuryHandlerAddress address of treasury handler contract.
@@ -100,8 +101,14 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 	function updateTreasuryHandler(
 		address treasuryHandlerAddress
 	) external onlyOwner {
-		require(treasuryHandlerAddress != address(0x00), "Zero treasury handler address");
-		require(treasuryHandlerAddress != address(treasuryHandler), "Same treasury handler address");
+		require(
+			treasuryHandlerAddress != address(0x00),
+			"Zero treasury handler address"
+		);
+		require(
+			treasuryHandlerAddress != address(treasuryHandler),
+			"Same treasury handler address"
+		);
 
 		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
 	}

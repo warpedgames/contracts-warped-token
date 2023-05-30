@@ -150,9 +150,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	 * @notice Remove nft level by address.
 	 * @param contracts NFT contract addresses.
 	 */
-	function removeNFTs(
-		address[] memory contracts
-	) external onlyOwner {
+	function removeNFTs(address[] memory contracts) external onlyOwner {
 		require(contracts.length > 0, "Invalid parameters");
 		for (uint8 i = 0; i < contracts.length; i++) {
 			for (uint8 j = 0; j < nftContracts.length; j++) {

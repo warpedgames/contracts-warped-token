@@ -66,7 +66,7 @@ contract WarpedTokenManager is WarpedPoolManager {
 		// 3. Transfer ownership of tax and transfer handlers into msgSender
 		taxHandler.transferOwnership(_msgSender());
 		treasuryHandler.transferOwnership(_msgSender());
-		
+
 		// 4. Transfer ownership of token contract into msgSender
 		warpedToken.transferOwnership(_msgSender());
 	}
