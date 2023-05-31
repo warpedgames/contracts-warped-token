@@ -562,26 +562,17 @@ describe("WarpedTaxHandler", function () {
 
 	it("with NFTs, addNFTs revert for non-erc721 contract", async function () {
 		await expectRevert(
-			this.taxHandler.addNFTs(
-				[this.erc1155.address],
-				[4]
-			),
+			this.taxHandler.addNFTs([this.erc1155.address], [4]),
 			"IERC721 not implemented"
 		)
 		// test contract address but not implement IERC165
 		await expectRevert(
-			this.taxHandler.addNFTs(
-				[this.taxHandler.address],
-				[4]
-			),
+			this.taxHandler.addNFTs([this.taxHandler.address], [4]),
 			"function selector was not recognized and there's no fallback function"
 		)
 		// test non-contract address
 		await expectRevert(
-			this.taxHandler.addNFTs(
-				[this.signers[2].address],
-				[4]
-			),
+			this.taxHandler.addNFTs([this.signers[2].address], [4]),
 			"function returned an unexpected amount of data"
 		)
 	})
