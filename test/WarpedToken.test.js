@@ -76,7 +76,7 @@ describe("WarpedToken", function () {
 			_token.updateTaxHandler(this.testAddress),
 			"Ownable: caller is not the owner"
 		)
-		
+
 		await expectRevert(
 			_token.updateTreasuryHandler(this.testAddress),
 			"Ownable: caller is not the owner"
@@ -92,7 +92,7 @@ describe("WarpedToken", function () {
 			this.token.updateTaxHandler(addresses.NULL_ADDRESS),
 			"Zero tax handler address"
 		)
-		
+
 		await expectRevert(
 			this.token.updateTreasuryHandler(this.treasuryHandler.address),
 			"Same treasury handler address"
@@ -104,10 +104,10 @@ describe("WarpedToken", function () {
 	})
 
 	it("updateTaxHandler and updateTreasuryHandler updates handlers successfully", async function () {
-		await this.token.updateTaxHandler(this.testAddress);
-		expect(await this.token.taxHandler()).to.equal(this.testAddress);
-		
-		await this.token.updateTreasuryHandler(this.testAddress);
-		expect(await this.token.treasuryHandler()).to.equal(this.testAddress);
+		await this.token.updateTaxHandler(this.testAddress)
+		expect(await this.token.taxHandler()).to.equal(this.testAddress)
+
+		await this.token.updateTreasuryHandler(this.testAddress)
+		expect(await this.token.treasuryHandler()).to.equal(this.testAddress)
 	})
 })
