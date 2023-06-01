@@ -134,7 +134,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	}
 
 	/**
-	 * @notice Add addresses and their levels of NFTs.
+	 * @notice Add addresses and their levels of NFTs(only ERC721).
 	 * @dev For future NFT launch, allow to add new NFT addresses and levels.
 	 * @param contracts NFT contract addresses.
 	 * @param levels NFT contract levels to be used for user level calculation.
