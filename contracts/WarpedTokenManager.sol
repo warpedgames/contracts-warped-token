@@ -64,25 +64,31 @@ contract WarpedTokenManager is WarpedPoolManager {
 		treasuryHandler.initialize(treasuryAddress, address(tokenContract));
 
 		// 3. Transfer ownership of tax and transfer handlers into msgSender
-		taxHandler.transferOwnership(_msgSender());
-		treasuryHandler.transferOwnership(_msgSender());
+		// taxHandler.transferOwnership(_msgSender());
+		// treasuryHandler.transferOwnership(_msgSender());
 
 		// 4. Transfer ownership of token contract into msgSender
-		tokenContract.transferOwnership(_msgSender());
+		// tokenContract.transferOwnership(_msgSender());
 		warpedToken = IERC20(tokenContract);
+
+		// 5. Transfer total supply into deployer wallet
+		tokenContract.transfer(_msgSender(), tokenContract.balanceOf(address(this)));
 	}
 
 	/// @notice Ownable function to create and add liquidity
 	/// @param amountToLiquidity amount of new tokens to add into liquidity
 	function addLiquidity(uint256 amountToLiquidity) external payable onlyOwner {
-		require(
-			amountToLiquidity <= warpedToken.balanceOf(address(this)),
-			"Amount exceed balance"
-		);
+		// 1. Receive token from deployer wallet
+		warpedToken.transferFrom(_msgSender(), address(this), amountToLiquidity);
 
+		// 2. Approve token to use by uniswap router
 		warpedToken.approve(address(UNISWAP_V2_ROUTER), amountToLiquidity);
+
+		// 3. Create uniswap pair
 		address uniswapV2Pair = IUniswapV2Factory(UNISWAP_V2_ROUTER.factory())
 			.createPair(address(warpedToken), UNISWAP_V2_ROUTER.WETH());
+		
+		// 4. Add liquidity
 		UNISWAP_V2_ROUTER.addLiquidityETH{value: address(this).balance}(
 			address(warpedToken),
 			amountToLiquidity,
@@ -91,8 +97,11 @@ contract WarpedTokenManager is WarpedPoolManager {
 			owner(),
 			block.timestamp
 		);
-		IERC20(uniswapV2Pair).approve(address(UNISWAP_V2_ROUTER), type(uint).max);
 
+		// 5. Send LP tokens to deployer wallet
+		IERC20(uniswapV2Pair).transfer(_msgSender(), IERC20(uniswapV2Pair).balanceOf(address(this)));
+
+		// 6. Add exchange pool and set primary pool
 		_exchangePools.add(address(uniswapV2Pair));
 		primaryPool = address(uniswapV2Pair);
 	}
