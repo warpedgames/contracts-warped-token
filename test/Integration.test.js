@@ -72,26 +72,26 @@ describe("Integration Test 1", function () {
 		)
 		await this.manager.deployed()
 
-		// this.token = await this.WarpedToken.attach(await this.manager.warpedToken())
-		// this.treasuryHandler = await this.WarpedTreasuryHandler.attach(
-		// 	await this.token.treasuryHandler()
-		// )
-		// this.taxHandler = await this.WarpedTaxHandler.attach(
-		// 	await this.token.taxHandler()
-		// )
+		this.token = await this.WarpedToken.attach(await this.manager.warpedToken())
+		this.treasuryHandler = await this.WarpedTreasuryHandler.attach(
+			await this.token.treasuryHandler()
+		)
+		this.taxHandler = await this.WarpedTaxHandler.attach(
+			await this.token.taxHandler()
+		)
 
-		// const tokenToLiquidity = ethers.utils.parseEther("500000000")
-		// const ethToLiquidity = ethers.utils.parseEther("1000")
-		// await this.token.approve(this.manager.address, tokenToLiquidity)
-		// await this.manager.addLiquidity(tokenToLiquidity, {
-		// 	value: ethToLiquidity
-		// })
+		const tokenToLiquidity = ethers.utils.parseEther("500000000")
+		const ethToLiquidity = ethers.utils.parseEther("1000")
+		await this.token.approve(this.manager.address, tokenToLiquidity)
+		await this.manager.addLiquidity(tokenToLiquidity, {
+			value: ethToLiquidity
+		})
 
-		// this.router = await ethers.getContractAt(
-		// 	uniswapRouterAbi,
-		// 	"0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
-		// )
-		// this.wethAddress = await this.router.WETH()
+		this.router = await ethers.getContractAt(
+			uniswapRouterAbi,
+			"0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+		)
+		this.wethAddress = await this.router.WETH()
 	})
 
 	it(".01 ETH buy - no NFTs - Expected Result: 4% tax into treasury handler address", async function () {

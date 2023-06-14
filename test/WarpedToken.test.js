@@ -31,6 +31,7 @@ describe("WarpedToken", function () {
 		this.taxHandler = await this.TaxHandlerStub.deploy()
 		await this.taxHandler.deployed()
 		this.token = await this.WarpedToken.deploy(
+			this.owner.address,
 			this.taxHandler.address,
 			this.treasuryHandler.address
 		)
@@ -46,6 +47,9 @@ describe("WarpedToken", function () {
 			BN.from(0)
 		)
 		expect(await this.token.totalSupply()).to.equal(
+			ethers.utils.parseEther("10000000000")
+		)
+		expect(await this.token.balanceOf(this.owner.address)).to.equal(
 			ethers.utils.parseEther("10000000000")
 		)
 	})

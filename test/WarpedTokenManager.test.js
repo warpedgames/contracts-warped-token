@@ -168,7 +168,7 @@ describe("WarpedTokenManager", function () {
 		const excessAmount = ethers.utils.parseEther("1000000000")
 		await expectRevert(
 			_tokenManager.addLiquidity(excessAmount),
-			"Amount exceed balance"
+			"ERC20: insufficient allowance"
 		)
 	})
 
@@ -181,7 +181,7 @@ describe("WarpedTokenManager", function () {
 		)
 	})
 
-	it("addLiqduitiy set primaryPool correctly", async function () {
+	it("addLiquidity set primaryPool correctly", async function () {
 		const amount = ethers.utils.parseEther("100000000")
 		const ethAmount = ethers.utils.parseEther("10")
 		await this.token.approve(this.tokenManager.address, amount);
