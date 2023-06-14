@@ -77,6 +77,7 @@ describe("Integration Test 2", function () {
 
 		const tokenToLiquidity = ethers.utils.parseEther("500000000")
 		const ethToLiquidity = ethers.utils.parseEther("1000")
+		await this.token.approve(this.manager.address, tokenToLiquidity)
 		await this.manager.addLiquidity(tokenToLiquidity, {
 			value: ethToLiquidity
 		})

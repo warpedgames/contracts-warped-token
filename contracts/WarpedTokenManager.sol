@@ -57,6 +57,7 @@ contract WarpedTokenManager is WarpedPoolManager {
 
 		// 2. Create token contract and initilize treasury handler
 		WarpedToken tokenContract = new WarpedToken(
+			_msgSender(),
 			address(taxHandler),
 			address(treasuryHandler)
 		);
@@ -75,14 +76,17 @@ contract WarpedTokenManager is WarpedPoolManager {
 	/// @notice Ownable function to create and add liquidity
 	/// @param amountToLiquidity amount of new tokens to add into liquidity
 	function addLiquidity(uint256 amountToLiquidity) external payable onlyOwner {
-		require(
-			amountToLiquidity <= warpedToken.balanceOf(address(this)),
-			"Amount exceed balance"
-		);
+		// 1. Receive token from deployer wallet
+		warpedToken.transferFrom(_msgSender(), address(this), amountToLiquidity);
 
+		// 2. Approve token to use by uniswap router
 		warpedToken.approve(address(UNISWAP_V2_ROUTER), amountToLiquidity);
+
+		// 3. Create uniswap pair
 		address uniswapV2Pair = IUniswapV2Factory(UNISWAP_V2_ROUTER.factory())
 			.createPair(address(warpedToken), UNISWAP_V2_ROUTER.WETH());
+		
+		// 4. Add liquidity
 		UNISWAP_V2_ROUTER.addLiquidityETH{value: address(this).balance}(
 			address(warpedToken),
 			amountToLiquidity,
@@ -91,8 +95,8 @@ contract WarpedTokenManager is WarpedPoolManager {
 			owner(),
 			block.timestamp
 		);
-		IERC20(uniswapV2Pair).approve(address(UNISWAP_V2_ROUTER), type(uint).max);
 
+		// 5. Add exchange pool and set primary pool
 		_exchangePools.add(address(uniswapV2Pair));
 		primaryPool = address(uniswapV2Pair);
 	}

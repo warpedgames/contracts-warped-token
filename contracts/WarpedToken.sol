@@ -33,16 +33,18 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 
 	/// @notice Constructor of WARPED token contract
 	/// @dev initialize with tax and treasury handler addresses.
+	/// @param deployerAddress deployer address to receive total supply
 	/// @param taxHandlerAddress tax handler contract address
 	/// @param treasuryHandlerAddress treasury handler contract address
 	constructor(
+		address deployerAddress,
 		address taxHandlerAddress,
 		address treasuryHandlerAddress
 	) ERC20(_NAME, _SYMBOL) {
 		taxHandler = ITaxHandler(taxHandlerAddress);
 		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
 
-		_mint(_msgSender(), _T_TOTAL);
+		_mint(deployerAddress, _T_TOTAL);
 	}
 
 	/**
