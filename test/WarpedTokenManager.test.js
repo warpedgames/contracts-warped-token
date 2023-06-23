@@ -184,7 +184,7 @@ describe("WarpedTokenManager", function () {
 	it("addLiquidity set primaryPool correctly", async function () {
 		const amount = ethers.utils.parseEther("100000000")
 		const ethAmount = ethers.utils.parseEther("10")
-		await this.token.approve(this.tokenManager.address, amount);
+		await this.token.approve(this.tokenManager.address, amount)
 		const addLiquidityResult = await this.tokenManager.addLiquidity(amount, {
 			value: ethAmount
 		})
