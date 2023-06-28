@@ -341,7 +341,7 @@ describe("WarpedTaxHandler", function () {
 				],
 				BN.from(400)
 			),
-			"No of tax rates over limit"
+			"Tax rates limit exceeded"
 		)
 	})
 
@@ -609,7 +609,7 @@ describe("WarpedTaxHandler", function () {
 				],
 				[1, 2, 4, 4, 8, 8, 1, 2, 4, 1, 1]
 			),
-			"No of NFT contracts over limit"
+			"No. of NFT contracts over limit"
 		)
 		// success for 10 nft contracts
 		await this.taxHandler.addNFTs(
@@ -644,7 +644,7 @@ describe("WarpedTaxHandler", function () {
 				],
 				[1, 2, 4, 8]
 			),
-			"No of NFT contracts over limit"
+			"No. of NFT contracts over limit"
 		)
 	})
 
