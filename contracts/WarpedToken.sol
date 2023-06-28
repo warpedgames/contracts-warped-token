@@ -23,8 +23,8 @@ import {LenientReentrancyGuard} from "./LenientReentrancyGuard.sol";
 contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 	uint8 private constant _DECIMALS = 18;
 	uint256 private constant _T_TOTAL = 10_000_000_000 * 10 ** _DECIMALS;
-	string private constant _NAME = unicode"WARPED";
-	string private constant _SYMBOL = unicode"WARPED";
+	string private constant _NAME = "WARPED";
+	string private constant _SYMBOL = "WARPED";
 
 	/// @notice Tax handler address
 	ITaxHandler public taxHandler;
