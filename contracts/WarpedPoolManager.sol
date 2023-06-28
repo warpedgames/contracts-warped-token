@@ -62,10 +62,11 @@ contract WarpedPoolManager is IPoolManager, Ownable {
 
 	/**
 	 * @notice Remove an address from the set of exchange pool addresses.
-	 * @dev Nothing happens if the pool doesn't exist in the set..
+	 * @dev Nothing happens if the pool doesn't exist in the set and reverts if the given address is primary pool. Need to change primary pool to remove.
 	 * @param exchangePool Address of exchange pool to remove.
 	 */
 	function removeExchangePool(address exchangePool) external onlyOwner {
+		require(exchangePool != primaryPool, "Primary pool not allowed");
 		if (_exchangePools.remove(exchangePool)) {
 			emit ExchangePoolRemoved(exchangePool);
 		}
