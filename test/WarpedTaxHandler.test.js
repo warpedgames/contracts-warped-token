@@ -322,6 +322,29 @@ describe("WarpedTaxHandler", function () {
 		)
 	})
 
+	it("setTaxRates should revert for over limit input", async function () {
+		await expectRevert(
+			this.taxHandler.setTaxRates(
+				[1024, 1023, 511, 255, 127, 63, 31, 15, 7, 2, 1],
+				[
+					BN.from(100),
+					BN.from(110),
+					BN.from(120),
+					BN.from(130),
+					BN.from(140),
+					BN.from(150),
+					BN.from(160),
+					BN.from(170),
+					BN.from(180),
+					BN.from(190),
+					BN.from(200)
+				],
+				BN.from(400)
+			),
+			"Tax rates limit exceeded"
+		)
+	})
+
 	it("after update tax rates points using setTaxRates: getTax(with NFTs) returns tax and reward amount with one-nft-owned buyer address", async function () {
 		const poolAddress = this.signers[0].address
 		await this.poolManager.addExchangePool(poolAddress)
@@ -547,6 +570,82 @@ describe("WarpedTaxHandler", function () {
 			"Ownable: caller is not the owner"
 		)
 		await expectRevert(this.taxHandler.removeNFTs([]), "Invalid parameters")
+	})
+
+	it("with NFTs, addNFTs reverts when length is over limit and success when less than limit", async function () {
+		// Deploy nft contracts
+		const nft4 = await this.ERC721.deploy()
+		const nft5 = await this.ERC721.deploy()
+		const nft6 = await this.ERC721.deploy()
+		const nft7 = await this.ERC721.deploy()
+		const nft8 = await this.ERC721.deploy()
+		const nft9 = await this.ERC721.deploy()
+		const nft10 = await this.ERC721.deploy()
+		const nft11 = await this.ERC721.deploy()
+		await nft4.deployed()
+		await nft5.deployed()
+		await nft6.deployed()
+		await nft7.deployed()
+		await nft8.deployed()
+		await nft9.deployed()
+		await nft10.deployed()
+		await nft11.deployed()
+
+		// revert for 11 nft contracts
+		await expectRevert(
+			this.taxHandler.addNFTs(
+				[
+					this.nft1.address,
+					this.nft2.address,
+					this.nft3.address,
+					nft4.address,
+					nft5.address,
+					nft6.address,
+					nft7.address,
+					nft8.address,
+					nft9.address,
+					nft10.address,
+					nft11.address
+				],
+				[1, 2, 4, 4, 8, 8, 1, 2, 4, 1, 1]
+			),
+			"No. of NFT contracts over limit"
+		)
+		// success for 10 nft contracts
+		await this.taxHandler.addNFTs(
+			[
+				this.nft1.address,
+				this.nft2.address,
+				this.nft3.address,
+				nft4.address,
+				nft5.address,
+				nft6.address,
+				nft7.address,
+				nft8.address,
+				nft9.address,
+				nft10.address
+			],
+			[1, 2, 4, 4, 8, 8, 1, 2, 4, 1]
+		)
+		// remove 3 nft contracts
+		await this.taxHandler.removeNFTs([
+			this.nft1.address,
+			this.nft2.address,
+			this.nft3.address
+		])
+		// add 4 nft contracts should revert because current 7 nft contracts added
+		await expectRevert(
+			this.taxHandler.addNFTs(
+				[
+					this.nft1.address,
+					this.nft2.address,
+					this.nft3.address,
+					nft11.address
+				],
+				[1, 2, 4, 8]
+			),
+			"No. of NFT contracts over limit"
+		)
 	})
 
 	it("with NFTs, Remove nfts successfullly remove nft contracts and levels", async function () {
