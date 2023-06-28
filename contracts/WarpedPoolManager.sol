@@ -52,6 +52,7 @@ contract WarpedPoolManager is IPoolManager, Ownable {
 	 * @param exchangePool Address of exchange pool to add.
 	 */
 	function addExchangePool(address exchangePool) external onlyOwner {
+		require(exchangePool != address(0), "Zero address passed");
 		if (_exchangePools.add(exchangePool)) {
 			emit ExchangePoolAdded(exchangePool);
 		}

@@ -45,6 +45,8 @@ contract WarpedTokenManager is WarpedPoolManager {
 		address[] memory nftContracts,
 		uint8[] memory nftLevels
 	) {
+		require(treasuryAddress != address(0), "treasury is zero address");
+
 		// 1. Create treasury and tax Handler
 		WarpedTreasuryHandler treasuryHandler = new WarpedTreasuryHandler(
 			IPoolManager(this)
