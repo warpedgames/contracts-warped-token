@@ -118,7 +118,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	 *
 	 * Requirements:
 	 *
-	 * - values of `thresholds` must be placed in ascending order.
+	 * - values of `thresholds` must be placed in descending order.
 	 */
 	function setTaxRates(
 		uint256[] memory thresholds,
@@ -133,6 +133,12 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		delete taxRates;
 		for (uint256 i = 0; i < thresholds.length; i++) {
 			require(rates[i] <= maxTaxRate, "Rate must be less than max rate");
+			if (i > 0) {
+				require(
+					thresholds[i] < thresholds[i - 1],
+					"Thresholds not descending order"
+				);
+			}
 			taxRates.push(TaxRatePoint(thresholds[i], rates[i]));
 		}
 		basisTaxRate = _basisTaxRate;

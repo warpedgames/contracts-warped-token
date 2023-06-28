@@ -439,6 +439,17 @@ describe("WarpedTaxHandler", function () {
 		)
 	})
 
+	it("setTaxRates reverts when thresholds are not in descending order", async function () {
+		await expectRevert(
+			this.taxHandler.setTaxRates(
+				[2, 7, 1],
+				[BN.from(200), BN.from(100), BN.from(300)],
+				BN.from(400)
+			),
+			"Thresholds not descending order"
+		)
+	})
+
 	it("setTaxRates reverts for invalid parameters", async function () {
 		await expectRevert(
 			this.taxHandler.setTaxRates(
