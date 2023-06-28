@@ -52,7 +52,6 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		taxRates.push(TaxRatePoint(7, 100));
 		taxRates.push(TaxRatePoint(5, 200));
 		taxRates.push(TaxRatePoint(1, 300));
-		taxDisabled = false;
 	}
 
 	/**
