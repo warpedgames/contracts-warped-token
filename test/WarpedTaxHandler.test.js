@@ -557,7 +557,23 @@ describe("WarpedTaxHandler", function () {
 		await this.taxHandler.removeNFTs([this.nft1.address, this.nft2.address])
 		expect(await this.taxHandler.nftLevels(this.nft1.address)).to.be.equal(0)
 		expect(await this.taxHandler.nftLevels(this.nft2.address)).to.be.equal(0)
-		expect(await this.taxHandler.nftLevels(this.nft3.address)).is.greaterThan(0)
+		expect(await this.taxHandler.nftLevels(this.nft3.address)).to.be.equal(1)
+		expect(await this.taxHandler.nftContracts(0)).to.be.equal(this.nft3.address)
+
+		await this.taxHandler.addNFTs(
+			[this.nft1.address, this.nft2.address],
+			[4, 2]
+		)
+		expect(await this.taxHandler.nftLevels(this.nft1.address)).to.be.equal(4)
+		expect(await this.taxHandler.nftLevels(this.nft2.address)).to.be.equal(2)
+		expect(await this.taxHandler.nftLevels(this.nft3.address)).to.be.equal(1)
+
+		await this.taxHandler.removeNFTs([this.nft3.address])
+		expect(await this.taxHandler.nftContracts(0)).to.be.equal(this.nft2.address)
+		expect(await this.taxHandler.nftContracts(1)).to.be.equal(this.nft1.address)
+		expect(await this.taxHandler.nftLevels(this.nft1.address)).to.be.equal(4)
+		expect(await this.taxHandler.nftLevels(this.nft2.address)).to.be.equal(2)
+		expect(await this.taxHandler.nftLevels(this.nft3.address)).to.be.equal(0)
 	})
 
 	it("with NFTs, addNFTs revert for non-erc721 contract", async function () {

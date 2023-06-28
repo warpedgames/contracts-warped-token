@@ -156,7 +156,11 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		for (uint8 i = 0; i < contracts.length; i++) {
 			for (uint8 j = 0; j < nftContracts.length; j++) {
 				if (address(nftContracts[j]) == contracts[i]) {
-					delete nftContracts[j];
+					// safely remove NFT contract from array
+					if (j < nftContracts.length - 1) {
+						nftContracts[j] = nftContracts[nftContracts.length - 1];
+					}
+					nftContracts.pop();
 					break;
 				}
 			}
@@ -215,7 +219,10 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		require(contracts.length == levels.length, "Invalid parameters");
 
 		for (uint8 i = 0; i < contracts.length; i++) {
-			require(IERC165(contracts[i]).supportsInterface(type(IERC721).interfaceId), "IERC721 not implemented");
+			require(
+				IERC165(contracts[i]).supportsInterface(type(IERC721).interfaceId),
+				"IERC721 not implemented"
+			);
 
 			nftContracts.push(IERC721(contracts[i]));
 			nftLevels[IERC721(contracts[i])] = levels[i];
