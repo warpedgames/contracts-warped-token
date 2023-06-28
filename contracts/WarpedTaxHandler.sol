@@ -19,6 +19,11 @@ import {ITaxHandler} from "./interfaces/ITaxHandler.sol";
 import {IPoolManager} from "./interfaces/IPoolManager.sol";
 
 contract WarpedTaxHandler is ITaxHandler, Ownable {
+	/// @notice limit number of NFT contracts
+	uint8 public constant NFT_CONTRACTS_LIMIT = 10;
+	/// @notice limit number of tax rate points
+	uint8 public constant TAX_RATES_LIMIT = 10;
+
 	/// @notice NFTs to be used to determine user tax level.
 	IERC721[] public nftContracts;
 	/// @notice Bits representing levels of each NFTs: 1,2,4,8
@@ -122,6 +127,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		uint256 _basisTaxRate
 	) external onlyOwner {
 		require(thresholds.length == rates.length, "Invalid level points");
+		require(thresholds.length <= TAX_RATES_LIMIT, "No of tax rates over limit");
 		require(_basisTaxRate > 0, "Invalid base rate");
 		require(_basisTaxRate <= maxTaxRate, "Base rate must be <= than max");
 
@@ -198,12 +204,14 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	 */
 	function _getTaxBasisPoints(address user) internal view returns (uint256) {
 		uint256 userLevel = 0;
+		// max number of nft contracts is 10 so this loop doesn't exceed block gas limit
 		for (uint256 i = 0; i < nftContracts.length; i++) {
 			IERC721 nft = nftContracts[i];
 			if (nft.balanceOf(user) > 0) {
 				userLevel = userLevel | nftLevels[nftContracts[i]];
 			}
 		}
+		// max number of tax rates is 10 so this loop doesn't exceed block gas limit
 		for (uint256 i = 0; i < taxRates.length; i++) {
 			if (userLevel >= taxRates[i].threshold) {
 				return taxRates[i].rate;
@@ -217,6 +225,10 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		uint8[] memory levels
 	) internal {
 		require(contracts.length == levels.length, "Invalid parameters");
+		require(
+			contracts.length + nftContracts.length <= NFT_CONTRACTS_LIMIT,
+			"No of NFT contracts over limit"
+		);
 
 		for (uint8 i = 0; i < contracts.length; i++) {
 			require(
