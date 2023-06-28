@@ -469,6 +469,18 @@ describe("WarpedTaxHandler", function () {
 		)
 	})
 
+	it("addNFTs reverts when add already existing contract and reverts for zero nft level", async function () {
+		this.taxHandler.addNFTs([this.nft1.address, this.nft2.address], [1, 2])
+		await expectRevert(
+			this.taxHandler.addNFTs([this.nft2.address, this.nft3.address], [2, 4]),
+			"Already existing contract"
+		)
+		await expectRevert(
+			this.taxHandler.addNFTs([this.nft3.address], [0]),
+			"Invalid NFT level"
+		)
+	})
+
 	it("pauseTax reverts for forbidden user and when already disabled", async function () {
 		const _taxHandler = this.taxHandler.connect(this.signers[1])
 		await expectRevert(
