@@ -31,6 +31,11 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 	/// @notice Treasury handler address
 	ITreasuryHandler public treasuryHandler;
 
+	/// @notice Emitted when tax handler contract is updated.
+	event TaxHandlerUpdated(address newAddress);
+	/// @notice Emitted when tax handler contract is updated.
+	event TreasuryHandlerUpdated(address newAddress);
+
 	/// @notice Constructor of WARPED token contract
 	/// @dev initialize with tax and treasury handler addresses.
 	/// @param deployerAddress deployer address to receive total supply
@@ -92,6 +97,7 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		);
 
 		taxHandler = ITaxHandler(taxHandlerAddress);
+		emit TaxHandlerUpdated(taxHandlerAddress);
 	}
 
 	/**
@@ -111,5 +117,6 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		);
 
 		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
+		emit TaxHandlerUpdated(treasuryHandlerAddress);
 	}
 }

@@ -69,6 +69,9 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		address newTreasuryAddress
 	);
 
+	/// @notice Emitted when _taxSwap is updated.
+	event TaxSwapUpdated(uint256 newValue);
+
 	/// @notice Constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address
 	constructor(IPoolManager _poolManager) {
@@ -226,6 +229,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	function updateTaxSwap(uint256 taxSwap) external onlyOwner {
 		require(taxSwap > 0, "Zero taxSwap");
 		_taxSwap = taxSwap;
+		emit TaxSwapUpdated(taxSwap);
 	}
 
 	/**
