@@ -37,9 +37,6 @@ contract WarpedPoolManager is IPoolManager, Ownable {
 	/// @notice Emitted when the primary pool address is updated.
 	event PrimaryPoolUpdated(address oldPrimaryPool, address newPrimaryPool);
 
-	// solhint-disable-next-line no-empty-blocks
-	constructor() {}
-
 	/**
 	 * @notice Check if the given address is pool address.
 	 * @param addr Address to check.
