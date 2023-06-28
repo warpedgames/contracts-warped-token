@@ -156,12 +156,23 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		for (uint8 i = 0; i < contracts.length; i++) {
 			for (uint8 j = 0; j < nftContracts.length; j++) {
 				if (address(nftContracts[j]) == contracts[i]) {
-					delete nftContracts[j];
+					// safely remove NFT contract from array
+					if (j < nftContracts.length - 1) {
+						nftContracts[j] = nftContracts[nftContracts.length-1];
+					}
+					nftContracts.pop();
 					break;
 				}
 			}
 			nftLevels[IERC721(contracts[i])] = 0;
 		}
+	}
+
+	/**
+	 * @notice Return number of NFTs added
+	 */
+	function numberOfNFTs() external view returns (uint256) {
+		return nftContracts.length;
 	}
 
 	/**
