@@ -169,13 +169,6 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	}
 
 	/**
-	 * @notice Return number of NFTs added
-	 */
-	function numberOfNFTs() external view returns (uint256) {
-		return nftContracts.length;
-	}
-
-	/**
 	 * @notice Set no tax for special period
 	 */
 	function pauseTax() external onlyOwner {
