@@ -15,6 +15,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {IUniswapV2Router02} from "./interfaces/IUniswapV2Router02.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import {IPoolManager} from "./interfaces/IPoolManager.sol";
 import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
@@ -27,6 +28,7 @@ import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
  */
 contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	using Address for address payable;
+	using SafeERC20 for IERC20;
 
 	IPoolManager public poolManager;
 
@@ -219,7 +221,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		if (tokenAddress == address(0)) {
 			treasury.sendValue(amount);
 		} else {
-			IERC20(tokenAddress).transfer(address(treasury), amount);
+			IERC20(tokenAddress).safeTransfer(address(treasury), amount);
 		}
 	}
 
