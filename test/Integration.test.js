@@ -64,7 +64,6 @@ describe("Integration Test 1", function () {
 			this.otherNft1.address,
 			this.otherNft2.address
 		]
-		console.log("nftcontracts ", JSON.stringify(nftContracts))
 
 		this.manager = await this.WarpedTokenManager.deploy(
 			this.taxWallet.address,
