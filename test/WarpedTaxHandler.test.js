@@ -439,6 +439,17 @@ describe("WarpedTaxHandler", function () {
 		)
 	})
 
+	it("setTaxRates reverts when thresholds are not in descending order", async function () {
+		await expectRevert(
+			this.taxHandler.setTaxRates(
+				[2, 7, 1],
+				[BN.from(200), BN.from(100), BN.from(300)],
+				BN.from(400)
+			),
+			"Thresholds not descending order"
+		)
+	})
+
 	it("setTaxRates reverts for invalid parameters", async function () {
 		await expectRevert(
 			this.taxHandler.setTaxRates(
@@ -455,6 +466,31 @@ describe("WarpedTaxHandler", function () {
 				BN.from(0)
 			),
 			"Invalid base rate"
+		)
+	})
+
+	it("setTaxRates emits event correctly", async function () {
+		const result = await this.taxHandler.setTaxRates(
+			[7, 2, 1],
+			[BN.from(100), BN.from(200), BN.from(300)],
+			BN.from(400)
+		)
+		const setTaxRatesReceipt = await result.wait()
+		const events = setTaxRatesReceipt.events.filter(
+			(e) => e.event === "TaxRatesUpdated"
+		)
+		expect(events.length).to.equal(1, "No event for setTaxRates")
+		expect(events[0].args[0]).to.eql(
+			[BN.from(7), BN.from(2), BN.from(1)],
+			"thresholds parameter incorrect for TaxRatesUpdated event"
+		)
+		expect(events[0].args[1]).to.eql(
+			[BN.from(100), BN.from(200), BN.from(300)],
+			"rates parameter incorrect for TaxRatesUpdated event"
+		)
+		expect(events[0].args[2]).to.equal(
+			BN.from(400),
+			"basisTaxRate parameter incorrect for TaxRatesUpdated event"
 		)
 	})
 
@@ -478,6 +514,24 @@ describe("WarpedTaxHandler", function () {
 		await expectRevert(
 			this.taxHandler.addNFTs([this.nft3.address], [0]),
 			"Invalid NFT level"
+    )
+	})
+  
+	it("addNFTs emits events correctly", async function () {
+		const result = await this.taxHandler.addNFTs(
+			[this.nft1.address, this.nft2.address, this.nft3.address],
+			[1, 2, 4]
+		)
+		const addNFTsReceipt = await result.wait()
+		const events = addNFTsReceipt.events.filter((e) => e.event === "NFTsAdded")
+		expect(events.length).to.equal(1, "No event for addNFTs")
+		expect(events[0].args[0]).to.eql(
+			[this.nft1.address, this.nft2.address, this.nft3.address],
+			"contracts parameter incorrect for NFTsAdded event"
+		)
+		expect(events[0].args[1]).to.eql(
+			[1, 2, 4],
+			"levels parameter incorrect for NFTsAdded event"
 		)
 	})
 
@@ -489,6 +543,27 @@ describe("WarpedTaxHandler", function () {
 		)
 		await this.taxHandler.pauseTax()
 		await expectRevert(this.taxHandler.pauseTax(), "Already paused")
+	})
+
+	it("pauseTax/resumeTax emits events correctly", async function () {
+		const pauseTaxResult = await this.taxHandler.pauseTax()
+		const pauseTaxReceipt = await pauseTaxResult.wait()
+		const pauseTaxEvents = pauseTaxReceipt.events.filter(
+			(e) => e.event === "TaxPaused"
+		)
+		expect(pauseTaxEvents.length).to.equal(1, "No event for TaxPaused")
+		expect(pauseTaxEvents[0].args.length).to.equal(0, "No event for TaxPaused")
+
+		const resumeTaxResult = await this.taxHandler.resumeTax()
+		const resumeTaxReceipt = await resumeTaxResult.wait()
+		const resumeTaxEvents = resumeTaxReceipt.events.filter(
+			(e) => e.event === "TaxResumed"
+		)
+		expect(resumeTaxEvents.length).to.equal(1, "No event for TaxResumed")
+		expect(resumeTaxEvents[0].args.length).to.equal(
+			0,
+			"No event for TaxResumed"
+		)
 	})
 
 	it("resume reverts for forbidden user and when not disabled", async function () {
@@ -582,6 +657,26 @@ describe("WarpedTaxHandler", function () {
 			"Ownable: caller is not the owner"
 		)
 		await expectRevert(this.taxHandler.removeNFTs([]), "Invalid parameters")
+	})
+
+	it("with NFTs, removeNFTs emit events correctly", async function () {
+		await this.taxHandler.addNFTs(
+			[this.nft1.address, this.nft2.address, this.nft3.address],
+			[4, 2, 1]
+		)
+		const removeNFTsResult = await this.taxHandler.removeNFTs([
+			this.nft1.address,
+			this.nft2.address
+		])
+		const removeNFTsReceipt = await removeNFTsResult.wait()
+		const removeNFTsEvents = removeNFTsReceipt.events.filter(
+			(e) => e.event === "NFTsRemoved"
+		)
+		expect(removeNFTsEvents.length).to.equal(1, "No event for removeNFTs")
+		expect(removeNFTsEvents[0].args[0]).eql(
+			[this.nft1.address, this.nft2.address],
+			"contracts parameter incorrect for NFTsRemoved event"
+		)
 	})
 
 	it("with NFTs, addNFTs reverts when length is over limit and success when less than limit", async function () {
