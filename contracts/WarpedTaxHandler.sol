@@ -46,12 +46,16 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		uint256[] rates,
 		uint256 basisTaxRate
 	);
+
 	/// @notice Emitted when nft contracts and levels are added.
 	event NFTsAdded(address[] contracts, uint8[] levels);
+
 	/// @notice Emitted when nft contracts are removed.
 	event NFTsRemoved(address[] contracts);
+
 	/// @notice Emitted when tax is paused.
 	event TaxPaused();
+
 	/// @notice Emitted when tax is resumed.
 	event TaxResumed();
 
