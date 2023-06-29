@@ -42,6 +42,33 @@ describe("WarpedToken", function () {
 		)
 	})
 
+	it("deploy fail when pass zero addresses", async function () {
+		await expectRevert(
+			this.WarpedToken.deploy(
+				ethers.constants.AddressZero,
+				this.taxHandler.address,
+				this.treasuryHandler.address
+			),
+			"Deployer is zero address"
+		)
+		await expectRevert(
+			this.WarpedToken.deploy(
+				this.owner.address,
+				ethers.constants.AddressZero,
+				this.treasuryHandler.address
+			),
+			"taxHandler is zero address"
+		)
+		await expectRevert(
+			this.WarpedToken.deploy(
+				this.owner.address,
+				this.taxHandler.address,
+				ethers.constants.AddressZero
+			),
+			"treasuryHandler is zero address"
+		)
+	})
+
 	it("mint tokens doesn't transfer reward", async function () {
 		expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(
 			BN.from(0)

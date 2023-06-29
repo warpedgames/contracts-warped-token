@@ -93,6 +93,27 @@ describe("WarpedTreasuryHandler", function () {
 		)
 	})
 
+	it("init reverts for zero address", async function () {
+		const _treasuryHandler = await this.WarpedTreasuryHandler.deploy(
+			this.poolManager.address
+		)
+		await _treasuryHandler.deployed()
+		await expectRevert(
+			_treasuryHandler.initialize(
+				ethers.constants.AddressZero,
+				this.token.address
+			),
+			"treasury is zero address"
+		)
+		await expectRevert(
+			_treasuryHandler.initialize(
+				this.signers[0].address,
+				ethers.constants.AddressZero
+			),
+			"token address is zero address"
+		)
+	})
+
 	it("after init, init reverts as already init", async function () {
 		await expectRevert(
 			this.treasuryHandler.initialize(
