@@ -261,6 +261,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		);
 
 		for (uint8 i = 0; i < contracts.length; i++) {
+			require(contracts[i] != address(0), "contract address is zero address");
 			require(
 				IERC165(contracts[i]).supportsInterface(type(IERC721).interfaceId),
 				"IERC721 not implemented"

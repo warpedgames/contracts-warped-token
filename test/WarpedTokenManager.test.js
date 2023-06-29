@@ -49,6 +49,17 @@ describe("WarpedTokenManager", function () {
 		this.token = await ethers.getContractAt(this.warpedTokenAbi, tokenAddress)
 	})
 
+	it("deploy reverts if treasury address is zero address", async function () {
+		await expectRevert(
+			this.WarpedTokenManager.deploy(
+				ethers.constants.AddressZero,
+				nftContracts,
+				nftLevels
+			),
+			"treasury is zero address"
+		)
+	})
+
 	it("constructor create contracts successfully", async function () {
 		const token = this.token
 		expect(await token.totalSupply()).to.equal(
@@ -91,6 +102,13 @@ describe("WarpedTokenManager", function () {
 		)
 	})
 
+	it("addExchangePool reverts for zero address", async function () {
+		await expectRevert(
+			this.tokenManager.addExchangePool(ethers.constants.AddressZero),
+			"Zero address passed"
+    )
+	})
+  
 	it("removeExchangePool reverts when given poolAddress and current primaryPool address are the same", async function () {
 		await this.tokenManager.addExchangePool(this.pool.address)
 		await this.tokenManager.setPrimaryPool(this.pool.address)

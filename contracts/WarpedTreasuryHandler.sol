@@ -89,6 +89,8 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		address tokenAddress
 	) external onlyOwner {
 		require(!_isInitialized, "Already initialized");
+		require(treasuryAddress != address(0), "treasury is zero address");
+		require(tokenAddress != address(0), "token address is zero address");
 
 		treasury = payable(treasuryAddress);
 		token = IERC20(tokenAddress);

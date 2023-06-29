@@ -47,6 +47,12 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		address taxHandlerAddress,
 		address treasuryHandlerAddress
 	) ERC20(_NAME, _SYMBOL) {
+		require(deployerAddress != address(0), "Deployer is zero address");
+		require(taxHandlerAddress != address(0), "taxHandler is zero address");
+		require(
+			treasuryHandlerAddress != address(0),
+			"treasuryHandler is zero address"
+		);
 		taxHandler = ITaxHandler(taxHandlerAddress);
 		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
 
