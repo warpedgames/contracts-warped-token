@@ -16,7 +16,7 @@ import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet
 import {IPoolManager} from "./interfaces/IPoolManager.sol";
 
 /**
- * @title Exchange pool processor abstract contract.
+ * @title Exchange pool processor contract.
  * @dev Keeps an enumerable set of designated exchange addresses as well as a single primary pool address.
  */
 contract WarpedPoolManager is IPoolManager, Ownable {
