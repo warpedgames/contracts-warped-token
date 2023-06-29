@@ -265,6 +265,10 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 				IERC165(contracts[i]).supportsInterface(type(IERC721).interfaceId),
 				"IERC721 not implemented"
 			);
+			// nftLevels for existing contract is always bigger than zero.
+			// So checking this value is enough to check the uniqueness of adding NFT contract address.
+			require(nftLevels[IERC721(contracts[i])] == 0, "Duplicate NFT contract");
+			require(levels[i] > 0, "Invalid NFT level");
 
 			nftContracts.push(IERC721(contracts[i]));
 			nftLevels[IERC721(contracts[i])] = levels[i];

@@ -505,6 +505,18 @@ describe("WarpedTaxHandler", function () {
 		)
 	})
 
+	it("addNFTs reverts when adding a duplicate NFT contract and reverts for zero nft level", async function () {
+		this.taxHandler.addNFTs([this.nft1.address, this.nft2.address], [1, 2])
+		await expectRevert(
+			this.taxHandler.addNFTs([this.nft2.address, this.nft3.address], [2, 4]),
+			"Duplicate NFT contract"
+		)
+		await expectRevert(
+			this.taxHandler.addNFTs([this.nft3.address], [0]),
+			"Invalid NFT level"
+    )
+	})
+  
 	it("addNFTs emits events correctly", async function () {
 		const result = await this.taxHandler.addNFTs(
 			[this.nft1.address, this.nft2.address, this.nft3.address],
