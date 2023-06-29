@@ -88,7 +88,9 @@ contract WarpedTokenManager is WarpedPoolManager {
 		address uniswapV2Pair = IUniswapV2Factory(UNISWAP_V2_ROUTER.factory())
 			.createPair(address(warpedToken), UNISWAP_V2_ROUTER.WETH());
 
-		// 4. Add liquidity
+		// 4. Add liquidity, here we can pass 0 to amountTokenMin and amountETHMin parameters
+		// because we are creating new pool and liquidity in this transaction so frontrunning can't be done.
+		// If pair and liquidity already exists, above createPair will reverted so next lines can't be called.
 		UNISWAP_V2_ROUTER.addLiquidityETH{value: address(this).balance}(
 			address(warpedToken),
 			amountToLiquidity,
