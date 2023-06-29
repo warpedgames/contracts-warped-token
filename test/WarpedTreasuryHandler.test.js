@@ -233,6 +233,15 @@ describe("WarpedTreasuryHandler", function () {
 		)
 	})
 
+	it("updateTaxSwap emits event correctly", async function () {
+		const newTaxSwap = ethers.utils.parseEther("20000000")
+		const result = await this.treasuryHandler.updateTaxSwap(newTaxSwap)
+		const receipt = await result.wait()
+		const events = receipt.events.filter((e) => e.event === "TaxSwapUpdated")
+		expect(events.length).to.equal(1, "No event for updateTaxSwap")
+		expect(events[0].args[0]).to.equal(newTaxSwap, "No event for updateTaxSwap")
+	})
+
 	it("processTreasury do nothing if called before init or from is zero or not sell", async function () {
 		const tokenAmount = ethers.utils.parseEther("100000")
 		await this.token.transfer(this.treasuryHandler.address, tokenAmount)

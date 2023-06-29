@@ -16,7 +16,7 @@ import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet
 import {IPoolManager} from "./interfaces/IPoolManager.sol";
 
 /**
- * @title Exchange pool processor abstract contract.
+ * @title Exchange pool processor contract.
  * @dev Keeps an enumerable set of designated exchange addresses as well as a single primary pool address.
  */
 contract WarpedPoolManager is IPoolManager, Ownable {
@@ -49,23 +49,25 @@ contract WarpedPoolManager is IPoolManager, Ownable {
 	/**
 	 * @notice Add an address to the set of exchange pool addresses.
 	 * @dev Nothing happens if the pool already exists in the set.
-	 * @param exchangePool Address of exchange pool to add.
+	 * @param poolAddress Address of the pool to add.
 	 */
-	function addExchangePool(address exchangePool) external onlyOwner {
+	function addExchangePool(address poolAddress) external onlyOwner {
 		require(exchangePool != address(0), "Zero address passed");
-		if (_exchangePools.add(exchangePool)) {
-			emit ExchangePoolAdded(exchangePool);
+		if (_exchangePools.add(poolAddress)) {
+			emit ExchangePoolAdded(poolAddress);
 		}
 	}
 
 	/**
 	 * @notice Remove an address from the set of exchange pool addresses.
-	 * @dev Nothing happens if the pool doesn't exist in the set..
-	 * @param exchangePool Address of exchange pool to remove.
+	 * @dev Remove from _exchangePools when given poolAddress is different to the current primaryPool, otherwise revert.
+	 * Nothing happens if the pool doesn't exist in the set.
+	 * @param poolAddress Address of the pool to remove.
 	 */
-	function removeExchangePool(address exchangePool) external onlyOwner {
-		if (_exchangePools.remove(exchangePool)) {
-			emit ExchangePoolRemoved(exchangePool);
+	function removeExchangePool(address poolAddress) external onlyOwner {
+		require(poolAddress != primaryPool, "Primary pool cannot be removed");
+		if (_exchangePools.remove(poolAddress)) {
+			emit ExchangePoolRemoved(poolAddress);
 		}
 	}
 
