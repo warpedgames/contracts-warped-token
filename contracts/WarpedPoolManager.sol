@@ -67,7 +67,7 @@ contract WarpedPoolManager is IPoolManager, Ownable {
 	 * @param poolAddress Address of the pool to remove.
 	 */
 	function removeExchangePool(address poolAddress) external onlyOwner {
-		require(poolAddress != primaryPool, "Primary pool not allowed");
+		require(poolAddress != primaryPool, "Primary pool cannot be removed");
 		if (_exchangePools.remove(poolAddress)) {
 			emit ExchangePoolRemoved(poolAddress);
 		}

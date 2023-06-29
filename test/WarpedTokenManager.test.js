@@ -96,7 +96,7 @@ describe("WarpedTokenManager", function () {
 		await this.tokenManager.setPrimaryPool(this.pool.address)
 		await expectRevert(
 			this.tokenManager.removeExchangePool(this.pool.address),
-			"Primary pool not allowed"
+			"Primary pool cannot be removed"
 		)
 	})
 
