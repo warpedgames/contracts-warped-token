@@ -91,13 +91,16 @@ describe("WarpedTokenManager", function () {
 		)
 	})
 
-	it("removeExchangePool reverts for primary pool and success after change primary pool", async function () {
+	it("removeExchangePool reverts when given poolAddress and current primaryPool address are the same", async function () {
 		await this.tokenManager.addExchangePool(this.pool.address)
 		await this.tokenManager.setPrimaryPool(this.pool.address)
 		await expectRevert(
 			this.tokenManager.removeExchangePool(this.pool.address),
 			"Primary pool not allowed"
 		)
+	})
+
+	it("removeExchangePool succeeds when given poolAddress and current primaryPool address are not the same", async function () {
 		await this.tokenManager.addExchangePool(this.tester.address)
 		await this.tokenManager.setPrimaryPool(this.tester.address)
 		await this.tokenManager.removeExchangePool(this.pool.address)
