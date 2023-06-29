@@ -514,9 +514,9 @@ describe("WarpedTaxHandler", function () {
 		await expectRevert(
 			this.taxHandler.addNFTs([this.nft3.address], [0]),
 			"Invalid NFT level"
-    )
+		)
 	})
-  
+
 	it("addNFTs emits events correctly", async function () {
 		const result = await this.taxHandler.addNFTs(
 			[this.nft1.address, this.nft2.address, this.nft3.address],
@@ -578,7 +578,7 @@ describe("WarpedTaxHandler", function () {
 		await expectRevert(this.taxHandler.resumeTax(), "Not paused")
 	})
 
-	it("addNFTs reverts for invalid parameters and zero address", async function () {
+	it("addNFTs reverts for invalid parameters", async function () {
 		await expectRevert(
 			this.taxHandler.addNFTs(
 				[this.nft1.address, this.nft2.address, this.nft3.address],
@@ -587,6 +587,9 @@ describe("WarpedTaxHandler", function () {
 			"Invalid parameters"
 		)
 		await expectRevert(this.taxHandler.addNFTs([], []), "Invalid parameters")
+	})
+
+	it("addNFTs reverts for zero address", async function () {
 		await expectRevert(
 			this.taxHandler.addNFTs([ethers.constants.AddressZero], [1]),
 			"contract address is zero address"
