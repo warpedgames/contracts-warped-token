@@ -40,6 +40,25 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	bool public taxDisabled;
 	IPoolManager public poolManager;
 
+	/// @notice Emitted when tax rates are updated.
+	event TaxRatesUpdated(
+		uint256[] thesholds,
+		uint256[] rates,
+		uint256 basisTaxRate
+	);
+
+	/// @notice Emitted when nft contracts and levels are added.
+	event NFTsAdded(address[] contracts, uint8[] levels);
+
+	/// @notice Emitted when nft contracts are removed.
+	event NFTsRemoved(address[] contracts);
+
+	/// @notice Emitted when tax is paused.
+	event TaxPaused();
+
+	/// @notice Emitted when tax is resumed.
+	event TaxResumed();
+
 	/// @notice Constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address
 	/// @param _nftContracts array of addresses of NFT contracts
@@ -142,6 +161,8 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 			taxRates.push(TaxRatePoint(thresholds[i], rates[i]));
 		}
 		basisTaxRate = _basisTaxRate;
+
+		emit TaxRatesUpdated(thresholds, rates, _basisTaxRate);
 	}
 
 	/**
@@ -177,6 +198,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 			}
 			nftLevels[IERC721(contracts[i])] = 0;
 		}
+		emit NFTsRemoved(contracts);
 	}
 
 	/**
@@ -185,6 +207,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	function pauseTax() external onlyOwner {
 		require(!taxDisabled, "Already paused");
 		taxDisabled = true;
+		emit TaxPaused();
 	}
 
 	/**
@@ -193,6 +216,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	function resumeTax() external onlyOwner {
 		require(taxDisabled, "Not paused");
 		taxDisabled = false;
+		emit TaxResumed();
 	}
 
 	/**
@@ -245,5 +269,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 			nftContracts.push(IERC721(contracts[i]));
 			nftLevels[IERC721(contracts[i])] = levels[i];
 		}
+
+		emit NFTsAdded(contracts, levels);
 	}
 }
