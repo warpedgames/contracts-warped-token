@@ -252,11 +252,19 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		path[0] = address(token);
 		path[1] = UNISWAP_V2_ROUTER.WETH();
 
+		// Call the getAmountsOut function to estimate the output amounts
+		uint256[] memory amountsOut = UNISWAP_V2_ROUTER.getAmountsOut(
+			tokenAmount,
+			path
+		);
+		// Set the minimum amounts slightly below the estimated output amounts
+		uint256 amountETHMin = amountsOut[1] - (amountsOut[1] / 100); // consider about 1 percent slippage
+
 		// Ensure the router can perform the swap for the designated number of tokens.
 		token.approve(address(UNISWAP_V2_ROUTER), tokenAmount);
 		UNISWAP_V2_ROUTER.swapExactTokensForETHSupportingFeeOnTransferTokens(
 			tokenAmount,
-			0,
+			amountETHMin,
 			path,
 			address(this),
 			block.timestamp
@@ -284,8 +292,8 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		);
 
 		// Set the minimum amounts slightly below the estimated output amounts
-		uint256 amountTokenMin = amountsOut[0] - (amountsOut[0] / 10); // Example: 90% of the estimated token amount
-		uint256 amountETHMin = amountsOut[1] - (amountsOut[1] / 10); // Example: 90% of the estimated ETH amount
+		uint256 amountTokenMin = amountsOut[0] - (amountsOut[0] / 100); // consider about 1 percent slippage
+		uint256 amountETHMin = amountsOut[1] - (amountsOut[1] / 100); // consider about 1 percent slippage
 
 		// Both minimum values are set to zero to allow for any form of slippage.
 		UNISWAP_V2_ROUTER.addLiquidityETH{value: weiAmount}(
