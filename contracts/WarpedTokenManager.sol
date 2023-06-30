@@ -79,27 +79,38 @@ contract WarpedTokenManager is WarpedPoolManager {
 	/// @param amountToLiquidity amount of new tokens to add into liquidity
 	function addLiquidity(uint256 amountToLiquidity) external payable onlyOwner {
 		// 1. Receive token from deployer wallet
-		warpedToken.transferFrom(_msgSender(), address(this), amountToLiquidity);
+		warpedToken.safeTransferFrom(
+			_msgSender(),
+			address(this),
+			amountToLiquidity
+		);
 
 		// 2. Approve token to use by uniswap router
-		warpedToken.approve(address(UNISWAP_V2_ROUTER), amountToLiquidity);
+		warpedToken.safeApprove(address(UNISWAP_V2_ROUTER), amountToLiquidity);
 
 		// 3. Create uniswap pair
 		address uniswapV2Pair = IUniswapV2Factory(UNISWAP_V2_ROUTER.factory())
 			.createPair(address(warpedToken), UNISWAP_V2_ROUTER.WETH());
 
 		// 4. Add liquidity
-		UNISWAP_V2_ROUTER.addLiquidityETH{value: address(this).balance}(
+		(uint amountToken, uint amountETH, uint liquidity) = UNISWAP_V2_ROUTER
+			.addLiquidityETH{value: address(this).balance}(
 			address(warpedToken),
 			amountToLiquidity,
-			0,
-			0,
+			amountToLiquidity,
+			msg.value,
 			owner(),
 			block.timestamp
 		);
+		require(
+			amountToken == amountToLiquidity &&
+				amountETH == msg.value &&
+				liquidity > 0,
+			"add liquidity failed"
+		);
 
 		// 5. Add exchange pool and set primary pool
-		_exchangePools.add(address(uniswapV2Pair));
+		require(_exchangePools.add(address(uniswapV2Pair)), "add pool failed");
 		primaryPool = address(uniswapV2Pair);
 	}
 }

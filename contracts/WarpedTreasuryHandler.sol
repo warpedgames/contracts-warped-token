@@ -253,7 +253,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		path[1] = UNISWAP_V2_ROUTER.WETH();
 
 		// Ensure the router can perform the swap for the designated number of tokens.
-		token.approve(address(UNISWAP_V2_ROUTER), tokenAmount);
+		token.safeApprove(address(UNISWAP_V2_ROUTER), tokenAmount);
 		UNISWAP_V2_ROUTER.swapExactTokensForETHSupportingFeeOnTransferTokens(
 			tokenAmount,
 			0,
@@ -270,7 +270,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	 */
 	function _addLiquidity(uint256 tokenAmount, uint256 weiAmount) internal {
 		// Ensure the router can perform the transfer for the designated number of tokens.
-		token.approve(address(UNISWAP_V2_ROUTER), tokenAmount);
+		token.safeApprove(address(UNISWAP_V2_ROUTER), tokenAmount);
 
 		// Both minimum values are set to zero to allow for any form of slippage.
 		UNISWAP_V2_ROUTER.addLiquidityETH{value: weiAmount}(
