@@ -29,6 +29,9 @@ contract WarpedTokenManager is WarpedPoolManager {
 	using EnumerableSet for EnumerableSet.AddressSet;
 	using SafeERC20 for IERC20;
 
+	/// @notice Emitted when liquidity added successfully
+	event LiquidityAdded(uint amountToken, uint amountETH, uint liquidity);
+
 	/// @notice WARPED token
 	IERC20 public warpedToken;
 	/// @notice Uniswap v2 router address
@@ -102,15 +105,10 @@ contract WarpedTokenManager is WarpedPoolManager {
 			owner(),
 			block.timestamp
 		);
-		require(
-			amountToken == amountToLiquidity &&
-				amountETH == msg.value &&
-				liquidity > 0,
-			"add liquidity failed"
-		);
+		emit LiquidityAdded(amountToken, amountETH, liquidity);
 
 		// 5. Add exchange pool and set primary pool
-		require(_exchangePools.add(address(uniswapV2Pair)), "add pool failed");
+		_exchangePools.add(address(uniswapV2Pair));
 		primaryPool = address(uniswapV2Pair);
 	}
 }

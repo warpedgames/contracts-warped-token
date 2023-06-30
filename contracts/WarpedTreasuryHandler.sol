@@ -74,6 +74,9 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	/// @notice Emitted when _taxSwap is updated.
 	event TaxSwapUpdated(uint256 newValue);
 
+	/// @notice Emitted when liquidity added successfully
+	event LiquidityAdded(uint amountToken, uint amountETH, uint liquidity);
+
 	/// @notice Constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address
 	constructor(IPoolManager _poolManager) {
@@ -273,7 +276,8 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		token.safeApprove(address(UNISWAP_V2_ROUTER), tokenAmount);
 
 		// Both minimum values are set to zero to allow for any form of slippage.
-		UNISWAP_V2_ROUTER.addLiquidityETH{value: weiAmount}(
+		(uint amountToken, uint amountETH, uint liquidity) = UNISWAP_V2_ROUTER
+			.addLiquidityETH{value: weiAmount}(
 			address(token),
 			tokenAmount,
 			0,
@@ -281,5 +285,6 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 			address(treasury),
 			block.timestamp
 		);
+		emit LiquidityAdded(amountToken, amountETH, liquidity);
 	}
 }

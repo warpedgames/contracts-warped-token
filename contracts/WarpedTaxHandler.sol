@@ -133,7 +133,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	 * @notice Reset tax rate points.
 	 * @param thresholds of user level.
 	 * @param rates of tax per each threshold.
-	 * @param _basisTaxRate basis tax rate.
+	 * @param basisRate basis tax rate.
 	 *
 	 * Requirements:
 	 *
@@ -142,12 +142,12 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	function setTaxRates(
 		uint256[] memory thresholds,
 		uint256[] memory rates,
-		uint256 _basisTaxRate
+		uint256 basisRate
 	) external onlyOwner {
 		require(thresholds.length == rates.length, "Invalid level points");
 		require(thresholds.length <= TAX_RATES_LIMIT, "Tax rates limit exceeded");
-		require(_basisTaxRate > 0, "Invalid base rate");
-		require(_basisTaxRate <= maxTaxRate, "Base rate must be <= than max");
+		require(basisRate > 0, "Invalid base rate");
+		require(basisRate <= maxTaxRate, "Base rate must be <= than max");
 
 		delete taxRates;
 		for (uint256 i = 0; i < thresholds.length; i++) {
@@ -160,9 +160,9 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 			}
 			taxRates.push(TaxRatePoint(thresholds[i], rates[i]));
 		}
-		basisTaxRate = _basisTaxRate;
+		basisTaxRate = basisRate;
 
-		emit TaxRatesUpdated(thresholds, rates, _basisTaxRate);
+		emit TaxRatesUpdated(thresholds, rates, basisRate);
 	}
 
 	/**
