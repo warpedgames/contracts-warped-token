@@ -106,9 +106,9 @@ describe("WarpedTokenManager", function () {
 		await expectRevert(
 			this.tokenManager.addExchangePool(ethers.constants.AddressZero),
 			"Zero address passed"
-    )
+		)
 	})
-  
+
 	it("removeExchangePool reverts when given poolAddress and current primaryPool address are the same", async function () {
 		await this.tokenManager.addExchangePool(this.pool.address)
 		await this.tokenManager.setPrimaryPool(this.pool.address)
@@ -136,20 +136,18 @@ describe("WarpedTokenManager", function () {
 			addResultReceipt.events.filter(
 				(e) =>
 					e.event === "ExchangePoolAdded" && e.args[0] === this.pool.address
-			).length > 0,
-			"No event for addExchangePool"
-		)
+			).length
+		).to.equal(1, "No event for addExchangePool")
 		const removeResult = await this.tokenManager.removeExchangePool(
 			this.pool.address
 		)
-		const removeResultreceipt = await removeResult.wait()
+		const removeResultReceipt = await removeResult.wait()
 		expect(
-			removeResultreceipt.events.filter(
+			removeResultReceipt.events.filter(
 				(e) =>
 					e.event === "ExchangePoolRemoved" && e.args[0] === this.pool.address
-			).length > 0,
-			"No event for removeExchangePool"
-		)
+			).length
+		).to.equal(1, "No event for removeExchangePool")
 	})
 
 	it("addExchangePool/removeExchangePool does not emit events for already added or not added pool", async function () {
@@ -158,8 +156,8 @@ describe("WarpedTokenManager", function () {
 			this.pool.address
 		)
 		const doubleAddResultReceipt = await doubleAddResult.wait()
-		expect(
-			doubleAddResultReceipt.events.length === 0,
+		expect(doubleAddResultReceipt.events.length).to.equal(
+			0,
 			"Should be no event for double add"
 		)
 		await this.tokenManager.removeExchangePool(this.pool.address)
@@ -167,8 +165,8 @@ describe("WarpedTokenManager", function () {
 			this.pool.address
 		)
 		const doubleRemoveResultReceipt = await doubleRemoveResult.wait()
-		expect(
-			doubleRemoveResultReceipt.events.length === 0,
+		expect(doubleRemoveResultReceipt.events.length).to.equal(
+			0,
 			"Should be no event for double remove"
 		)
 	})
@@ -192,9 +190,8 @@ describe("WarpedTokenManager", function () {
 			setPoolResultReceipt.events.filter(
 				(e) =>
 					e.event === "PrimaryPoolUpdated" && e.args[1] === this.pool.address
-			).length > 0,
-			"No event for setPrimaryPool"
-		)
+			).length
+		).to.equal(1, "No event for setPrimaryPool")
 		await expectRevert(
 			this.tokenManager.setPrimaryPool(this.pool.address),
 			"Already primary pool address"
@@ -229,9 +226,8 @@ describe("WarpedTokenManager", function () {
 		const addLiquidityResultReceipt = await addLiquidityResult.wait()
 		expect(
 			addLiquidityResultReceipt.events.filter(
-				(e) => e.event === "PrimaryPoolUpdated"
-			).length > 0,
-			"No event for PrimaryPoolUpdated"
-		)
+				(e) => e.event === "LiquidityAdded"
+			).length
+		).to.equal(1, "No event for LiquidityAdded")
 	})
 })

@@ -340,20 +340,36 @@ describe("WarpedTreasuryHandler", function () {
 			ethers.utils.parseEther("12000000")
 		)
 		await this.treasuryHandler.setLiquidityBasisPoints(2000)
-		await this.token.testTreausryHandler(
+		let result = await this.token.testTreausryHandler(
 			this.treasuryHandler.address,
 			this.signers[0].address,
 			primaryPool,
 			ethers.utils.parseEther("1000000")
 		)
+		let receipt = await result.wait()
+		expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(
+			ethers.utils.parseEther("11000000")
+		)
+		const topicsForLiquidityAdded = await ethers.utils.id(
+			"LiquidityAdded(uint256,uint256,uint256)"
+		)
+		expect(
+			receipt.events.filter((e) => e.topics[0] === topicsForLiquidityAdded)
+				.length
+		).to.equal(1, "No event for LiquidityAdded")
 
 		await this.treasuryHandler.setLiquidityBasisPoints(10000)
-		await this.token.testTreausryHandler(
+		result = await this.token.testTreausryHandler(
 			this.treasuryHandler.address,
 			this.signers[0].address,
 			primaryPool,
 			ethers.utils.parseEther("1000000")
 		)
+		receipt = await result.wait()
+		expect(
+			receipt.events.filter((e) => e.topics[0] === topicsForLiquidityAdded)
+				.length
+		).to.equal(1, "No event for LiquidityAdded")
 	})
 
 	it("after pool added, after init, updateTaxSwap and processTreasury work correctly", async function () {

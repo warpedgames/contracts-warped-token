@@ -74,6 +74,9 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	/// @notice Emitted when _taxSwap is updated.
 	event TaxSwapUpdated(uint256 newValue);
 
+	/// @notice Emitted when liquidity added successfully
+	event LiquidityAdded(uint amountToken, uint amountETH, uint liquidity);
+
 	/// @notice Constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address
 	constructor(IPoolManager _poolManager) {
@@ -253,7 +256,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		path[1] = UNISWAP_V2_ROUTER.WETH();
 
 		// Ensure the router can perform the swap for the designated number of tokens.
-		token.approve(address(UNISWAP_V2_ROUTER), tokenAmount);
+		token.safeApprove(address(UNISWAP_V2_ROUTER), tokenAmount);
 		UNISWAP_V2_ROUTER.swapExactTokensForETHSupportingFeeOnTransferTokens(
 			tokenAmount,
 			0,
@@ -270,10 +273,11 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	 */
 	function _addLiquidity(uint256 tokenAmount, uint256 weiAmount) internal {
 		// Ensure the router can perform the transfer for the designated number of tokens.
-		token.approve(address(UNISWAP_V2_ROUTER), tokenAmount);
+		token.safeApprove(address(UNISWAP_V2_ROUTER), tokenAmount);
 
 		// Both minimum values are set to zero to allow for any form of slippage.
-		UNISWAP_V2_ROUTER.addLiquidityETH{value: weiAmount}(
+		(uint amountToken, uint amountETH, uint liquidity) = UNISWAP_V2_ROUTER
+			.addLiquidityETH{value: weiAmount}(
 			address(token),
 			tokenAmount,
 			0,
@@ -281,5 +285,6 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 			address(treasury),
 			block.timestamp
 		);
+		emit LiquidityAdded(amountToken, amountETH, liquidity);
 	}
 }
