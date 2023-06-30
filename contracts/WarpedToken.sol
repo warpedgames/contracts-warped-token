@@ -16,15 +16,19 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 import {ITaxHandler} from "./interfaces/ITaxHandler.sol";
 import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
-import {LenientReentrancyGuard} from "./LenientReentrancyGuard.sol";
 
 /// @notice WARPED token contract
 /// @dev extends standard ERC20 contract
-contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
+contract WarpedToken is ERC20, Ownable {
 	uint8 private constant _DECIMALS = 18;
 	uint256 private constant _T_TOTAL = 10_000_000_000 * 10 ** _DECIMALS;
 	string private constant _NAME = "WARPED";
 	string private constant _SYMBOL = "WARPED";
+
+	uint256 private constant _NOT_IN_TAX_PROCESSING = 1;
+	uint256 private constant _TAX_PROCESSING = 2;
+
+	uint256 private _tax_processing_status = _NOT_IN_TAX_PROCESSING;
 
 	/// @notice Tax handler address
 	ITaxHandler public taxHandler;
@@ -59,6 +63,17 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		_mint(deployerAddress, _T_TOTAL);
 	}
 
+	modifier skipWhenTaxProcessing() {
+		if (_tax_processing_status == _TAX_PROCESSING) {
+			return;
+		}
+
+		_tax_processing_status = _TAX_PROCESSING;
+		_;
+
+		_tax_processing_status = _NOT_IN_TAX_PROCESSING;
+	}
+
 	/**
 	 * @dev See {ERC20-_beforeTokenTransfer}.
 	 * forward into beforeTokenTransferHandler function of treasury handler
@@ -67,7 +82,7 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		address from,
 		address to,
 		uint256 amount
-	) internal override nonReentrant {
+	) internal override skipWhenTaxProcessing {
 		treasuryHandler.processTreasury(from, to, amount);
 	}
 
@@ -79,7 +94,7 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		address from,
 		address to,
 		uint256 amount
-	) internal override nonReentrant {
+	) internal override skipWhenTaxProcessing {
 		if (from == address(0x0)) {
 			// skip for mint
 			return;
