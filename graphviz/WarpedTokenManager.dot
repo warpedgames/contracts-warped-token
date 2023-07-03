@@ -1,0 +1,124 @@
+digraph G {
+  graph [ ratio = "auto", page = "100", compound =true, bgcolor = "#2e3e56" ];
+  node [ style = "filled", fillcolor = "#edad56", color = "#edad56", penwidth =3 ];
+  edge [ color = "#fcfcfc", penwidth =2, fontname = "helvetica Neue Ultra Light" ];
+subgraph "clusterWarpedTokenManager" {
+  graph [ label = "WarpedTokenManager", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "WarpedTokenManager.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+  "WarpedTokenManager.addLiquidity" [ label = "addLiquidity", color = "brown", fillcolor = "#ffbdb9" ];
+  "WarpedTokenManager.address" [ label = "address" ];
+  "WarpedTokenManager.IPoolManager" [ label = "IPoolManager" ];
+  "WarpedTokenManager._msgSender" [ label = "_msgSender" ];
+  "WarpedTokenManager.IERC20" [ label = "IERC20" ];
+  "WarpedTokenManager.IUniswapV2Factory" [ label = "IUniswapV2Factory" ];
+  "WarpedTokenManager.owner" [ label = "owner" ];
+}
+
+subgraph "clusterWarpedTreasuryHandler" {
+  graph [ label = "WarpedTreasuryHandler", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "WarpedTreasuryHandler.initialize" [ label = "initialize" ];
+  "WarpedTreasuryHandler.transferOwnership" [ label = "transferOwnership" ];
+}
+
+subgraph "clusterWarpedTaxHandler" {
+  graph [ label = "WarpedTaxHandler", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "WarpedTaxHandler.transferOwnership" [ label = "transferOwnership" ];
+}
+
+subgraph "clusterWarpedToken" {
+  graph [ label = "WarpedToken", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "WarpedToken.transferOwnership" [ label = "transferOwnership" ];
+}
+
+subgraph "clusterIERC20" {
+  graph [ label = "IERC20", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "IERC20.safeTransferFrom" [ label = "safeTransferFrom" ];
+  "IERC20.safeApprove" [ label = "safeApprove" ];
+}
+
+subgraph "clusterIUniswapV2Router02" {
+  graph [ label = "IUniswapV2Router02", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "IUniswapV2Router02.factory" [ label = "factory" ];
+  "IUniswapV2Router02.WETH" [ label = "WETH" ];
+}
+
+subgraph "cluster_exchangePools" {
+  graph [ label = "_exchangePools", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "_exchangePools.add" [ label = "add" ];
+}
+
+  "WarpedTokenManager.<Constructor>";
+  "WarpedTokenManager.address";
+  "WarpedTokenManager.IPoolManager";
+  "WarpedTokenManager._msgSender";
+  "WarpedTreasuryHandler.initialize";
+  "WarpedTaxHandler.transferOwnership";
+  "WarpedTreasuryHandler.transferOwnership";
+  "WarpedToken.transferOwnership";
+  "WarpedTokenManager.IERC20";
+  "WarpedTokenManager.addLiquidity";
+  "IERC20.safeTransferFrom";
+  "IERC20.safeApprove";
+  "WarpedTokenManager.IUniswapV2Factory";
+  "IUniswapV2Router02.factory";
+  "IUniswapV2Router02.WETH";
+  "WarpedTokenManager.owner";
+  "_exchangePools.add";
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.IPoolManager" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.IPoolManager" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTreasuryHandler.initialize" [ color = "white" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTaxHandler.transferOwnership" [ color = "white" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTreasuryHandler.transferOwnership" [ color = "white" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedToken.transferOwnership" [ color = "white" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.IERC20" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "IERC20.safeTransferFrom" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "IERC20.safeApprove" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.IUniswapV2Factory" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "IUniswapV2Router02.factory" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "IUniswapV2Router02.WETH" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.owner" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "_exchangePools.add" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+
+
+rankdir=LR
+node [shape=plaintext]
+subgraph cluster_01 { 
+label = "Legend";
+key [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td align="right" port="i1">Internal Call</td></tr>
+  <tr><td align="right" port="i2">External Call</td></tr>
+  <tr><td align="right" port="i3">Defined Contract</td></tr>
+  <tr><td align="right" port="i4">Undefined Contract</td></tr>
+  </table>>]
+key2 [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td port="i1">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i2">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i3" bgcolor="#445773">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i4">
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="7" color="#e8726d">
+      <tr>
+       <td></td>
+      </tr>
+     </table>
+  </td></tr>
+  </table>>]
+key:i1:e -> key2:i1:w [color="#1bc6a6"]
+key:i2:e -> key2:i2:w [color="white"]
+}
+}

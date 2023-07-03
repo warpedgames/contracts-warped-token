@@ -1,0 +1,128 @@
+digraph G {
+  graph [ ratio = "auto", page = "100", compound =true, bgcolor = "#2e3e56" ];
+  node [ style = "filled", fillcolor = "#edad56", color = "#edad56", penwidth =3 ];
+  edge [ color = "#fcfcfc", penwidth =2, fontname = "helvetica Neue Ultra Light" ];
+subgraph "clusterWarpedTreasuryHandler" {
+  graph [ label = "WarpedTreasuryHandler", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "WarpedTreasuryHandler.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+  "WarpedTreasuryHandler.<Receive Ether>" [ label = "<Receive Ether>", color = "brown", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.initialize" [ label = "initialize", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.processTreasury" [ label = "processTreasury", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.setLiquidityBasisPoints" [ label = "setLiquidityBasisPoints", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.setPriceImpactBasisPoints" [ label = "setPriceImpactBasisPoints", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.setTreasury" [ label = "setTreasury", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.withdraw" [ label = "withdraw", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.updateTaxSwap" [ label = "updateTaxSwap", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler._swapTokensForEth" [ label = "_swapTokensForEth" ];
+  "WarpedTreasuryHandler._addLiquidity" [ label = "_addLiquidity" ];
+  "WarpedTreasuryHandler.address" [ label = "address" ];
+  "WarpedTreasuryHandler.payable" [ label = "payable" ];
+  "WarpedTreasuryHandler.IERC20" [ label = "IERC20" ];
+}
+
+subgraph "clusterIPoolManager" {
+  graph [ label = "IPoolManager", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "IPoolManager.isPoolAddress" [ label = "isPoolAddress" ];
+  "IPoolManager.primaryPool" [ label = "primaryPool" ];
+}
+
+subgraph "clusterIERC20" {
+  graph [ label = "IERC20", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "IERC20.balanceOf" [ label = "balanceOf" ];
+  "IERC20.safeApprove" [ label = "safeApprove" ];
+}
+
+subgraph "clustertreasury" {
+  graph [ label = "treasury", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "treasury.sendValue" [ label = "sendValue" ];
+}
+
+subgraph "clusterIUniswapV2Router02" {
+  graph [ label = "IUniswapV2Router02", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "IUniswapV2Router02.WETH" [ label = "WETH" ];
+  "IUniswapV2Router02.getAmountsOut" [ label = "getAmountsOut" ];
+  "IUniswapV2Router02.swapExactTokensForETHSupportingFeeOnTransferTokens" [ label = "swapExactTokensForETHSupportingFeeOnTransferTokens" ];
+}
+
+  "WarpedTreasuryHandler.initialize";
+  "WarpedTreasuryHandler.address";
+  "WarpedTreasuryHandler.payable";
+  "WarpedTreasuryHandler.IERC20";
+  "WarpedTreasuryHandler.processTreasury";
+  "IPoolManager.isPoolAddress";
+  "IERC20.balanceOf";
+  "IPoolManager.primaryPool";
+  "WarpedTreasuryHandler._swapTokensForEth";
+  "WarpedTreasuryHandler._addLiquidity";
+  "treasury.sendValue";
+  "WarpedTreasuryHandler.setTreasury";
+  "WarpedTreasuryHandler.withdraw";
+  "IUniswapV2Router02.WETH";
+  "IUniswapV2Router02.getAmountsOut";
+  "IERC20.safeApprove";
+  "IUniswapV2Router02.swapExactTokensForETHSupportingFeeOnTransferTokens";
+  "WarpedTreasuryHandler.initialize" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.initialize" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.initialize" -> "WarpedTreasuryHandler.payable" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.initialize" -> "WarpedTreasuryHandler.IERC20" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.processTreasury" -> "IPoolManager.isPoolAddress" [ color = "white" ];
+  "WarpedTreasuryHandler.processTreasury" -> "IERC20.balanceOf" [ color = "white" ];
+  "WarpedTreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.processTreasury" -> "IERC20.balanceOf" [ color = "white" ];
+  "WarpedTreasuryHandler.processTreasury" -> "IPoolManager.primaryPool" [ color = "white" ];
+  "WarpedTreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.processTreasury" -> "WarpedTreasuryHandler._swapTokensForEth" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.processTreasury" -> "WarpedTreasuryHandler._addLiquidity" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.processTreasury" -> "treasury.sendValue" [ color = "white" ];
+  "WarpedTreasuryHandler.setTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.setTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.setTreasury" -> "WarpedTreasuryHandler.payable" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.withdraw" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.withdraw" -> "treasury.sendValue" [ color = "white" ];
+  "WarpedTreasuryHandler.withdraw" -> "WarpedTreasuryHandler.IERC20" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.withdraw" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "IUniswapV2Router02.WETH" [ color = "white" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "IUniswapV2Router02.getAmountsOut" [ color = "white" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "IERC20.safeApprove" [ color = "white" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "IUniswapV2Router02.swapExactTokensForETHSupportingFeeOnTransferTokens" [ color = "white" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "IERC20.safeApprove" [ color = "white" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "IUniswapV2Router02.WETH" [ color = "white" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "IUniswapV2Router02.getAmountsOut" [ color = "white" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+
+
+rankdir=LR
+node [shape=plaintext]
+subgraph cluster_01 { 
+label = "Legend";
+key [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td align="right" port="i1">Internal Call</td></tr>
+  <tr><td align="right" port="i2">External Call</td></tr>
+  <tr><td align="right" port="i3">Defined Contract</td></tr>
+  <tr><td align="right" port="i4">Undefined Contract</td></tr>
+  </table>>]
+key2 [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td port="i1">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i2">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i3" bgcolor="#445773">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i4">
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="7" color="#e8726d">
+      <tr>
+       <td></td>
+      </tr>
+     </table>
+  </td></tr>
+  </table>>]
+key:i1:e -> key2:i1:w [color="#1bc6a6"]
+key:i2:e -> key2:i2:w [color="white"]
+}
+}
