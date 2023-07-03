@@ -1,0 +1,367 @@
+digraph G {
+  graph [ ratio = "auto", page = "100", compound =true, bgcolor = "#2e3e56" ];
+  node [ style = "filled", fillcolor = "#edad56", color = "#edad56", penwidth =3 ];
+  edge [ color = "#fcfcfc", penwidth =2, fontname = "helvetica Neue Ultra Light" ];
+subgraph "clusterITreasuryHandler" {
+  graph [ label = "ITreasuryHandler  (iface)", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "ITreasuryHandler.processTreasury" [ label = "processTreasury" ];
+}
+
+subgraph "clusterIUniswapV2Factory" {
+  graph [ label = "IUniswapV2Factory  (iface)", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "IUniswapV2Factory.createPair" [ label = "createPair", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+}
+
+subgraph "clusterIUniswapV2Router01" {
+  graph [ label = "IUniswapV2Router01  (iface)", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "IUniswapV2Router01.factory" [ label = "factory", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "IUniswapV2Router01.WETH" [ label = "WETH", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "IUniswapV2Router01.getAmountsOut" [ label = "getAmountsOut", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "IUniswapV2Router01.addLiquidityETH" [ label = "addLiquidityETH", color = "brown", fillcolor = "#ffbdb9" ];
+}
+
+subgraph "clusterIUniswapV2Router02" {
+  graph [ label = "IUniswapV2Router02  (iface)", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "IUniswapV2Router02.swapExactTokensForETHSupportingFeeOnTransferTokens" [ label = "swapExactTokensForETHSupportingFeeOnTransferTokens" ];
+  "IUniswapV2Router02.factory" [ label = "factory" ];
+  "IUniswapV2Router02.WETH" [ label = "WETH" ];
+  "IUniswapV2Router02.getAmountsOut" [ label = "getAmountsOut" ];
+}
+
+subgraph "clusterITaxHandler" {
+  graph [ label = "ITaxHandler  (iface)", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "ITaxHandler.getTax" [ label = "getTax" ];
+}
+
+subgraph "clusterIPoolManager" {
+  graph [ label = "IPoolManager  (iface)", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "IPoolManager.primaryPool" [ label = "primaryPool" ];
+  "IPoolManager.isPoolAddress" [ label = "isPoolAddress" ];
+}
+
+subgraph "clusterWarpedToken" {
+  graph [ label = "WarpedToken", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "WarpedToken.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+  "WarpedToken.skipWhenTaxProcessing" [ label = "skipWhenTaxProcessing", color = "#1bc6a6", shape =doubleoctagon ];
+  "WarpedToken.updateTaxHandler" [ label = "updateTaxHandler", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedToken.updateTreasuryHandler" [ label = "updateTreasuryHandler", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedToken._beforeTokenTransfer" [ label = "_beforeTokenTransfer", color = "#f2c383", fillcolor = "#f2c383" ];
+  "WarpedToken._afterTokenTransfer" [ label = "_afterTokenTransfer", color = "#f2c383", fillcolor = "#f2c383" ];
+  "WarpedToken.address" [ label = "address" ];
+  "WarpedToken._mint" [ label = "_mint" ];
+  "WarpedToken._transfer" [ label = "_transfer" ];
+  "WarpedToken.transferOwnership" [ label = "transferOwnership" ];
+}
+
+subgraph "clusterWarpedTaxHandler" {
+  graph [ label = "WarpedTaxHandler", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "WarpedTaxHandler.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+  "WarpedTaxHandler.setTaxRates" [ label = "setTaxRates", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTaxHandler.addNFTs" [ label = "addNFTs", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTaxHandler.removeNFTs" [ label = "removeNFTs", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTaxHandler.pauseTax" [ label = "pauseTax", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTaxHandler.resumeTax" [ label = "resumeTax", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "ITaxHandler.getTax" [ label = "getTax", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTaxHandler._getTaxBasisPoints" [ label = "_getTaxBasisPoints" ];
+  "WarpedTaxHandler._addNFTs" [ label = "_addNFTs" ];
+  "WarpedTaxHandler.address" [ label = "address" ];
+  "WarpedTaxHandler.IERC721" [ label = "IERC721" ];
+  "WarpedTaxHandler.IERC165" [ label = "IERC165" ];
+  "WarpedTaxHandler.type" [ label = "type" ];
+  "WarpedTaxHandler.transferOwnership" [ label = "transferOwnership" ];
+}
+
+subgraph "clusterWarpedTokenManager" {
+  graph [ label = "WarpedTokenManager", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "WarpedTokenManager.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+  "WarpedTokenManager.addLiquidity" [ label = "addLiquidity", color = "brown", fillcolor = "#ffbdb9" ];
+  "WarpedTokenManager.address" [ label = "address" ];
+  "WarpedTokenManager._msgSender" [ label = "_msgSender" ];
+  "WarpedTokenManager.IERC20" [ label = "IERC20" ];
+  "WarpedTokenManager.owner" [ label = "owner" ];
+}
+
+subgraph "clusterWarpedPoolManager" {
+  graph [ label = "WarpedPoolManager", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "WarpedPoolManager.addExchangePool" [ label = "addExchangePool", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedPoolManager.removeExchangePool" [ label = "removeExchangePool", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedPoolManager.setPrimaryPool" [ label = "setPrimaryPool", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "IPoolManager.isPoolAddress" [ label = "isPoolAddress", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedPoolManager.address" [ label = "address" ];
+}
+
+subgraph "clusterWarpedTreasuryHandler" {
+  graph [ label = "WarpedTreasuryHandler", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "WarpedTreasuryHandler.initialize" [ label = "initialize", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.transferOwnership" [ label = "transferOwnership" ];
+  "WarpedTreasuryHandler.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+  "WarpedTreasuryHandler.<Receive Ether>" [ label = "<Receive Ether>", color = "brown", fillcolor = "#ffbdb9" ];
+  "ITreasuryHandler.processTreasury" [ label = "processTreasury", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.setLiquidityBasisPoints" [ label = "setLiquidityBasisPoints", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.setPriceImpactBasisPoints" [ label = "setPriceImpactBasisPoints", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.setTreasury" [ label = "setTreasury", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.withdraw" [ label = "withdraw", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler.updateTaxSwap" [ label = "updateTaxSwap", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedTreasuryHandler._swapTokensForEth" [ label = "_swapTokensForEth" ];
+  "WarpedTreasuryHandler._addLiquidity" [ label = "_addLiquidity" ];
+  "WarpedTreasuryHandler.address" [ label = "address" ];
+  "WarpedTreasuryHandler.payable" [ label = "payable" ];
+  "WarpedTreasuryHandler.IERC20" [ label = "IERC20" ];
+}
+
+subgraph "clusterTaxHandlerStub" {
+  graph [ label = "TaxHandlerStub", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "TaxHandlerStub.setTestData" [ label = "setTestData", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "ITaxHandler.getTax" [ label = "getTax", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+}
+
+subgraph "clusterTreasuryHandlerStub" {
+  graph [ label = "TreasuryHandlerStub", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "TreasuryHandlerStub.setTokenAndPool" [ label = "setTokenAndPool", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "ITreasuryHandler.processTreasury" [ label = "processTreasury", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "TreasuryHandlerStub.IERC20" [ label = "IERC20" ];
+  "TreasuryHandlerStub.address" [ label = "address" ];
+}
+
+subgraph "clusterERC1155Stub" {
+  graph [ label = "ERC1155Stub", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "ERC1155Stub.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+}
+
+subgraph "clusterERC20Stub" {
+  graph [ label = "ERC20Stub", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "ERC20Stub.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+  "ERC20Stub.testTreausryHandler" [ label = "testTreausryHandler", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "ERC20Stub._mint" [ label = "_mint" ];
+  "ERC20Stub._msgSender" [ label = "_msgSender" ];
+}
+
+subgraph "clusterERC721Stub" {
+  graph [ label = "ERC721Stub", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "ERC721Stub.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+}
+
+subgraph "clusterIERC721" {
+  graph [ label = "IERC721", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "IERC721.balanceOf" [ label = "balanceOf" ];
+}
+
+subgraph "clusterIERC20" {
+  graph [ label = "IERC20", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "IERC20.safeTransferFrom" [ label = "safeTransferFrom" ];
+  "IERC20.safeApprove" [ label = "safeApprove" ];
+  "IERC20.balanceOf" [ label = "balanceOf" ];
+  "IERC20.transfer" [ label = "transfer" ];
+}
+
+subgraph "clusterEnumerableSet.AddressSet" {
+  graph [ label = "EnumerableSet.AddressSet", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "EnumerableSet.AddressSet.add" [ label = "add" ];
+  "EnumerableSet.AddressSet.remove" [ label = "remove" ];
+  "EnumerableSet.AddressSet.contains" [ label = "contains" ];
+}
+
+subgraph "clustertreasury" {
+  graph [ label = "treasury", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "treasury.sendValue" [ label = "sendValue" ];
+}
+
+  "WarpedToken.<Constructor>";
+  "WarpedToken.address";
+  "WarpedToken._mint";
+  "WarpedToken.updateTaxHandler";
+  "WarpedToken.updateTreasuryHandler";
+  "WarpedToken._beforeTokenTransfer";
+  "ITreasuryHandler.processTreasury";
+  "WarpedToken._afterTokenTransfer";
+  "ITaxHandler.getTax";
+  "WarpedToken._transfer";
+  "WarpedTaxHandler.<Constructor>";
+  "WarpedTaxHandler._addNFTs";
+  "WarpedTaxHandler.addNFTs";
+  "WarpedTaxHandler.removeNFTs";
+  "WarpedTaxHandler.address";
+  "WarpedTaxHandler.IERC721";
+  "IPoolManager.isPoolAddress";
+  "WarpedTaxHandler._getTaxBasisPoints";
+  "IERC721.balanceOf";
+  "WarpedTaxHandler.IERC165";
+  "WarpedTaxHandler.type";
+  "WarpedTokenManager.<Constructor>";
+  "WarpedTokenManager.address";
+  "WarpedTokenManager._msgSender";
+  "WarpedTreasuryHandler.initialize";
+  "WarpedTaxHandler.transferOwnership";
+  "WarpedTreasuryHandler.transferOwnership";
+  "WarpedToken.transferOwnership";
+  "WarpedTokenManager.IERC20";
+  "WarpedTokenManager.addLiquidity";
+  "IERC20.safeTransferFrom";
+  "IERC20.safeApprove";
+  "IUniswapV2Router02.factory";
+  "IUniswapV2Router02.WETH";
+  "WarpedTokenManager.owner";
+  "EnumerableSet.AddressSet.add";
+  "WarpedPoolManager.addExchangePool";
+  "WarpedPoolManager.address";
+  "WarpedPoolManager.removeExchangePool";
+  "EnumerableSet.AddressSet.remove";
+  "WarpedPoolManager.setPrimaryPool";
+  "EnumerableSet.AddressSet.contains";
+  "WarpedTreasuryHandler.address";
+  "WarpedTreasuryHandler.payable";
+  "WarpedTreasuryHandler.IERC20";
+  "IERC20.balanceOf";
+  "IPoolManager.primaryPool";
+  "WarpedTreasuryHandler._swapTokensForEth";
+  "WarpedTreasuryHandler._addLiquidity";
+  "treasury.sendValue";
+  "WarpedTreasuryHandler.setTreasury";
+  "WarpedTreasuryHandler.withdraw";
+  "IUniswapV2Router02.getAmountsOut";
+  "IUniswapV2Router02.swapExactTokensForETHSupportingFeeOnTransferTokens";
+  "TreasuryHandlerStub.setTokenAndPool";
+  "TreasuryHandlerStub.IERC20";
+  "TreasuryHandlerStub.address";
+  "IERC20.transfer";
+  "ERC20Stub.<Constructor>";
+  "ERC20Stub._mint";
+  "ERC20Stub._msgSender";
+  "ERC20Stub.testTreausryHandler";
+  "WarpedToken.<Constructor>" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.<Constructor>" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.<Constructor>" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.<Constructor>" -> "WarpedToken._mint" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTaxHandler" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTaxHandler" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTreasuryHandler" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTreasuryHandler" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken._beforeTokenTransfer" -> "ITreasuryHandler.processTreasury" [ color = "white" ];
+  "WarpedToken._afterTokenTransfer" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken._afterTokenTransfer" -> "ITaxHandler.getTax" [ color = "white" ];
+  "WarpedToken._afterTokenTransfer" -> "WarpedToken._transfer" [ color = "#1bc6a6" ];
+  "WarpedToken._afterTokenTransfer" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler.<Constructor>" -> "WarpedTaxHandler._addNFTs" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler.addNFTs" -> "WarpedTaxHandler._addNFTs" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler.removeNFTs" -> "WarpedTaxHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler.removeNFTs" -> "WarpedTaxHandler.IERC721" [ color = "#1bc6a6" ];
+  "ITaxHandler.getTax" -> "IPoolManager.isPoolAddress" [ color = "white" ];
+  "ITaxHandler.getTax" -> "IPoolManager.isPoolAddress" [ color = "white" ];
+  "ITaxHandler.getTax" -> "IPoolManager.isPoolAddress" [ color = "white" ];
+  "ITaxHandler.getTax" -> "IPoolManager.isPoolAddress" [ color = "white" ];
+  "ITaxHandler.getTax" -> "IPoolManager.isPoolAddress" [ color = "white" ];
+  "ITaxHandler.getTax" -> "WarpedTaxHandler._getTaxBasisPoints" [ color = "#1bc6a6" ];
+  "ITaxHandler.getTax" -> "WarpedTaxHandler._getTaxBasisPoints" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler._getTaxBasisPoints" -> "IERC721.balanceOf" [ color = "white" ];
+  "WarpedTaxHandler._addNFTs" -> "WarpedTaxHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler._addNFTs" -> "WarpedTaxHandler.IERC165" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler._addNFTs" -> "WarpedTaxHandler.type" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler._addNFTs" -> "WarpedTaxHandler.IERC721" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler._addNFTs" -> "WarpedTaxHandler.IERC721" [ color = "#1bc6a6" ];
+  "WarpedTaxHandler._addNFTs" -> "WarpedTaxHandler.IERC721" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTreasuryHandler.initialize" [ color = "white" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTaxHandler.transferOwnership" [ color = "white" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTreasuryHandler.transferOwnership" [ color = "white" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedToken.transferOwnership" [ color = "white" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.<Constructor>" -> "WarpedTokenManager.IERC20" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "IERC20.safeTransferFrom" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager._msgSender" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "IERC20.safeApprove" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "IUniswapV2Router02.factory" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "IUniswapV2Router02.WETH" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.owner" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "EnumerableSet.AddressSet.add" [ color = "white" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedTokenManager.addLiquidity" -> "WarpedTokenManager.address" [ color = "#1bc6a6" ];
+  "WarpedPoolManager.addExchangePool" -> "WarpedPoolManager.address" [ color = "#1bc6a6" ];
+  "WarpedPoolManager.addExchangePool" -> "EnumerableSet.AddressSet.add" [ color = "white" ];
+  "WarpedPoolManager.removeExchangePool" -> "EnumerableSet.AddressSet.remove" [ color = "white" ];
+  "WarpedPoolManager.setPrimaryPool" -> "EnumerableSet.AddressSet.contains" [ color = "white" ];
+  "IPoolManager.isPoolAddress" -> "EnumerableSet.AddressSet.contains" [ color = "white" ];
+  "WarpedTreasuryHandler.initialize" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.initialize" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.initialize" -> "WarpedTreasuryHandler.payable" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.initialize" -> "WarpedTreasuryHandler.IERC20" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "IPoolManager.isPoolAddress" [ color = "white" ];
+  "ITreasuryHandler.processTreasury" -> "IERC20.balanceOf" [ color = "white" ];
+  "ITreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "IERC20.balanceOf" [ color = "white" ];
+  "ITreasuryHandler.processTreasury" -> "IPoolManager.primaryPool" [ color = "white" ];
+  "ITreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "WarpedTreasuryHandler._swapTokensForEth" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "WarpedTreasuryHandler._addLiquidity" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "treasury.sendValue" [ color = "white" ];
+  "WarpedTreasuryHandler.setTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.setTreasury" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.setTreasury" -> "WarpedTreasuryHandler.payable" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.withdraw" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.withdraw" -> "treasury.sendValue" [ color = "white" ];
+  "WarpedTreasuryHandler.withdraw" -> "WarpedTreasuryHandler.IERC20" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler.withdraw" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "IUniswapV2Router02.WETH" [ color = "white" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "IUniswapV2Router02.getAmountsOut" [ color = "white" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "IERC20.safeApprove" [ color = "white" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "IUniswapV2Router02.swapExactTokensForETHSupportingFeeOnTransferTokens" [ color = "white" ];
+  "WarpedTreasuryHandler._swapTokensForEth" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "IERC20.safeApprove" [ color = "white" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "IUniswapV2Router02.WETH" [ color = "white" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "IUniswapV2Router02.getAmountsOut" [ color = "white" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "WarpedTreasuryHandler._addLiquidity" -> "WarpedTreasuryHandler.address" [ color = "#1bc6a6" ];
+  "TreasuryHandlerStub.setTokenAndPool" -> "TreasuryHandlerStub.IERC20" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "TreasuryHandlerStub.address" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "IERC20.balanceOf" [ color = "white" ];
+  "ITreasuryHandler.processTreasury" -> "TreasuryHandlerStub.address" [ color = "#1bc6a6" ];
+  "ITreasuryHandler.processTreasury" -> "IERC20.transfer" [ color = "white" ];
+  "ITreasuryHandler.processTreasury" -> "IERC20.transfer" [ color = "white" ];
+  "ERC20Stub.<Constructor>" -> "ERC20Stub._mint" [ color = "#1bc6a6" ];
+  "ERC20Stub.<Constructor>" -> "ERC20Stub._msgSender" [ color = "#1bc6a6" ];
+  "ERC20Stub.testTreausryHandler" -> "ITreasuryHandler.processTreasury" [ color = "white" ];
+
+
+rankdir=LR
+node [shape=plaintext]
+subgraph cluster_01 { 
+label = "Legend";
+key [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td align="right" port="i1">Internal Call</td></tr>
+  <tr><td align="right" port="i2">External Call</td></tr>
+  <tr><td align="right" port="i3">Defined Contract</td></tr>
+  <tr><td align="right" port="i4">Undefined Contract</td></tr>
+  </table>>]
+key2 [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td port="i1">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i2">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i3" bgcolor="#445773">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i4">
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="7" color="#e8726d">
+      <tr>
+       <td></td>
+      </tr>
+     </table>
+  </td></tr>
+  </table>>]
+key:i1:e -> key2:i1:w [color="#1bc6a6"]
+key:i2:e -> key2:i2:w [color="white"]
+}
+}

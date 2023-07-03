@@ -1,0 +1,86 @@
+digraph G {
+  graph [ ratio = "auto", page = "100", compound =true, bgcolor = "#2e3e56" ];
+  node [ style = "filled", fillcolor = "#edad56", color = "#edad56", penwidth =3 ];
+  edge [ color = "#fcfcfc", penwidth =2, fontname = "helvetica Neue Ultra Light" ];
+subgraph "clusterWarpedToken" {
+  graph [ label = "WarpedToken", color = "#445773", fontcolor = "#f0f0f0", style = "rounded", bgcolor = "#445773" ];
+  "WarpedToken.<Constructor>" [ label = "<Constructor>", color = "#FF9797", fillcolor = "#FF9797" ];
+  "WarpedToken.skipWhenTaxProcessing" [ label = "skipWhenTaxProcessing", color = "#1bc6a6", shape =doubleoctagon ];
+  "WarpedToken.updateTaxHandler" [ label = "updateTaxHandler", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedToken.updateTreasuryHandler" [ label = "updateTreasuryHandler", color = "#ffbdb9", fillcolor = "#ffbdb9" ];
+  "WarpedToken._beforeTokenTransfer" [ label = "_beforeTokenTransfer", color = "#f2c383", fillcolor = "#f2c383" ];
+  "WarpedToken._afterTokenTransfer" [ label = "_afterTokenTransfer", color = "#f2c383", fillcolor = "#f2c383" ];
+  "WarpedToken.address" [ label = "address" ];
+  "WarpedToken.ITaxHandler" [ label = "ITaxHandler" ];
+  "WarpedToken.ITreasuryHandler" [ label = "ITreasuryHandler" ];
+  "WarpedToken._mint" [ label = "_mint" ];
+  "WarpedToken._transfer" [ label = "_transfer" ];
+}
+
+subgraph "clusterITreasuryHandler" {
+  graph [ label = "ITreasuryHandler", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "ITreasuryHandler.processTreasury" [ label = "processTreasury" ];
+}
+
+subgraph "clusterITaxHandler" {
+  graph [ label = "ITaxHandler", color = "#e8726d", fontcolor = "#f0f0f0", style = "rounded,dashed", bgcolor = "#3b4b63" ];
+  "ITaxHandler.getTax" [ label = "getTax" ];
+}
+
+  "WarpedToken.<Constructor>";
+  "WarpedToken.address";
+  "WarpedToken.ITaxHandler";
+  "WarpedToken.ITreasuryHandler";
+  "WarpedToken._mint";
+  "WarpedToken.updateTaxHandler";
+  "WarpedToken.updateTreasuryHandler";
+  "WarpedToken._beforeTokenTransfer";
+  "ITreasuryHandler.processTreasury";
+  "WarpedToken._afterTokenTransfer";
+  "ITaxHandler.getTax";
+  "WarpedToken._transfer";
+  "WarpedToken.<Constructor>" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.<Constructor>" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.<Constructor>" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.<Constructor>" -> "WarpedToken.ITaxHandler" [ color = "#1bc6a6" ];
+  "WarpedToken.<Constructor>" -> "WarpedToken.ITreasuryHandler" [ color = "#1bc6a6" ];
+  "WarpedToken.<Constructor>" -> "WarpedToken._mint" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTaxHandler" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTaxHandler" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTaxHandler" -> "WarpedToken.ITaxHandler" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTreasuryHandler" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTreasuryHandler" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken.updateTreasuryHandler" -> "WarpedToken.ITreasuryHandler" [ color = "#1bc6a6" ];
+  "WarpedToken._beforeTokenTransfer" -> "ITreasuryHandler.processTreasury" [ color = "white" ];
+  "WarpedToken._afterTokenTransfer" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+  "WarpedToken._afterTokenTransfer" -> "ITaxHandler.getTax" [ color = "white" ];
+  "WarpedToken._afterTokenTransfer" -> "WarpedToken._transfer" [ color = "#1bc6a6" ];
+  "WarpedToken._afterTokenTransfer" -> "WarpedToken.address" [ color = "#1bc6a6" ];
+
+
+rankdir=LR
+node [shape=plaintext]
+subgraph cluster_01 { 
+label = "Legend";
+key [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td align="right" port="i1">Internal Call</td></tr>
+  <tr><td align="right" port="i2">External Call</td></tr>
+  <tr><td align="right" port="i3">Defined Contract</td></tr>
+  <tr><td align="right" port="i4">Undefined Contract</td></tr>
+  </table>>]
+key2 [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+  <tr><td port="i1">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i2">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i3" bgcolor="#445773">&nbsp;&nbsp;&nbsp;</td></tr>
+  <tr><td port="i4">
+    <table border="1" cellborder="0" cellspacing="0" cellpadding="7" color="#e8726d">
+      <tr>
+       <td></td>
+      </tr>
+     </table>
+  </td></tr>
+  </table>>]
+key:i1:e -> key2:i1:w [color="#1bc6a6"]
+key:i2:e -> key2:i2:w [color="white"]
+}
+}
