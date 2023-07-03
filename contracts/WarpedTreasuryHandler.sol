@@ -9,12 +9,13 @@
        \/         \/       \/                  \/         \/ 
  */
 
-pragma solidity ^0.8.18;
+pragma solidity 0.8.18;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {IUniswapV2Router02} from "./interfaces/IUniswapV2Router02.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import {IPoolManager} from "./interfaces/IPoolManager.sol";
 import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
@@ -27,6 +28,7 @@ import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
  */
 contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	using Address for address payable;
+	using SafeERC20 for IERC20;
 
 	IPoolManager public poolManager;
 
@@ -69,6 +71,12 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		address newTreasuryAddress
 	);
 
+	/// @notice Emitted when _taxSwap is updated.
+	event TaxSwapUpdated(uint256 newValue);
+
+	/// @notice Emitted when liquidity added successfully
+	event LiquidityAdded(uint amountToken, uint amountETH, uint liquidity);
+
 	/// @notice Constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address
 	constructor(IPoolManager _poolManager) {
@@ -84,6 +92,8 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		address tokenAddress
 	) external onlyOwner {
 		require(!_isInitialized, "Already initialized");
+		require(treasuryAddress != address(0), "treasury is zero address");
+		require(tokenAddress != address(0), "token address is zero address");
 
 		treasury = payable(treasuryAddress);
 		token = IERC20(tokenAddress);
@@ -219,13 +229,14 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		if (tokenAddress == address(0)) {
 			treasury.sendValue(amount);
 		} else {
-			IERC20(tokenAddress).transfer(address(treasury), amount);
+			IERC20(tokenAddress).safeTransfer(address(treasury), amount);
 		}
 	}
 
 	function updateTaxSwap(uint256 taxSwap) external onlyOwner {
 		require(taxSwap > 0, "Zero taxSwap");
 		_taxSwap = taxSwap;
+		emit TaxSwapUpdated(taxSwap);
 	}
 
 	/**
@@ -244,11 +255,19 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		path[0] = address(token);
 		path[1] = UNISWAP_V2_ROUTER.WETH();
 
+		// Call the getAmountsOut function to estimate the output amounts
+		uint256[] memory amountsOut = UNISWAP_V2_ROUTER.getAmountsOut(
+			tokenAmount,
+			path
+		);
+		// Set the minimum amounts slightly below the estimated output amounts
+		uint256 amountETHMin = amountsOut[1] - (amountsOut[1] / 100); // consider about 1 percent slippage
+
 		// Ensure the router can perform the swap for the designated number of tokens.
-		token.approve(address(UNISWAP_V2_ROUTER), tokenAmount);
+		token.safeApprove(address(UNISWAP_V2_ROUTER), tokenAmount);
 		UNISWAP_V2_ROUTER.swapExactTokensForETHSupportingFeeOnTransferTokens(
 			tokenAmount,
-			0,
+			amountETHMin,
 			path,
 			address(this),
 			block.timestamp
@@ -262,16 +281,33 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	 */
 	function _addLiquidity(uint256 tokenAmount, uint256 weiAmount) internal {
 		// Ensure the router can perform the transfer for the designated number of tokens.
-		token.approve(address(UNISWAP_V2_ROUTER), tokenAmount);
+		token.safeApprove(address(UNISWAP_V2_ROUTER), tokenAmount);
+
+		// Create a dynamic array containing the token and ETH addresses in the desired order
+		address[] memory path = new address[](2);
+		path[0] = address(token);
+		path[1] = UNISWAP_V2_ROUTER.WETH();
+
+		// Call the getAmountsOut function to estimate the output amounts
+		uint256[] memory amountsOut = UNISWAP_V2_ROUTER.getAmountsOut(
+			tokenAmount,
+			path
+		);
+
+		// Set the minimum amounts slightly below the estimated output amounts
+		uint256 amountTokenMin = amountsOut[0] - (amountsOut[0] / 100); // consider about 1 percent slippage
+		uint256 amountETHMin = amountsOut[1] - (amountsOut[1] / 100); // consider about 1 percent slippage
 
 		// Both minimum values are set to zero to allow for any form of slippage.
-		UNISWAP_V2_ROUTER.addLiquidityETH{value: weiAmount}(
+		(uint amountToken, uint amountETH, uint liquidity) = UNISWAP_V2_ROUTER
+			.addLiquidityETH{value: weiAmount}(
 			address(token),
 			tokenAmount,
-			0,
-			0,
+			amountTokenMin,
+			amountETHMin,
 			address(treasury),
 			block.timestamp
 		);
+		emit LiquidityAdded(amountToken, amountETH, liquidity);
 	}
 }

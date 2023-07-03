@@ -42,6 +42,33 @@ describe("WarpedToken", function () {
 		)
 	})
 
+	it("deploy fail when pass zero addresses", async function () {
+		await expectRevert(
+			this.WarpedToken.deploy(
+				ethers.constants.AddressZero,
+				this.taxHandler.address,
+				this.treasuryHandler.address
+			),
+			"Deployer is zero address"
+		)
+		await expectRevert(
+			this.WarpedToken.deploy(
+				this.owner.address,
+				ethers.constants.AddressZero,
+				this.treasuryHandler.address
+			),
+			"taxHandler is zero address"
+		)
+		await expectRevert(
+			this.WarpedToken.deploy(
+				this.owner.address,
+				this.taxHandler.address,
+				ethers.constants.AddressZero
+			),
+			"treasuryHandler is zero address"
+		)
+	})
+
 	it("mint tokens doesn't transfer reward", async function () {
 		expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(
 			BN.from(0)
@@ -107,11 +134,34 @@ describe("WarpedToken", function () {
 		)
 	})
 
-	it("updateTaxHandler and updateTreasuryHandler updates handlers successfully", async function () {
-		await this.token.updateTaxHandler(this.testAddress)
+	it("updateTaxHandler and updateTreasuryHandler updates handlers successfully and emit events correctly", async function () {
+		const updateTaxResult = await this.token.updateTaxHandler(this.testAddress)
+		const updateTaxReceipt = await updateTaxResult.wait()
+		const updateTaxEvents = updateTaxReceipt.events.filter(
+			(e) => e.event === "TaxHandlerUpdated"
+		)
 		expect(await this.token.taxHandler()).to.equal(this.testAddress)
+		expect(updateTaxEvents.length).to.equal(1, "No event for updateTaxHandler")
+		expect(updateTaxEvents[0].args[0]).to.equal(
+			this.testAddress,
+			"address incorrect for TaxHandlerUpdated"
+		)
 
-		await this.token.updateTreasuryHandler(this.testAddress)
+		const updateTreasuryResult = await this.token.updateTreasuryHandler(
+			this.testAddress
+		)
+		const updateTreasuryReceipt = await updateTreasuryResult.wait()
+		const updateTreasuryEvents = updateTreasuryReceipt.events.filter(
+			(e) => e.event === "TreasuryHandlerUpdated"
+		)
 		expect(await this.token.treasuryHandler()).to.equal(this.testAddress)
+		expect(updateTreasuryEvents.length).to.equal(
+			1,
+			"No event for updateTreasuryHandler"
+		)
+		expect(updateTreasuryEvents[0].args[0]).to.equal(
+			this.testAddress,
+			"address incorrect for TreasuryHandlerUpdated"
+		)
 	})
 })

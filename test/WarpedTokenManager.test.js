@@ -49,6 +49,17 @@ describe("WarpedTokenManager", function () {
 		this.token = await ethers.getContractAt(this.warpedTokenAbi, tokenAddress)
 	})
 
+	it("deploy reverts if treasury address is zero address", async function () {
+		await expectRevert(
+			this.WarpedTokenManager.deploy(
+				ethers.constants.AddressZero,
+				nftContracts,
+				nftLevels
+			),
+			"treasury is zero address"
+		)
+	})
+
 	it("constructor create contracts successfully", async function () {
 		const token = this.token
 		expect(await token.totalSupply()).to.equal(
@@ -91,6 +102,33 @@ describe("WarpedTokenManager", function () {
 		)
 	})
 
+	it("addExchangePool reverts for zero address", async function () {
+		await expectRevert(
+			this.tokenManager.addExchangePool(ethers.constants.AddressZero),
+			"Zero address passed"
+		)
+	})
+
+	it("removeExchangePool reverts when given poolAddress and current primaryPool address are the same", async function () {
+		await this.tokenManager.addExchangePool(this.pool.address)
+		await this.tokenManager.setPrimaryPool(this.pool.address)
+		await expectRevert(
+			this.tokenManager.removeExchangePool(this.pool.address),
+			"Primary pool cannot be removed"
+		)
+	})
+
+	it("removeExchangePool succeeds when given poolAddress and current primaryPool address are not the same", async function () {
+		await this.tokenManager.addExchangePool(this.tester.address)
+		await this.tokenManager.setPrimaryPool(this.tester.address)
+		await this.tokenManager.removeExchangePool(this.pool.address)
+		expect(await this.tokenManager.primaryPool()).not.equal(this.pool.address)
+		expect(await this.tokenManager.primaryPool()).to.equal(this.tester.address)
+		expect(await this.tokenManager.isPoolAddress(this.pool.address)).to.equal(
+			false
+		)
+	})
+
 	it("addExchangePool/removeExchangePool emit events correctly", async function () {
 		const addResult = await this.tokenManager.addExchangePool(this.pool.address)
 		const addResultReceipt = await addResult.wait()
@@ -98,20 +136,18 @@ describe("WarpedTokenManager", function () {
 			addResultReceipt.events.filter(
 				(e) =>
 					e.event === "ExchangePoolAdded" && e.args[0] === this.pool.address
-			).length > 0,
-			"No event for addExchangePool"
-		)
+			).length
+		).to.equal(1, "No event for addExchangePool")
 		const removeResult = await this.tokenManager.removeExchangePool(
 			this.pool.address
 		)
-		const removeResultreceipt = await removeResult.wait()
+		const removeResultReceipt = await removeResult.wait()
 		expect(
-			removeResultreceipt.events.filter(
+			removeResultReceipt.events.filter(
 				(e) =>
 					e.event === "ExchangePoolRemoved" && e.args[0] === this.pool.address
-			).length > 0,
-			"No event for removeExchangePool"
-		)
+			).length
+		).to.equal(1, "No event for removeExchangePool")
 	})
 
 	it("addExchangePool/removeExchangePool does not emit events for already added or not added pool", async function () {
@@ -120,8 +156,8 @@ describe("WarpedTokenManager", function () {
 			this.pool.address
 		)
 		const doubleAddResultReceipt = await doubleAddResult.wait()
-		expect(
-			doubleAddResultReceipt.events.length === 0,
+		expect(doubleAddResultReceipt.events.length).to.equal(
+			0,
 			"Should be no event for double add"
 		)
 		await this.tokenManager.removeExchangePool(this.pool.address)
@@ -129,8 +165,8 @@ describe("WarpedTokenManager", function () {
 			this.pool.address
 		)
 		const doubleRemoveResultReceipt = await doubleRemoveResult.wait()
-		expect(
-			doubleRemoveResultReceipt.events.length === 0,
+		expect(doubleRemoveResultReceipt.events.length).to.equal(
+			0,
 			"Should be no event for double remove"
 		)
 	})
@@ -154,9 +190,8 @@ describe("WarpedTokenManager", function () {
 			setPoolResultReceipt.events.filter(
 				(e) =>
 					e.event === "PrimaryPoolUpdated" && e.args[1] === this.pool.address
-			).length > 0,
-			"No event for setPrimaryPool"
-		)
+			).length
+		).to.equal(1, "No event for setPrimaryPool")
 		await expectRevert(
 			this.tokenManager.setPrimaryPool(this.pool.address),
 			"Already primary pool address"
@@ -191,9 +226,8 @@ describe("WarpedTokenManager", function () {
 		const addLiquidityResultReceipt = await addLiquidityResult.wait()
 		expect(
 			addLiquidityResultReceipt.events.filter(
-				(e) => e.event === "PrimaryPoolUpdated"
-			).length > 0,
-			"No event for PrimaryPoolUpdated"
-		)
+				(e) => e.event === "LiquidityAdded"
+			).length
+		).to.equal(1, "No event for LiquidityAdded")
 	})
 })

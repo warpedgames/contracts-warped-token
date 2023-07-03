@@ -9,27 +9,37 @@
        \/         \/       \/                  \/         \/ 
  */
 
-pragma solidity ^0.8.18;
+pragma solidity 0.8.18;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 import {ITaxHandler} from "./interfaces/ITaxHandler.sol";
 import {ITreasuryHandler} from "./interfaces/ITreasuryHandler.sol";
-import {LenientReentrancyGuard} from "./LenientReentrancyGuard.sol";
 
 /// @notice WARPED token contract
 /// @dev extends standard ERC20 contract
-contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
+contract WarpedToken is ERC20, Ownable {
 	uint8 private constant _DECIMALS = 18;
 	uint256 private constant _T_TOTAL = 10_000_000_000 * 10 ** _DECIMALS;
-	string private constant _NAME = unicode"WARPED";
-	string private constant _SYMBOL = unicode"WARPED";
+	string private constant _NAME = "WARPED";
+	string private constant _SYMBOL = "WARPED";
+
+	uint256 private constant _NOT_IN_TAX_PROCESSING = 1;
+	uint256 private constant _TAX_PROCESSING = 2;
+
+	uint256 private _tax_processing_status = _NOT_IN_TAX_PROCESSING;
 
 	/// @notice Tax handler address
 	ITaxHandler public taxHandler;
 	/// @notice Treasury handler address
 	ITreasuryHandler public treasuryHandler;
+
+	/// @notice Emitted when tax handler contract is updated.
+	event TaxHandlerUpdated(address newAddress);
+
+	/// @notice Emitted when tax handler contract is updated.
+	event TreasuryHandlerUpdated(address newAddress);
 
 	/// @notice Constructor of WARPED token contract
 	/// @dev initialize with tax and treasury handler addresses.
@@ -41,10 +51,27 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		address taxHandlerAddress,
 		address treasuryHandlerAddress
 	) ERC20(_NAME, _SYMBOL) {
+		require(deployerAddress != address(0), "Deployer is zero address");
+		require(taxHandlerAddress != address(0), "taxHandler is zero address");
+		require(
+			treasuryHandlerAddress != address(0),
+			"treasuryHandler is zero address"
+		);
 		taxHandler = ITaxHandler(taxHandlerAddress);
 		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
 
 		_mint(deployerAddress, _T_TOTAL);
+	}
+
+	modifier skipWhenTaxProcessing() {
+		if (_tax_processing_status == _TAX_PROCESSING) {
+			return;
+		}
+
+		_tax_processing_status = _TAX_PROCESSING;
+		_;
+
+		_tax_processing_status = _NOT_IN_TAX_PROCESSING;
 	}
 
 	/**
@@ -55,7 +82,7 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		address from,
 		address to,
 		uint256 amount
-	) internal override nonReentrant {
+	) internal override skipWhenTaxProcessing {
 		treasuryHandler.processTreasury(from, to, amount);
 	}
 
@@ -67,7 +94,7 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		address from,
 		address to,
 		uint256 amount
-	) internal override nonReentrant {
+	) internal override skipWhenTaxProcessing {
 		if (from == address(0x0)) {
 			// skip for mint
 			return;
@@ -92,6 +119,7 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		);
 
 		taxHandler = ITaxHandler(taxHandlerAddress);
+		emit TaxHandlerUpdated(taxHandlerAddress);
 	}
 
 	/**
@@ -111,5 +139,6 @@ contract WarpedToken is ERC20, Ownable, LenientReentrancyGuard {
 		);
 
 		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
+		emit TreasuryHandlerUpdated(treasuryHandlerAddress);
 	}
 }

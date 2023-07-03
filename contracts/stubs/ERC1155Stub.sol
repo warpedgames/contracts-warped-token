@@ -9,7 +9,7 @@
        \/         \/       \/                  \/         \/ 
  */
 
-pragma solidity ^0.8.18;
+pragma solidity 0.8.18;
 
 import {ERC1155PresetMinterPauser} from "@openzeppelin/contracts/token/ERC1155/presets/ERC1155PresetMinterPauser.sol";
 

@@ -93,6 +93,27 @@ describe("WarpedTreasuryHandler", function () {
 		)
 	})
 
+	it("init reverts for zero address", async function () {
+		const _treasuryHandler = await this.WarpedTreasuryHandler.deploy(
+			this.poolManager.address
+		)
+		await _treasuryHandler.deployed()
+		await expectRevert(
+			_treasuryHandler.initialize(
+				ethers.constants.AddressZero,
+				this.token.address
+			),
+			"treasury is zero address"
+		)
+		await expectRevert(
+			_treasuryHandler.initialize(
+				this.signers[0].address,
+				ethers.constants.AddressZero
+			),
+			"token address is zero address"
+		)
+	})
+
 	it("after init, init reverts as already init", async function () {
 		await expectRevert(
 			this.treasuryHandler.initialize(
@@ -212,6 +233,15 @@ describe("WarpedTreasuryHandler", function () {
 		)
 	})
 
+	it("updateTaxSwap emits event correctly", async function () {
+		const newTaxSwap = ethers.utils.parseEther("20000000")
+		const result = await this.treasuryHandler.updateTaxSwap(newTaxSwap)
+		const receipt = await result.wait()
+		const events = receipt.events.filter((e) => e.event === "TaxSwapUpdated")
+		expect(events.length).to.equal(1, "No event for updateTaxSwap")
+		expect(events[0].args[0]).to.equal(newTaxSwap, "No event for updateTaxSwap")
+	})
+
 	it("processTreasury do nothing if called before init or from is zero or not sell", async function () {
 		const tokenAmount = ethers.utils.parseEther("100000")
 		await this.token.transfer(this.treasuryHandler.address, tokenAmount)
@@ -310,20 +340,36 @@ describe("WarpedTreasuryHandler", function () {
 			ethers.utils.parseEther("12000000")
 		)
 		await this.treasuryHandler.setLiquidityBasisPoints(2000)
-		await this.token.testTreausryHandler(
+		let result = await this.token.testTreausryHandler(
 			this.treasuryHandler.address,
 			this.signers[0].address,
 			primaryPool,
 			ethers.utils.parseEther("1000000")
 		)
+		let receipt = await result.wait()
+		expect(await this.token.balanceOf(this.treasuryHandler.address)).to.equal(
+			ethers.utils.parseEther("11000000")
+		)
+		const topicsForLiquidityAdded = await ethers.utils.id(
+			"LiquidityAdded(uint256,uint256,uint256)"
+		)
+		expect(
+			receipt.events.filter((e) => e.topics[0] === topicsForLiquidityAdded)
+				.length
+		).to.equal(1, "No event for LiquidityAdded")
 
 		await this.treasuryHandler.setLiquidityBasisPoints(10000)
-		await this.token.testTreausryHandler(
+		result = await this.token.testTreausryHandler(
 			this.treasuryHandler.address,
 			this.signers[0].address,
 			primaryPool,
 			ethers.utils.parseEther("1000000")
 		)
+		receipt = await result.wait()
+		expect(
+			receipt.events.filter((e) => e.topics[0] === topicsForLiquidityAdded)
+				.length
+		).to.equal(1, "No event for LiquidityAdded")
 	})
 
 	it("after pool added, after init, updateTaxSwap and processTreasury work correctly", async function () {

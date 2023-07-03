@@ -9,7 +9,7 @@
        \/         \/       \/                  \/         \/ 
  */
 
-pragma solidity ^0.8.18;
+pragma solidity 0.8.18;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -19,6 +19,11 @@ import {ITaxHandler} from "./interfaces/ITaxHandler.sol";
 import {IPoolManager} from "./interfaces/IPoolManager.sol";
 
 contract WarpedTaxHandler is ITaxHandler, Ownable {
+	/// @notice limit number of NFT contracts
+	uint8 public constant NFT_CONTRACTS_LIMIT = 10;
+	/// @notice limit number of tax rate points
+	uint8 public constant TAX_RATES_LIMIT = 10;
+
 	/// @notice NFTs to be used to determine user tax level.
 	IERC721[] public nftContracts;
 	/// @notice Bits representing levels of each NFTs: 1,2,4,8
@@ -31,9 +36,28 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 
 	TaxRatePoint[] public taxRates;
 	uint256 public basisTaxRate;
-	uint256 public maxTaxRate = 400;
+	uint256 public constant maxTaxRate = 400;
 	bool public taxDisabled;
 	IPoolManager public poolManager;
+
+	/// @notice Emitted when tax rates are updated.
+	event TaxRatesUpdated(
+		uint256[] thesholds,
+		uint256[] rates,
+		uint256 basisTaxRate
+	);
+
+	/// @notice Emitted when nft contracts and levels are added.
+	event NFTsAdded(address[] contracts, uint8[] levels);
+
+	/// @notice Emitted when nft contracts are removed.
+	event NFTsRemoved(address[] contracts);
+
+	/// @notice Emitted when tax is paused.
+	event TaxPaused();
+
+	/// @notice Emitted when tax is resumed.
+	event TaxResumed();
 
 	/// @notice Constructor of tax handler contract
 	/// @param _poolManager exchange pool manager address
@@ -52,7 +76,6 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		taxRates.push(TaxRatePoint(7, 100));
 		taxRates.push(TaxRatePoint(5, 200));
 		taxRates.push(TaxRatePoint(1, 300));
-		taxDisabled = false;
 	}
 
 	/**
@@ -110,27 +133,36 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	 * @notice Reset tax rate points.
 	 * @param thresholds of user level.
 	 * @param rates of tax per each threshold.
-	 * @param _basisTaxRate basis tax rate.
+	 * @param basisRate basis tax rate.
 	 *
 	 * Requirements:
 	 *
-	 * - values of `thresholds` must be placed in ascending order.
+	 * - values of `thresholds` must be placed in descending order.
 	 */
 	function setTaxRates(
 		uint256[] memory thresholds,
 		uint256[] memory rates,
-		uint256 _basisTaxRate
+		uint256 basisRate
 	) external onlyOwner {
 		require(thresholds.length == rates.length, "Invalid level points");
-		require(_basisTaxRate > 0, "Invalid base rate");
-		require(_basisTaxRate <= maxTaxRate, "Base rate must be <= than max");
+		require(thresholds.length <= TAX_RATES_LIMIT, "Tax rates limit exceeded");
+		require(basisRate > 0, "Invalid base rate");
+		require(basisRate <= maxTaxRate, "Base rate must be <= than max");
 
 		delete taxRates;
 		for (uint256 i = 0; i < thresholds.length; i++) {
 			require(rates[i] <= maxTaxRate, "Rate must be less than max rate");
+			if (i > 0) {
+				require(
+					thresholds[i] < thresholds[i - 1],
+					"Thresholds not descending order"
+				);
+			}
 			taxRates.push(TaxRatePoint(thresholds[i], rates[i]));
 		}
-		basisTaxRate = _basisTaxRate;
+		basisTaxRate = basisRate;
+
+		emit TaxRatesUpdated(thresholds, rates, basisRate);
 	}
 
 	/**
@@ -156,12 +188,17 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		for (uint8 i = 0; i < contracts.length; i++) {
 			for (uint8 j = 0; j < nftContracts.length; j++) {
 				if (address(nftContracts[j]) == contracts[i]) {
-					delete nftContracts[j];
+					// safely remove NFT contract from array
+					if (j < nftContracts.length - 1) {
+						nftContracts[j] = nftContracts[nftContracts.length - 1];
+					}
+					nftContracts.pop();
 					break;
 				}
 			}
 			nftLevels[IERC721(contracts[i])] = 0;
 		}
+		emit NFTsRemoved(contracts);
 	}
 
 	/**
@@ -170,6 +207,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	function pauseTax() external onlyOwner {
 		require(!taxDisabled, "Already paused");
 		taxDisabled = true;
+		emit TaxPaused();
 	}
 
 	/**
@@ -178,6 +216,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	function resumeTax() external onlyOwner {
 		require(taxDisabled, "Not paused");
 		taxDisabled = false;
+		emit TaxResumed();
 	}
 
 	/**
@@ -194,6 +233,9 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	 */
 	function _getTaxBasisPoints(address user) internal view returns (uint256) {
 		uint256 userLevel = 0;
+		// Max number of nft contracts is 10 so gas for the loop of nft contracts is less than about 141k.
+		// Max number of tax rates is 10 so gas for the loop of tax rates is less than about 100k.
+		// Total gas for both loops is less than about 241k so it will be not over the block gas limit.
 		for (uint256 i = 0; i < nftContracts.length; i++) {
 			IERC721 nft = nftContracts[i];
 			if (nft.balanceOf(user) > 0) {
@@ -213,12 +255,26 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		uint8[] memory levels
 	) internal {
 		require(contracts.length == levels.length, "Invalid parameters");
+		require(
+			contracts.length + nftContracts.length <= NFT_CONTRACTS_LIMIT,
+			"No. of NFT contracts over limit"
+		);
 
 		for (uint8 i = 0; i < contracts.length; i++) {
-			require(IERC165(contracts[i]).supportsInterface(type(IERC721).interfaceId), "IERC721 not implemented");
+			require(contracts[i] != address(0), "contract address is zero address");
+			require(
+				IERC165(contracts[i]).supportsInterface(type(IERC721).interfaceId),
+				"IERC721 not implemented"
+			);
+			// nftLevels for existing contract is always bigger than zero.
+			// So checking this value is enough to check the uniqueness of adding NFT contract address.
+			require(nftLevels[IERC721(contracts[i])] == 0, "Duplicate NFT contract");
+			require(levels[i] > 0, "Invalid NFT level");
 
 			nftContracts.push(IERC721(contracts[i]));
 			nftLevels[IERC721(contracts[i])] = levels[i];
 		}
+
+		emit NFTsAdded(contracts, levels);
 	}
 }

@@ -9,7 +9,7 @@
        \/         \/       \/                  \/         \/ 
  */
 
-pragma solidity ^0.8.18;
+pragma solidity 0.8.18;
 
 interface IUniswapV2Factory {
 	function createPair(
@@ -22,6 +22,11 @@ interface IUniswapV2Router01 {
 	function factory() external pure returns (address);
 
 	function WETH() external pure returns (address);
+
+	function getAmountsOut(
+		uint256 amountIn,
+		address[] calldata path
+	) external view returns (uint256[] memory amounts);
 
 	function addLiquidityETH(
 		address token,
