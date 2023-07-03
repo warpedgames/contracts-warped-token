@@ -23,6 +23,11 @@ interface IUniswapV2Router01 {
 
 	function WETH() external pure returns (address);
 
+	function getAmountsOut(
+		uint256 amountIn,
+		address[] calldata path
+	) external view returns (uint256[] memory amounts);
+
 	function addLiquidityETH(
 		address token,
 		uint amountTokenDesired,
