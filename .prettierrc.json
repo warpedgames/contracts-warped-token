@@ -4,5 +4,15 @@
 	"printWidth": 80,
 	"semi": false,
 	"trailingComma": "none",
-	"singleQuote": false
+	"singleQuote": false,
+	"overrides": [
+		{
+			"files": ["**/*.sol"],
+			"options": {
+				"tabWidth": 4,
+				"useTabs": false,
+				"printWidth": 120
+			}
+		}
+	]
 }

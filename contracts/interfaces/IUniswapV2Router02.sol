@@ -12,10 +12,7 @@
 pragma solidity 0.8.18;
 
 interface IUniswapV2Factory {
-    function createPair(
-        address tokenA,
-        address tokenB
-    ) external returns (address pair);
+    function createPair(address tokenA, address tokenB) external returns (address pair);
 }
 
 interface IUniswapV2Router01 {
@@ -23,10 +20,7 @@ interface IUniswapV2Router01 {
 
     function WETH() external pure returns (address);
 
-    function getAmountsOut(
-        uint256 amountIn,
-        address[] calldata path
-    ) external view returns (uint256[] memory amounts);
+    function getAmountsOut(uint256 amountIn, address[] calldata path) external view returns (uint256[] memory amounts);
 
     function addLiquidityETH(
         address token,
@@ -35,10 +29,7 @@ interface IUniswapV2Router01 {
         uint amountETHMin,
         address to,
         uint deadline
-    )
-        external
-        payable
-        returns (uint amountToken, uint amountETH, uint liquidity);
+    ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
 }
 
 interface IUniswapV2Router02 is IUniswapV2Router01 {

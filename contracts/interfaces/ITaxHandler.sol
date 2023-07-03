@@ -19,9 +19,5 @@ interface ITaxHandler {
      * @param amount Number of tokens in the transfer.
      * @return taxAmount Number of tokens for tax.
      */
-    function getTax(
-        address benefactor,
-        address beneficiary,
-        uint256 amount
-    ) external view returns (uint256);
+    function getTax(address benefactor, address beneficiary, uint256 amount) external view returns (uint256);
 }

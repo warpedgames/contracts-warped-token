@@ -41,11 +41,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
     IPoolManager public poolManager;
 
     /// @notice Emitted when tax rates are updated.
-    event TaxRatesUpdated(
-        uint256[] thesholds,
-        uint256[] rates,
-        uint256 basisTaxRate
-    );
+    event TaxRatesUpdated(uint256[] thesholds, uint256[] rates, uint256 basisTaxRate);
 
     /// @notice Emitted when nft contracts and levels are added.
     event NFTsAdded(address[] contracts, uint8[] levels);
@@ -63,11 +59,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
     /// @param _poolManager exchange pool manager address
     /// @param _nftContracts array of addresses of NFT contracts
     /// @param _levels array of levels of NFT contracts
-    constructor(
-        IPoolManager _poolManager,
-        address[] memory _nftContracts,
-        uint8[] memory _levels
-    ) {
+    constructor(IPoolManager _poolManager, address[] memory _nftContracts, uint8[] memory _levels) {
         poolManager = _poolManager;
 
         _addNFTs(_nftContracts, _levels);
@@ -88,16 +80,9 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
      *
      * - values of `thresholds` must be placed in descending order.
      */
-    function setTaxRates(
-        uint256[] memory thresholds,
-        uint256[] memory rates,
-        uint256 basisRate
-    ) external onlyOwner {
+    function setTaxRates(uint256[] memory thresholds, uint256[] memory rates, uint256 basisRate) external onlyOwner {
         require(thresholds.length == rates.length, "Invalid level points");
-        require(
-            thresholds.length <= TAX_RATES_LIMIT,
-            "Tax rates limit exceeded"
-        );
+        require(thresholds.length <= TAX_RATES_LIMIT, "Tax rates limit exceeded");
         require(basisRate > 0, "Invalid base rate");
         require(basisRate <= maxTaxRate, "Base rate must be <= than max");
 
@@ -105,10 +90,7 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
         for (uint256 i = 0; i < thresholds.length; i++) {
             require(rates[i] <= maxTaxRate, "Rate must be less than max rate");
             if (i > 0) {
-                require(
-                    thresholds[i] < thresholds[i - 1],
-                    "Thresholds not descending order"
-                );
+                require(thresholds[i] < thresholds[i - 1], "Thresholds not descending order");
             }
             taxRates.push(TaxRatePoint(thresholds[i], rates[i]));
         }
@@ -123,14 +105,8 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
      * @param contracts NFT contract addresses.
      * @param levels NFT contract levels to be used for user level calculation.
      */
-    function addNFTs(
-        address[] memory contracts,
-        uint8[] memory levels
-    ) external onlyOwner {
-        require(
-            contracts.length > 0 && levels.length > 0,
-            "Invalid parameters"
-        );
+    function addNFTs(address[] memory contracts, uint8[] memory levels) external onlyOwner {
+        require(contracts.length > 0 && levels.length > 0, "Invalid parameters");
         _addNFTs(contracts, levels);
     }
 
@@ -188,28 +164,18 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
      * @param amount Number of tokens in the transfer.
      * @return taxAmount Number of tokens for tax
      */
-    function getTax(
-        address benefactor,
-        address beneficiary,
-        uint256 amount
-    ) external view override returns (uint256) {
+    function getTax(address benefactor, address beneficiary, uint256 amount) external view override returns (uint256) {
         if (taxDisabled) {
             return 0;
         }
 
         // Transactions between regular users (this includes contracts) aren't taxed.
-        if (
-            !poolManager.isPoolAddress(benefactor) &&
-            !poolManager.isPoolAddress(beneficiary)
-        ) {
+        if (!poolManager.isPoolAddress(benefactor) && !poolManager.isPoolAddress(beneficiary)) {
             return 0;
         }
 
         // Transactions between pools aren't taxed.
-        if (
-            poolManager.isPoolAddress(benefactor) &&
-            poolManager.isPoolAddress(beneficiary)
-        ) {
+        if (poolManager.isPoolAddress(benefactor) && poolManager.isPoolAddress(beneficiary)) {
             return 0;
         }
 
@@ -256,33 +222,16 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
         return basisTaxRate;
     }
 
-    function _addNFTs(
-        address[] memory contracts,
-        uint8[] memory levels
-    ) internal {
+    function _addNFTs(address[] memory contracts, uint8[] memory levels) internal {
         require(contracts.length == levels.length, "Invalid parameters");
-        require(
-            contracts.length + nftContracts.length <= NFT_CONTRACTS_LIMIT,
-            "No. of NFT contracts over limit"
-        );
+        require(contracts.length + nftContracts.length <= NFT_CONTRACTS_LIMIT, "No. of NFT contracts over limit");
 
         for (uint8 i = 0; i < contracts.length; i++) {
-            require(
-                contracts[i] != address(0),
-                "contract address is zero address"
-            );
-            require(
-                IERC165(contracts[i]).supportsInterface(
-                    type(IERC721).interfaceId
-                ),
-                "IERC721 not implemented"
-            );
+            require(contracts[i] != address(0), "contract address is zero address");
+            require(IERC165(contracts[i]).supportsInterface(type(IERC721).interfaceId), "IERC721 not implemented");
             // nftLevels for existing contract is always bigger than zero.
             // So checking this value is enough to check the uniqueness of adding NFT contract address.
-            require(
-                nftLevels[IERC721(contracts[i])] == 0,
-                "Duplicate NFT contract"
-            );
+            require(nftLevels[IERC721(contracts[i])] == 0, "Duplicate NFT contract");
             require(levels[i] > 0, "Invalid NFT level");
 
             nftContracts.push(IERC721(contracts[i]));

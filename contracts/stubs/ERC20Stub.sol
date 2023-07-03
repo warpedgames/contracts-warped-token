@@ -19,12 +19,7 @@ contract ERC20Stub is ERC20 {
         _mint(_msgSender(), _totalSupply);
     }
 
-    function testTreausryHandler(
-        address treasury,
-        address from,
-        address to,
-        uint256 amount
-    ) external {
+    function testTreausryHandler(address treasury, address from, address to, uint256 amount) external {
         ITreasuryHandler handler = ITreasuryHandler(treasury);
         handler.processTreasury(from, to, amount);
     }

@@ -54,22 +54,13 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
         IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
 
     /// @notice Emitted when the basis points value of tokens to add as liquidity is updated.
-    event LiquidityBasisPointsUpdated(
-        uint256 oldBasisPoints,
-        uint256 newBasisPoints
-    );
+    event LiquidityBasisPointsUpdated(uint256 oldBasisPoints, uint256 newBasisPoints);
 
     /// @notice Emitted when the maximum price impact basis points value is updated.
-    event PriceImpactBasisPointsUpdated(
-        uint256 oldBasisPoints,
-        uint256 newBasisPoints
-    );
+    event PriceImpactBasisPointsUpdated(uint256 oldBasisPoints, uint256 newBasisPoints);
 
     /// @notice Emitted when the treasury address is updated.
-    event TreasuryAddressUpdated(
-        address oldTreasuryAddress,
-        address newTreasuryAddress
-    );
+    event TreasuryAddressUpdated(address oldTreasuryAddress, address newTreasuryAddress);
 
     /// @notice Emitted when _taxSwap is updated.
     event TaxSwapUpdated(uint256 newValue);
@@ -93,10 +84,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
      * @param treasuryAddress Address of treasury to use.
      * @param tokenAddress Address of token to accumulate and sell.
      */
-    function initialize(
-        address treasuryAddress,
-        address tokenAddress
-    ) external onlyOwner {
+    function initialize(address treasuryAddress, address tokenAddress) external onlyOwner {
         require(!_isInitialized, "Already initialized");
         require(treasuryAddress != address(0), "treasury is zero address");
         require(tokenAddress != address(0), "token address is zero address");
@@ -119,11 +107,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
      * @param beneficiary Address of the beneficiary.
      * @param amount Number of tokens in the transfer.
      */
-    function processTreasury(
-        address benefactor,
-        address beneficiary,
-        uint256 amount
-    ) external override {
+    function processTreasury(address benefactor, address beneficiary, uint256 amount) external override {
         if (!_isInitialized || benefactor == address(0x0)) {
             // skip when not initialized or mint
             return;
@@ -136,11 +120,8 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 
         uint256 contractTokenBalance = token.balanceOf(address(this));
         if (contractTokenBalance > _taxSwap) {
-            uint256 primaryPoolBalance = token.balanceOf(
-                poolManager.primaryPool()
-            );
-            uint256 maxPriceImpactSale = (primaryPoolBalance *
-                priceImpactBasisPoints) / 10000;
+            uint256 primaryPoolBalance = token.balanceOf(poolManager.primaryPool());
+            uint256 maxPriceImpactSale = (primaryPoolBalance * priceImpactBasisPoints) / 10000;
 
             contractTokenBalance = _taxSwap > amount ? amount : _taxSwap;
 
@@ -161,8 +142,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
             //  P = basis points of tokens to use for liquidity
             //
             // The number is divided by two to preserve the token side of the token/WETH pool.
-            uint256 tokensForLiquidity = (contractTokenBalance *
-                liquidityBasisPoints) / 20000;
+            uint256 tokensForLiquidity = (contractTokenBalance * liquidityBasisPoints) / 20000;
             uint256 tokensForSwap = contractTokenBalance - tokensForLiquidity;
 
             uint256 currentWeiBalance = address(this).balance;
@@ -171,8 +151,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 
             // No need to divide this number, because that was only to have enough tokens remaining to pair with this
             // ETH value.
-            uint256 weiForLiquidity = (weiEarned * liquidityBasisPoints) /
-                10000;
+            uint256 weiForLiquidity = (weiEarned * liquidityBasisPoints) / 10000;
 
             if (tokensForLiquidity > 0) {
                 _addLiquidity(tokensForLiquidity, weiForLiquidity);
@@ -192,9 +171,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
      * @param newBasisPoints New liquidity basis points value. Cannot exceed 10,000 (i.e., 100%) as that would break the
      * calculation.
      */
-    function setLiquidityBasisPoints(
-        uint256 newBasisPoints
-    ) external onlyOwner {
+    function setLiquidityBasisPoints(uint256 newBasisPoints) external onlyOwner {
         require(newBasisPoints <= 10000, "Max is 10000");
 
         uint256 oldBasisPoints = liquidityBasisPoints;
@@ -207,9 +184,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
      * @notice Set new price impact basis points value.
      * @param newBasisPoints New price impact basis points value.
      */
-    function setPriceImpactBasisPoints(
-        uint256 newBasisPoints
-    ) external onlyOwner {
+    function setPriceImpactBasisPoints(uint256 newBasisPoints) external onlyOwner {
         require(newBasisPoints < 1500, "Too high value");
 
         uint256 oldBasisPoints = priceImpactBasisPoints;
@@ -261,10 +236,7 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
         path[1] = UNISWAP_V2_ROUTER.WETH();
 
         // Call the getAmountsOut function to estimate the output amounts
-        uint256[] memory amountsOut = UNISWAP_V2_ROUTER.getAmountsOut(
-            tokenAmount,
-            path
-        );
+        uint256[] memory amountsOut = UNISWAP_V2_ROUTER.getAmountsOut(tokenAmount, path);
         // Set the minimum amounts slightly below the estimated output amounts
         uint256 amountETHMin = amountsOut[1] - (amountsOut[1] / 100); // consider about 1 percent slippage
 
@@ -294,18 +266,14 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
         path[1] = UNISWAP_V2_ROUTER.WETH();
 
         // Call the getAmountsOut function to estimate the output amounts
-        uint256[] memory amountsOut = UNISWAP_V2_ROUTER.getAmountsOut(
-            tokenAmount,
-            path
-        );
+        uint256[] memory amountsOut = UNISWAP_V2_ROUTER.getAmountsOut(tokenAmount, path);
 
         // Set the minimum amounts slightly below the estimated output amounts
         uint256 amountTokenMin = amountsOut[0] - (amountsOut[0] / 100); // consider about 1 percent slippage
         uint256 amountETHMin = amountsOut[1] - (amountsOut[1] / 100); // consider about 1 percent slippage
 
         // Both minimum values are set to zero to allow for any form of slippage.
-        (uint amountToken, uint amountETH, uint liquidity) = UNISWAP_V2_ROUTER
-            .addLiquidityETH{value: weiAmount}(
+        (uint amountToken, uint amountETH, uint liquidity) = UNISWAP_V2_ROUTER.addLiquidityETH{value: weiAmount}(
             address(token),
             tokenAmount,
             amountTokenMin,

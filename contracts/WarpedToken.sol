@@ -53,10 +53,7 @@ contract WarpedToken is ERC20, Ownable {
     ) ERC20(_NAME, _SYMBOL) {
         require(deployerAddress != address(0), "Deployer is zero address");
         require(taxHandlerAddress != address(0), "taxHandler is zero address");
-        require(
-            treasuryHandlerAddress != address(0),
-            "treasuryHandler is zero address"
-        );
+        require(treasuryHandlerAddress != address(0), "treasuryHandler is zero address");
         taxHandler = ITaxHandler(taxHandlerAddress);
         treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
 
@@ -80,10 +77,7 @@ contract WarpedToken is ERC20, Ownable {
      */
     function updateTaxHandler(address taxHandlerAddress) external onlyOwner {
         require(taxHandlerAddress != address(0x00), "Zero tax handler address");
-        require(
-            taxHandlerAddress != address(taxHandler),
-            "Same tax handler address"
-        );
+        require(taxHandlerAddress != address(taxHandler), "Same tax handler address");
 
         taxHandler = ITaxHandler(taxHandlerAddress);
         emit TaxHandlerUpdated(taxHandlerAddress);
@@ -93,17 +87,9 @@ contract WarpedToken is ERC20, Ownable {
      * @notice Update treasury handler
      * @param treasuryHandlerAddress address of treasury handler contract.
      */
-    function updateTreasuryHandler(
-        address treasuryHandlerAddress
-    ) external onlyOwner {
-        require(
-            treasuryHandlerAddress != address(0x00),
-            "Zero treasury handler address"
-        );
-        require(
-            treasuryHandlerAddress != address(treasuryHandler),
-            "Same treasury handler address"
-        );
+    function updateTreasuryHandler(address treasuryHandlerAddress) external onlyOwner {
+        require(treasuryHandlerAddress != address(0x00), "Zero treasury handler address");
+        require(treasuryHandlerAddress != address(treasuryHandler), "Same treasury handler address");
 
         treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
         emit TreasuryHandlerUpdated(treasuryHandlerAddress);
@@ -113,11 +99,7 @@ contract WarpedToken is ERC20, Ownable {
      * @dev See {ERC20-_beforeTokenTransfer}.
      * forward into beforeTokenTransferHandler function of treasury handler
      */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal override skipWhenTaxProcessing {
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal override skipWhenTaxProcessing {
         treasuryHandler.processTreasury(from, to, amount);
     }
 
@@ -125,11 +107,7 @@ contract WarpedToken is ERC20, Ownable {
      * @dev See {ERC20-_afterTokenTransfer}.
      * calculate tax, reward, and burn amount using tax handler and transfer using _transfer function
      */
-    function _afterTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal override skipWhenTaxProcessing {
+    function _afterTokenTransfer(address from, address to, uint256 amount) internal override skipWhenTaxProcessing {
         if (from == address(0x0)) {
             // skip for mint
             return;

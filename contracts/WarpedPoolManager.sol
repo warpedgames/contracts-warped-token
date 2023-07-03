@@ -68,10 +68,7 @@ contract WarpedPoolManager is IPoolManager, Ownable {
      * @param exchangePool Address of exchange pool to set as primary pool.
      */
     function setPrimaryPool(address exchangePool) external onlyOwner {
-        require(
-            _exchangePools.contains(exchangePool),
-            "Not registered as exchange pool"
-        );
+        require(_exchangePools.contains(exchangePool), "Not registered as exchange pool");
         require(primaryPool != exchangePool, "Already primary pool address");
 
         address oldPrimaryPool = primaryPool;

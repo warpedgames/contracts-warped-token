@@ -22,9 +22,5 @@ interface ITreasuryHandler {
      * @param beneficiary Address of the beneficiary.
      * @param amount Number of tokens in the transfer.
      */
-    function processTreasury(
-        address benefactor,
-        address beneficiary,
-        uint256 amount
-    ) external;
+    function processTreasury(address benefactor, address beneficiary, uint256 amount) external;
 }

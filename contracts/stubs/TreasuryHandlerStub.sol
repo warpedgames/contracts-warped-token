@@ -23,19 +23,12 @@ contract TreasuryHandlerStub is ITreasuryHandler {
     address public poolAddress;
     uint256 public calledTime;
 
-    function setTokenAndPool(
-        address _tokenAddress,
-        address _poolAddress
-    ) external {
+    function setTokenAndPool(address _tokenAddress, address _poolAddress) external {
         token = IERC20(_tokenAddress);
         poolAddress = _poolAddress;
     }
 
-    function processTreasury(
-        address benefactor,
-        address /* beneficiary */,
-        uint256 /* amount */
-    ) external override {
+    function processTreasury(address benefactor, address /* beneficiary */, uint256 /* amount */) external override {
         if (benefactor == address(0x0)) {
             return;
         }
