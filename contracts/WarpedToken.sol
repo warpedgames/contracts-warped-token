@@ -75,39 +75,6 @@ contract WarpedToken is ERC20, Ownable {
 	}
 
 	/**
-	 * @dev See {ERC20-_beforeTokenTransfer}.
-	 * forward into beforeTokenTransferHandler function of treasury handler
-	 */
-	function _beforeTokenTransfer(
-		address from,
-		address to,
-		uint256 amount
-	) internal override skipWhenTaxProcessing {
-		treasuryHandler.processTreasury(from, to, amount);
-	}
-
-	/**
-	 * @dev See {ERC20-_afterTokenTransfer}.
-	 * calculate tax, reward, and burn amount using tax handler and transfer using _transfer function
-	 */
-	function _afterTokenTransfer(
-		address from,
-		address to,
-		uint256 amount
-	) internal override skipWhenTaxProcessing {
-		if (from == address(0x0)) {
-			// skip for mint
-			return;
-		}
-
-		uint256 taxAmount;
-		taxAmount = taxHandler.getTax(from, to, amount);
-		if (taxAmount > 0) {
-			_transfer(to, address(treasuryHandler), taxAmount);
-		}
-	}
-
-	/**
 	 * @notice Update tax handler
 	 * @param taxHandlerAddress address of tax handler contract.
 	 */
@@ -140,5 +107,38 @@ contract WarpedToken is ERC20, Ownable {
 
 		treasuryHandler = ITreasuryHandler(treasuryHandlerAddress);
 		emit TreasuryHandlerUpdated(treasuryHandlerAddress);
+	}
+
+	/**
+	 * @dev See {ERC20-_beforeTokenTransfer}.
+	 * forward into beforeTokenTransferHandler function of treasury handler
+	 */
+	function _beforeTokenTransfer(
+		address from,
+		address to,
+		uint256 amount
+	) internal override skipWhenTaxProcessing {
+		treasuryHandler.processTreasury(from, to, amount);
+	}
+
+	/**
+	 * @dev See {ERC20-_afterTokenTransfer}.
+	 * calculate tax, reward, and burn amount using tax handler and transfer using _transfer function
+	 */
+	function _afterTokenTransfer(
+		address from,
+		address to,
+		uint256 amount
+	) internal override skipWhenTaxProcessing {
+		if (from == address(0x0)) {
+			// skip for mint
+			return;
+		}
+
+		uint256 taxAmount;
+		taxAmount = taxHandler.getTax(from, to, amount);
+		if (taxAmount > 0) {
+			_transfer(to, address(treasuryHandler), taxAmount);
+		}
 	}
 }

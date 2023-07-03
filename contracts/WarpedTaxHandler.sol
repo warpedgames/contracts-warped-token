@@ -79,57 +79,6 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 	}
 
 	/**
-	 * @notice Get number of tokens to pay as tax.
-	 * @dev There is no easy way to differentiate between a user swapping
-	 * tokens and a user adding or removing liquidity to the pool. In both
-	 * cases tokens are transferred to or from the pool. This is an unfortunate
-	 * case where users have to accept being taxed on liquidity additions and
-	 * removal. To get around this issue a separate liquidity addition contract
-	 * can be deployed. This contract could be exempt from taxes if its
-	 * functionality is verified to only add and remove liquidity.
-	 * @param benefactor Address of the benefactor.
-	 * @param beneficiary Address of the beneficiary.
-	 * @param amount Number of tokens in the transfer.
-	 * @return taxAmount Number of tokens for tax
-	 */
-	function getTax(
-		address benefactor,
-		address beneficiary,
-		uint256 amount
-	) external view override returns (uint256) {
-		if (taxDisabled) {
-			return 0;
-		}
-
-		// Transactions between regular users (this includes contracts) aren't taxed.
-		if (
-			!poolManager.isPoolAddress(benefactor) &&
-			!poolManager.isPoolAddress(beneficiary)
-		) {
-			return 0;
-		}
-
-		// Transactions between pools aren't taxed.
-		if (
-			poolManager.isPoolAddress(benefactor) &&
-			poolManager.isPoolAddress(beneficiary)
-		) {
-			return 0;
-		}
-
-		uint256 taxRate = 0;
-		// If the benefactor is found in the set of exchange pools, then it's a buy transactions, otherwise a sell
-		// transactions, because the other use cases have already been checked above.
-		if (poolManager.isPoolAddress(benefactor)) {
-			taxRate = _getTaxBasisPoints(beneficiary);
-		} else {
-			taxRate = _getTaxBasisPoints(benefactor);
-		}
-
-		return (amount * taxRate) / 10000;
-	}
-
-	/**
 	 * @notice Reset tax rate points.
 	 * @param thresholds of user level.
 	 * @param rates of tax per each threshold.
@@ -217,6 +166,57 @@ contract WarpedTaxHandler is ITaxHandler, Ownable {
 		require(taxDisabled, "Not paused");
 		taxDisabled = false;
 		emit TaxResumed();
+	}
+
+	/**
+	 * @notice Get number of tokens to pay as tax.
+	 * @dev There is no easy way to differentiate between a user swapping
+	 * tokens and a user adding or removing liquidity to the pool. In both
+	 * cases tokens are transferred to or from the pool. This is an unfortunate
+	 * case where users have to accept being taxed on liquidity additions and
+	 * removal. To get around this issue a separate liquidity addition contract
+	 * can be deployed. This contract could be exempt from taxes if its
+	 * functionality is verified to only add and remove liquidity.
+	 * @param benefactor Address of the benefactor.
+	 * @param beneficiary Address of the beneficiary.
+	 * @param amount Number of tokens in the transfer.
+	 * @return taxAmount Number of tokens for tax
+	 */
+	function getTax(
+		address benefactor,
+		address beneficiary,
+		uint256 amount
+	) external view override returns (uint256) {
+		if (taxDisabled) {
+			return 0;
+		}
+
+		// Transactions between regular users (this includes contracts) aren't taxed.
+		if (
+			!poolManager.isPoolAddress(benefactor) &&
+			!poolManager.isPoolAddress(beneficiary)
+		) {
+			return 0;
+		}
+
+		// Transactions between pools aren't taxed.
+		if (
+			poolManager.isPoolAddress(benefactor) &&
+			poolManager.isPoolAddress(beneficiary)
+		) {
+			return 0;
+		}
+
+		uint256 taxRate = 0;
+		// If the benefactor is found in the set of exchange pools, then it's a buy transactions, otherwise a sell
+		// transactions, because the other use cases have already been checked above.
+		if (poolManager.isPoolAddress(benefactor)) {
+			taxRate = _getTaxBasisPoints(beneficiary);
+		} else {
+			taxRate = _getTaxBasisPoints(benefactor);
+		}
+
+		return (amount * taxRate) / 10000;
 	}
 
 	/**

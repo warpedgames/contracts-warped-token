@@ -84,6 +84,12 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 	}
 
 	/**
+	 * @notice Allow contract to accept ETH.
+	 */
+	// solhint-disable-next-line no-empty-blocks
+	receive() external payable {}
+
+	/**
 	 * @param treasuryAddress Address of treasury to use.
 	 * @param tokenAddress Address of token to accumulate and sell.
 	 */
@@ -238,12 +244,6 @@ contract WarpedTreasuryHandler is ITreasuryHandler, Ownable {
 		_taxSwap = taxSwap;
 		emit TaxSwapUpdated(taxSwap);
 	}
-
-	/**
-	 * @notice Allow contract to accept ETH.
-	 */
-	// solhint-disable-next-line no-empty-blocks
-	receive() external payable {}
 
 	/**
 	 * @dev Swap accumulated tokens for ETH.

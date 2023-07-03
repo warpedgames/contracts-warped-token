@@ -38,15 +38,6 @@ contract WarpedPoolManager is IPoolManager, Ownable {
 	event PrimaryPoolUpdated(address oldPrimaryPool, address newPrimaryPool);
 
 	/**
-	 * @notice Check if the given address is pool address.
-	 * @param addr Address to check.
-	 * @return bool True if the given address is pool address.
-	 */
-	function isPoolAddress(address addr) external view override returns (bool) {
-		return _exchangePools.contains(addr);
-	}
-
-	/**
 	 * @notice Add an address to the set of exchange pool addresses.
 	 * @dev Nothing happens if the pool already exists in the set.
 	 * @param poolAddress Address of the pool to add.
@@ -87,5 +78,14 @@ contract WarpedPoolManager is IPoolManager, Ownable {
 		primaryPool = exchangePool;
 
 		emit PrimaryPoolUpdated(oldPrimaryPool, exchangePool);
+	}
+
+	/**
+	 * @notice Check if the given address is pool address.
+	 * @param addr Address to check.
+	 * @return bool True if the given address is pool address.
+	 */
+	function isPoolAddress(address addr) external view override returns (bool) {
+		return _exchangePools.contains(addr);
 	}
 }
