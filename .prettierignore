@@ -1,0 +1,13 @@
+#Hardhat files
+cache
+artifacts
+.log
+
+# Auto generated 
+coverage
+coverage.json
+docs
+
+node_modules
+.env
+.DS_Store
