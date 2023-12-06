@@ -13,7 +13,7 @@
 
 ## Summary
 
-`https://docs.google.com/document/d/1b8mfhAul9MTyxIaDIR18KGqk0_4f3KJbAEIb0CgpGE4/edit#heading=h.a9go4ji7no3i`
+`https://warped.gitbook.io/warped-universe-documentation/`
 
 <br />
 
